@@ -42,16 +42,16 @@ class App:
         info, a message with "Incorrect username or password", or the user will be redirected to /menu
         :return : a Response object that redirects the user to the menu page on success, otherwise a str message appears saying either the username or password was incorrect
         """
-        pass
+        return ""
 
     @_app.route('/google-signin')
-    def google_login()->Response:
+    def google_login():
         """
         Handles the requests made to the website where users can log in to google
         :postcondition: a google user login successfully
         :return : a Response object that redirects the user to the callback method on success
         """
-        pass
+        return ""
 
     @_app.route('/google-logged')
     def google_callback():
@@ -62,7 +62,7 @@ class App:
         :postcondition: create the user session
         :return : a Response object that redirects the user to the menu page
         """
-        pass
+        return ""
 
     @_app.route('/menu')
     def menu():
@@ -71,7 +71,7 @@ class App:
         Postcondition: an integer from the range 0 to the number of game modes minus 1 will be selected and sent as part of the /game/<int:mode> request
         :return : a Response object that redirects the user to a game session of the game mode they selected
         """
-        pass
+        return ""
     
     @_app.route('/game/<int:mode>')
     def game(mode:int):
@@ -81,7 +81,7 @@ class App:
         :param mode : number representing the game mode selected by the user
         :return : string indicating the end of the game and the user's wpm and percent of words typed correct
         """
-        pass
+        return ""
 
 class Database:
     """
@@ -199,7 +199,7 @@ class UserData(App.db.Model):
     _losses = App.db.Column(App.db.Integer)
     _freq_mistyped_words = App.db.Column(App.db.String(STR_MAX_SIZE))
 
-    def repr():
+    def repr()->str:
         """
         Returns a string representation of the user data
         :return :
