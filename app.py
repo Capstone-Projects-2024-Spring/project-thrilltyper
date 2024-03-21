@@ -1,5 +1,7 @@
+import os
 from flask import Flask, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from authlib.integrations.flask_client import OAuth
 STR_MAX_SIZE = 65535
 
 class App:
@@ -11,6 +13,29 @@ class App:
     _app = Flask(__name__)
     _app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
     db = SQLAlchemy(_app)
+
+    # Configuration of flask app
+    appConf = {
+    "OAUTH2_CLIENT_ID": os.environ.get("CLIENT_ID"),
+    "OAUTH2_CLIENT_SECRET": os.environ.get("CLIENT_SECRET"),
+    "OAUTH2_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
+    "FLASK_SECRET": os.environ.get("FLASK_SECRET"),
+    "FLASK_PORT": 5000
+    }
+    _app.secret_key = appConf.get("FLASK_SECRET")
+
+    oauth = OAuth(_app)
+    # list of google scopes - https://developers.google.com/identity/protocols/oauth2/scopes
+    oauth.register(
+        "ttyper",
+        client_id=appConf.get("OAUTH2_CLIENT_ID"),
+        client_secret=appConf.get("OAUTH2_CLIENT_SECRET"),
+        client_kwargs={
+            "scope": "openid profile email",
+            'code_challenge_method': 'S256'  # enable PKCE
+        },
+        server_metadata_url=f'{appConf.get("OAUTH2_META_URL")}',
+    )
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
@@ -42,16 +67,18 @@ class App:
         info, a message with "Incorrect username or password", or the user will be redirected to /menu
         :return : a Response object that redirects the user to the menu page on success, otherwise a str message appears saying either the username or password was incorrect
         """
-        return render_template('index.html')
+        if session.get("user") is None:
+            return render_template('index.html')
+        return render_template('index.html', session=session.get("user"))
 
-    @_app.route('/google-signin')
+    @_app.route('/google-signin', methods=['GET','POST'])
     def google_login():
         """
         Handles the requests made to the website where users can log in to google
         :postcondition: a google user login successfully
         :return : a Response object that redirects the user to the callback method on success
         """
-        pass
+        return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
 
     @_app.route('/google-logged')
     def google_callback():
@@ -62,7 +89,9 @@ class App:
         :postcondition: create the user session
         :return : a Response object that redirects the user to the menu page
         """
-        pass
+        token = App.oauth.ttyper.authorize_access_token()
+        session["user"] = token
+        return redirect("/")
 
     @_app.route('/menu')
     def menu():
