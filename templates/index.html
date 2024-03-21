@@ -1,3 +1,7 @@
 {% block body %}
-    <p><a href="{{url_for('google_login')}}">Login with Google</a></p>
+    {% if session %}
+        <h1>Welcome {{session.userinfo.given_name}}!</h1>
+    {% else %}
+        <p><a href="{{url_for('google_login')}}">Login with Google</a></p>
+    {% endif %}
 {% endblock %}
