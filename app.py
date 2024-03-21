@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 STR_MAX_SIZE = 65535
 
@@ -34,7 +34,7 @@ class App:
         """
         self._app.run()
 
-    @_app.route('/')
+    @_app.route('/',methods=["POST","GET"])
     def log_in():
         """
         Handles the requests made to the welcome page where users can log in, register, or continue as guests 
@@ -42,7 +42,7 @@ class App:
         info, a message with "Incorrect username or password", or the user will be redirected to /menu
         :return : a Response object that redirects the user to the menu page on success, otherwise a str message appears saying either the username or password was incorrect
         """
-        return ""
+        return "User name or password is incorrect"
 
     @_app.route('/google-signin')
     def google_login():
