@@ -67,8 +67,12 @@ class App:
         info, a message with "Incorrect username or password", or the user will be redirected to /menu
         :return : a Response object that redirects the user to the menu page on success, otherwise a str message appears saying either the username or password was incorrect
         """
+
+        # Query user to log in
         if session.get("user") is None:
             return render_template('index.html')
+        
+        # Show messages to user if logged
         return render_template('index.html', session=session.get("user"))
 
     @_app.route('/google-signin', methods=['GET','POST'])
@@ -79,6 +83,15 @@ class App:
         :return : a Response object that redirects the user to the callback method on success
         """
         return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
+    
+    @_app.route('/logout', method=['GET', 'POST'])
+    def logout():
+        """
+        Log out user from the session
+        :postcondition: session is None
+        """
+        # Pop out the user session
+        session.pop("user", None)
 
     @_app.route('/google-logged')
     def google_callback():
