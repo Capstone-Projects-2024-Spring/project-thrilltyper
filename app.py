@@ -83,16 +83,6 @@ class App:
         :return : a Response object that redirects the user to the callback method on success
         """
         return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
-    
-    @_app.route('/logout', methods=['GET', 'POST'])
-    def logout():
-        """
-        Log out user from the session
-        :postcondition: session is None
-        """
-        # Pop out the user session
-        session.pop("user", None)
-        return redirect("/")
 
     @_app.route('/google-logged')
     def google_callback():
@@ -121,6 +111,34 @@ class App:
             # Handle other OAuth errors gracefully
             # return "OAuth Error: {}".format(str(e))
             return redirect("/")
+        
+
+       
+    @_app.route('/register', methods=['POST'])
+    def register():
+        """
+        Created and logged a new user account
+        :precondition: form contained valid input
+        """
+        # Get input
+        username = request.form["username"]
+        password = request.form["password"]
+        # Validate input
+        # Store database
+        # Store session
+        print(username + " : " + password)
+        return redirect("/")
+    
+       
+    @_app.route('/logout', methods=['GET', 'POST'])
+    def logout():
+        """
+        Log out user from the session
+        :postcondition: session is None
+        """
+        # Pop out the user session
+        session.pop("user", None)
+        return redirect("/")
 
     @_app.route('/menu')
     def menu():
