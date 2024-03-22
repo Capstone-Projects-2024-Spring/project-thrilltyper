@@ -2,6 +2,8 @@ import os
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
+
+from player import player
 STR_MAX_SIZE = 65535
 
 class App:
@@ -126,6 +128,13 @@ class App:
         # Validate input
         # Store database
         # Store session
+        d =  player(username)
+    
+        # Store the Player object in the session
+        session['user'] = d.__json__()
+        p = session.get('player')
+
+        print("hahahaha")
         print(username + " : " + password)
         return redirect("/")
     
