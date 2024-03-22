@@ -1,5 +1,5 @@
 import os
-from flask import Flask, redirect, render_template, request, url_for, session
+from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 STR_MAX_SIZE = 65535
@@ -73,7 +73,7 @@ class App:
             return render_template('index.html')
         
         # Show messages to user if logged
-        return render_template('index.html', session=session.get("user"))
+        return render_template('index.html', userSession=session.get("user"))
 
     @_app.route('/google-signin', methods=['GET','POST'])
     def google_login():
@@ -84,7 +84,7 @@ class App:
         """
         return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
     
-    @_app.route('/logout', method=['GET', 'POST'])
+    @_app.route('/logout', methods=['GET', 'POST'])
     def logout():
         """
         Log out user from the session
@@ -92,6 +92,7 @@ class App:
         """
         # Pop out the user session
         session.pop("user", None)
+        return redirect("/")
 
     @_app.route('/google-logged')
     def google_callback():
@@ -102,9 +103,24 @@ class App:
         :postcondition: create the user session
         :return : a Response object that redirects the user to the menu page
         """
-        token = App.oauth.ttyper.authorize_access_token()
-        session["user"] = token
-        return redirect("/")
+        try:
+            # Obtain the access token from Google OAuth
+            token = App.oauth.ttyper.authorize_access_token()
+            
+            # Check if the 'id_token' is present in the token
+            if 'id_token' in token:
+                # If the 'id_token' is present, indicating a successful login
+                # Extract and store necessary user information in the session
+                session["user"] = token
+            else:
+                # Handle the case where access is denied (user cancelled the login)
+                return "Access denied: Google login was canceled or failed."
+            # Redirect to the desired page after successful authentication
+            return redirect("/")
+        except Exception as e:
+            # Handle other OAuth errors gracefully
+            # return "OAuth Error: {}".format(str(e))
+            return redirect("/")
 
     @_app.route('/menu')
     def menu():
