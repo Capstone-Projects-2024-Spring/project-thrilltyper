@@ -12,6 +12,7 @@ class Cosmetics {
     constructor(availableThemes) {
 
         this.availableThemes = availableThemes;
+        this.availablePoints = 0; //initializing point
 
     }
 
@@ -23,7 +24,12 @@ class Cosmetics {
     changeTheme(theme) {
         //implements changed theme for cosmetics
         //takes in one of the available theme of cosmetics
+
         //validates whether the theme exists or not
+        if(!this.availableThemes.includes(theme)){
+            throw new Error('Invalid theme');
+        }
+
     }
 
     /**
@@ -34,7 +40,15 @@ class Cosmetics {
     earnpoints(earnedpoints) {
         //implements points gaining function for themed cosmetics
         //adding the points to the cumulative total in the user profile
-        return earnedpoints;
+
+        //validation of earned points
+        if(typeof earnedpoints != 'number' || earnedpoints < 0){
+            throw new Error('Invalid points');
+        }
+
+        //adding earned points to available points
+        this.availablePoints += earnedpoints;
+        return this.availablePoints; //return amount of available points
     }
 
     /**
@@ -46,6 +60,14 @@ class Cosmetics {
         //implementation of spending points for cosmetics
         //validates if there is enough points in the user profile statistics
         //rejects the transaction if there is not enought points
+
+        //validation of amount of points
+        if(this.availablePoints < spendPoints){
+            throw new Error('Not enough points');
+        }
+
+        //deduct points when cosmetic theme is bought by user
+        this.availablePoints -= spendPoints;
     }
 
 }
