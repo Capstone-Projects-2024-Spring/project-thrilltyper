@@ -4,8 +4,30 @@
     height: 100%;
     
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+/* Define styles for the welcome message */
+#welcome-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff; /* Set background color as desired */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.5s ease; /* Smooth transition over 0.5 seconds */
+}
+
+/* Define styles for fading out */
+.fade-out {
+  display: none !important;
+  /* opacity: 0 !important; Ensure that this style takes precedence */
 }
 
 .gsi-material-button {
