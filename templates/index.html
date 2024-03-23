@@ -24,7 +24,7 @@
 
 
 <div id="login-ctn">
-    <form action="{{url_for('register')}}" method="POST">
+    <form id="main-form" action="{{url_for('authenticate')}}" method="POST">
         <h2>Login</h2>
         <div class="form-group">
             <label for="username">Username:</label>
@@ -37,9 +37,9 @@
 
         <div id="login-ops">
             <button type="submit">Login</button>
-            <a href="/">Signup</a>
+            <a href="{{url_for('signup')}}">Signup</a>
         </div>
-        
+
 
         <!--Google Login Redirection-->
         <a href="{{url_for('google_login')}}">
@@ -72,6 +72,21 @@
     </form>
 
 </div>
+
+<script>
+    // Get the form element
+    var form = document.getElementById('main-form');
+
+    // Check if the current path is the root ("/")
+    if (window.location.pathname === '/signup') {
+        // Change the form action to a different URL
+        form.action = '{{url_for("register")}}'; // Change this to your desired action
+        var btn = form.querySelector('button[type="submit"]');
+        btn.innerHTML = "Signup"
+        var anchor = form.querySelector('a');
+        anchor.style.display = "none";
+    }
+</script>>
 
 
 {% endif %}
