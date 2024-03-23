@@ -23,24 +23,24 @@
 {% else %}
 
 
-<div id="login-ctn">
-    <form id="main-form" action="{{url_for('authenticate')}}" method="POST">
-        <h2>Login</h2>
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
+<div id="content">
+    <div id="login-ctn">
+        <form id="main-form" action="{{url_for('authenticate')}}" method="POST">
+            <h2>Login</h2>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-        <div id="login-ops">
-            <button type="submit">Login</button>
-            <a href="{{url_for('signup')}}">Signup</a>
-        </div>
-
-
+            <div id="login-ops">
+                <button type="submit">Login</button>
+                <a href="{{url_for('signup')}}">Signup</a>
+            </div>
+        </form>
         <!--Google Login Redirection-->
         <a href="{{url_for('google_login')}}">
             <button class="gsi-material-button">
@@ -69,8 +69,7 @@
                 </div>
             </button>
         </a>
-    </form>
-
+    </div>
 </div>
 
 <script>
@@ -86,7 +85,7 @@
         var anchor = form.querySelector('a');
         anchor.style.display = "none";
     }
-</script>>
+</script>
 
 
 {% endif %}
