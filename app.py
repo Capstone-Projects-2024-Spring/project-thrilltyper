@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
@@ -15,6 +16,9 @@ class App:
     _app = Flask(__name__)
     _app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
     db = SQLAlchemy(_app)
+
+    # Explicitly load env
+    load_dotenv()
 
     # Configuration of flask app
     appConf = {
@@ -59,7 +63,7 @@ class App:
             server. See :func:`werkzeug.serving.run_simple` for more
             information.
         """
-        self._app.run()
+        self._app.run(host, port)
 
     @_app.route('/')
     def log_in():
@@ -331,4 +335,4 @@ class UserData(App.db.Model):
 
 if __name__=='__main__':
     app = App()
-    app.run(debug=True)
+    app.run(host="localhost", debug=True)
