@@ -17,6 +17,9 @@ class App:
     _app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
     db = SQLAlchemy(_app)
 
+    # Explicitly load env
+    load_dotenv()
+
     # Configuration of flask app
     appConf = {
     "OAUTH2_CLIENT_ID": os.environ.get("CLIENT_ID"),
@@ -60,7 +63,6 @@ class App:
             server. See :func:`werkzeug.serving.run_simple` for more
             information.
         """
-        load_dotenv()
         self._app.run()
 
     @_app.route('/')
