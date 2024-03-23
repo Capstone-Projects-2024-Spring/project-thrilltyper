@@ -1,5 +1,9 @@
-from flask import Flask
+import os
+from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from authlib.integrations.flask_client import OAuth
+
+from player import player
 STR_MAX_SIZE = 65535
 
 class App:
@@ -11,6 +15,29 @@ class App:
     _app = Flask(__name__)
     _app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
     db = SQLAlchemy(_app)
+
+    # Configuration of flask app
+    appConf = {
+    "OAUTH2_CLIENT_ID": os.environ.get("CLIENT_ID"),
+    "OAUTH2_CLIENT_SECRET": os.environ.get("CLIENT_SECRET"),
+    "OAUTH2_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
+    "FLASK_SECRET": os.environ.get("FLASK_SECRET"),
+    "FLASK_PORT": 5000
+    }
+    _app.secret_key = appConf.get("FLASK_SECRET")
+
+    oauth = OAuth(_app)
+    # list of google scopes - https://developers.google.com/identity/protocols/oauth2/scopes
+    oauth.register(
+        "ttyper",
+        client_id=appConf.get("OAUTH2_CLIENT_ID"),
+        client_secret=appConf.get("OAUTH2_CLIENT_SECRET"),
+        client_kwargs={
+            "scope": "openid profile email",
+            'code_challenge_method': 'S256'  # enable PKCE
+        },
+        server_metadata_url=f'{appConf.get("OAUTH2_META_URL")}',
+    )
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
@@ -42,16 +69,22 @@ class App:
         info, a message with "Incorrect username or password", or the user will be redirected to /menu
         :return : a Response object that redirects the user to the menu page on success, otherwise a str message appears saying either the username or password was incorrect
         """
-        pass
 
-    @_app.route('/google-signin')
-    def google_login()->Response:
+        # Query user to log in
+        if session.get("user") is None:
+            return render_template('index.html')
+        
+        # Show messages to user if logged
+        return render_template('index.html', userSession=session.get("user"))
+
+    @_app.route('/google-signin', methods=['GET','POST'])
+    def google_login():
         """
         Handles the requests made to the website where users can log in to google
         :postcondition: a google user login successfully
         :return : a Response object that redirects the user to the callback method on success
         """
-        pass
+        return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
 
     @_app.route('/google-logged')
     def google_callback():
@@ -62,7 +95,80 @@ class App:
         :postcondition: create the user session
         :return : a Response object that redirects the user to the menu page
         """
-        pass
+        try:
+            # Obtain the access token from Google OAuth
+            token = App.oauth.ttyper.authorize_access_token()
+            
+            # Check if the 'id_token' is present in the token
+            if 'id_token' in token:
+                # If the 'id_token' is present, indicating a successful login
+                # Extract and store necessary user information in the session
+                session["user"] = token
+            else:
+                # Handle the case where access is denied (user cancelled the login)
+                return "Access denied: Google login was canceled or failed."
+            # Redirect to the desired page after successful authentication
+            return redirect("/")
+        except Exception as e:
+            # Handle other OAuth errors gracefully
+            # return "OAuth Error: {}".format(str(e))
+            return redirect("/")
+        
+    @_app.route('/authentication', methods=['POST'])
+    def authenticate():
+        # Temp account
+        uname = "admin"
+        upsw = "admin"
+        try:
+            username = request.form["username"]
+            password = request.form["password"]
+            if username == uname and password == upsw:
+                d =  player(username)
+                # Store the Player object in the session
+                session['user'] = d.__json__()
+                return redirect("/")
+            else:
+               return "Authentication Failed" 
+        except Exception as e:
+            return "Authentication Failed"
+
+    
+    @_app.route('/signup', methods=['GET', 'POST'])
+    def signup():
+        return render_template("index.html")
+
+    @_app.route('/register', methods=['POST'])
+    def register():
+        """
+        Created and logged a new user account
+        :precondition: form contained valid input
+        """
+        # Get input
+        username = request.form["username"]
+        password = request.form["password"]
+        # Validate input
+        # Store database
+        # Store session
+        d =  player(username)
+    
+        # Store the Player object in the session
+        session['user'] = d.__json__()
+        p = session.get('player')
+
+        print("hahahaha")
+        print(username + " : " + password)
+        return redirect("/")
+    
+       
+    @_app.route('/logout', methods=['GET', 'POST'])
+    def logout():
+        """
+        Log out user from the session
+        :postcondition: session is None
+        """
+        # Pop out the user session
+        session.pop("user", None)
+        return redirect("/")
 
     @_app.route('/menu')
     def menu():
