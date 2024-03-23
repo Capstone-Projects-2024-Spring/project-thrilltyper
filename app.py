@@ -114,8 +114,29 @@ class App:
             # return "OAuth Error: {}".format(str(e))
             return redirect("/")
         
+    @_app.route('/authentication', methods=['POST'])
+    def authenticate():
+        # Temp account
+        uname = "admin"
+        upsw = "admin"
+        try:
+            username = request.form["username"]
+            password = request.form["password"]
+            if username == uname and password == upsw:
+                d =  player(username)
+                # Store the Player object in the session
+                session['user'] = d.__json__()
+                return redirect("/")
+            else:
+               return "Authentication Failed" 
+        except Exception as e:
+            return "Authentication Failed"
 
-       
+    
+    @_app.route('/signup', methods=['GET', 'POST'])
+    def signup():
+        return render_template("index.html")
+
     @_app.route('/register', methods=['POST'])
     def register():
         """
