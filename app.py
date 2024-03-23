@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
@@ -59,6 +60,7 @@ class App:
             server. See :func:`werkzeug.serving.run_simple` for more
             information.
         """
+        load_dotenv()
         self._app.run()
 
     @_app.route('/')
@@ -331,4 +333,4 @@ class UserData(App.db.Model):
 
 if __name__=='__main__':
     app = App()
-    app.run(debug=True)
+    app.run(host="localhost", debug=True)
