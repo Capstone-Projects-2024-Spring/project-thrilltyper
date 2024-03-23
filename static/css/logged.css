@@ -36,7 +36,7 @@
   padding: 0.25rem;
 }
 
-#login-ctn {
+#content {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -46,13 +46,17 @@
   height: 100%;
 }
 
+#login-ctn {
+  display: inline-block;
+}
+
 #login-ctn #login-ops {
   display: flex;
   justify-content: space-between;
   padding: 0.25rem;
 }
 
-#login-ctn form {
+#login-ctn {
   padding: 2rem;
   border-radius: 10px;
   /* Border radius for rounded corners */
