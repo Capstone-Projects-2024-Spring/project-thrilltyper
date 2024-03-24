@@ -319,7 +319,23 @@ class Database:
         :precondition: `username` must be a valid user identifier.
         :postcondition: If a user with the provided username exists in the database, the corresponding user record is deleted.
         """
-        pass
+        try:
+
+            #the first index/result filtered by the username
+            delete_user = UserInfo.query.filter_by(_username=username).first()
+            #print('the user is: ', delete_user)
+            if delete_user:
+                #if username exists delete it and return True
+                App.db.session.delete(delete_user)
+                App.db.session.commit()
+                return True
+            #else username does not exist
+            else:
+                return False
+        except Exception as e:
+            #roll back transaction if error occurred
+            App.db.session.rollback()
+            return False
 
 #these two tables/classes are not limited to parent/child relationship
 #they're bidirectional, you can retrieve the relative data of the other table by calling either table
@@ -336,11 +352,18 @@ class UserInfo(App.db.Model):
     _registered_date : record of the date and time in UTC when user registered
     """
     _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
-    _password =App.db.Column(App.db.String(30), nullable=False)
+    _password =App.db.Column(App.db.String(30)) #password can be null for login with email
     _email = App.db.Column(App.db.String(60), unique=True)
     _profile_photo = App.db.Column(App.db.String(255))
     #record the time the user account is created
     _registered_date = App.db.Column(App.db.DateTime, default=App.db.func.current_timestamp()) #still in UTC timezone
+
+    #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
+    #uselist set to False meaning one-to-one relationship between the two table
+    #one instance of the user_info is related to one and only one user_data instance (1:1))
+    user_data_ref = App.db.relationship('UserData', backref=App.db.backref('user_info_ref', uselist=False), cascade="all, delete-orphan", single_parent=True)
+    #cascade = "all, delete-orphan" when userinfo/data row is deleted, the parent/child row will also be deleted in one-to-one relationship
+    #since cascade default to be many-to-one relationship(1 userinfo - Many userdata rows), single_parent flag need to set to be True(ensures 1:1)
 
 class UserData(App.db.Model):
     """
@@ -364,11 +387,6 @@ class UserData(App.db.Model):
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
-
-    #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
-    #uselist set to False meaning one-to-one relationship between the two table
-    #one instance of the user_info is related to one and only one user_data instance (1:1))
-    user_info_ref = App.db.relationship('UserInfo', backref=App.db.backref('user_data_ref', uselist=False))
 
 
     #validation of whether the username exists in table 'user_info' when adding to user_data table
@@ -400,21 +418,23 @@ if __name__=='__main__':
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
+        #app.db.drop_all()
+
         app.db.create_all()
         #sample insert
-        #this line is for testing
+        """
         try:
             user_info_data = {
-                '_username': 'he_john',
-                '_password': '123456789',
-                '_email': 'hejohn456@gmail.com'
+                '_username': 'me_john',
+                '_password': '20222024',
+                '_email': 'hejohn456@gmail.com' #email must be unique
             }
 
             user_data_data = {
-                '_username': 'he_john', #username must kept the same for integrity
+                '_username': 'me_john', #username must kept the same for integrity
                 #if _username is not the same, it will not pass the @validates(_username) method, and an exception will be raised
-                '_wpm': 70,
-                '_accuracy': '100.0',
+                '_wpm': 50,
+                '_accuracy': '80.0',
                 #'you_good': '60' if this line is ran, the program will crash since it is not a existing column
             }
 
@@ -426,6 +446,21 @@ if __name__=='__main__':
         except Exception as e:
             print(f'Error in Inserting Data: {e}')
             raise
+        """
+        
+        
+        #testing delete method
+        try:
+            deletion_successful = Database.delete('me_john')
+                
+            if deletion_successful:
+                print('Deletion Successful!')
+            else:
+                print('Deletion Failed: User not found!')
+        except Exception as e:
+            print(f'Error during deletion: {e}')
+            raise
+        
 
 
     app.run(host="localhost", debug=True)
