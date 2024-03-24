@@ -333,14 +333,14 @@ class UserInfo(App.db.Model):
     _password : can not be null, password of a user's account
     _email : the unique email address of the user 
     _profile_photo : the url representation of the user's profile photo in email
-    _registered_date : record of the date and time in the database system when user registered
+    _registered_date : record of the date and time in UTC when user registered
     """
     _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
     _password =App.db.Column(App.db.String(30), nullable=False)
     _email = App.db.Column(App.db.String(60), unique=True)
     _profile_photo = App.db.Column(App.db.String(255))
     #record the time the user account is created
-    _registered_date = App.db.Column(App.db.DateTime, default=App.db.func.current_timestamp())
+    _registered_date = App.db.Column(App.db.DateTime, default=App.db.func.current_timestamp()) #still in UTC timezone
 
 class UserData(App.db.Model):
     """
@@ -375,6 +375,7 @@ class UserData(App.db.Model):
     #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
     #when inserting/update a row into user_data
     #try/except should be used to catch ValueError exception to avoid crash of system
+    #mainly used for update/query/delete method, insert cannot be checked by this validation
     @validates('_username')
     def validate_username(self, key, _username):
         #selects the first result filtered using username by sqlalchemy 
@@ -403,16 +404,17 @@ if __name__=='__main__':
         #sample insert
         try:
             user_info_data = {
-                '_username': 'me_john',
+                '_username': 'he_john',
                 '_password': '123456789',
-                '_email': 'mejohn123@gmail.com'
+                '_email': 'hejohn456@gmail.com'
             }
 
             user_data_data = {
-                '_username': 'me_john', #username must kept the same for integrity
+                '_username': 'he_john', #username must kept the same for integrity
                 #if _username is not the same, it will not pass the @validates(_username) method, and an exception will be raised
-                '_wpm': 60,
-                '_accuracy': '90.0'
+                '_wpm': 70,
+                '_accuracy': '100.0',
+                #'you_good': '60' if this line is ran, the program will crash since it is not a existing column
             }
 
             #insertion in the respective table
