@@ -3,9 +3,11 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
+from datetime import datetime
+from pytz import UTC #timezone - Coordinated Universial Time
 
 from player import player
-STR_MAX_SIZE = 65535
+#STR_MAX_SIZE = 65535
 
 class App:
     """
@@ -308,29 +310,63 @@ class Database:
         """
         pass
 
+#these two tables/classes are not limited to parent/child relationship
+#they're bidirectional, you can retrieve the relative data of the other table by calling either table
+#UserData table will have the foreign key
+#responsible for storing user's personal information
+class UserInfo(App.db.Model):
+
+    """
+    Representation of user personal information stored in the database under UserInfo table
+    _username : primary key of the table, unique identifier of a user
+    _password : can not be null, password of a user's account
+    _email : the unique email address of the user 
+    _profile_photo : the url representation of the user's profile photo in email
+    _registered_date : record of the date and time in UTC when user registered
+    """
+    _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
+    _password =App.db.Column(App.db.String(30), nullable=False)
+    _email = App.db.Column(App.db.String(60), unique=True)
+    _profile_photo = App.db.Column(App.db.String(255))
+    #record the time the user account is created
+    _registered_date = App.db.Column(App.db.DateTime, default=lambda:datetime.now(UTC))
+
 class UserData(App.db.Model):
     """
-    Representation of user data stored in the database under the UserData table
-    _username : unique identifier of a user
+    Representation of user in game data stored in the database under the UserData table
+    _user_data_id : the primary key of the table, auto increment by sqlalchemy
+    _username : non-nullable and unique identifier of a user, act as the foreign key referencing UserInfo table
     _wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
     _losses : number of multiplayer matches lost
     _freq_mistyped_words : string of words/phrases frequently mistyped separated by the '|' character
+    _total_playing_time : record the total number of time the user is playing the game
     """
-    _username = App.db.Column(App.db.String(15),nullable=False,primary_key=True)
+    _user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
+    _username = App.db.Column(App.db.String(30),App.db.ForeignKey('user_info._username'), nullable=False) #foreign key referencing UserInfo table
+    #this 'user_info' from the above line is mentioning the table name of UserInfo
+    #this underscore and the lower case is automated by the system
     _wpm = App.db.Column(App.db.SmallInteger)
     _accuracy = App.db.Column(App.db.Numeric)
-    _wins = App.db.Column(App.db.Integer)
-    _losses = App.db.Column(App.db.Integer)
-    _freq_mistyped_words = App.db.Column(App.db.String(STR_MAX_SIZE))
+    _wins = App.db.Column(App.db.Integer, default=0)
+    _losses = App.db.Column(App.db.Integer, default=0)
+    _freq_mistyped_words = App.db.Column(App.db.Text)
+    _total_playing_time = App.db.Column(App.db.Integer, default=0)
 
-    def repr():
+    #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
+    #uselist set to False meaning one-to-one relationship between the two table
+    #one instance of the user_info is related to one and only one user_data instance (1:1))
+    user_info_ref = App.db.relationship('UserInfo', backref=App.db.backref('user_data_ref', uselist=False))
+
+    def repr(self):
         """
         Returns a string representation of the user data
         :return :
         """
-        pass
+        return f"<UserData(username={self._username}, wpm={self._wpm}, accuracy={self._accuracy}, " \
+               f"wins={self._wins}, losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
+               f"total_playing_time={self._total_playing_time})>"
 
 
 if __name__=='__main__':
