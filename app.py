@@ -290,12 +290,15 @@ class Database:
         pass
 
     @staticmethod
-    def query(username: str):
+    def query(username: str, db_table_class: str):
         """
         Query a user record from the database.
 
         :param username: Unique identifier of the user to be queried.
         :type username: str
+
+        :param db_table_class: the name of the table class
+        :type db_table_class: str
 
         :return: Returns the UserData object if found, else None.
         :rtype: UserData or None
@@ -303,7 +306,28 @@ class Database:
         :precondition: `username` must be a valid user identifier.
         :postcondition: If a user with the provided username exists in the database, returns the corresponding UserData object; otherwise, returns None.
         """
-        pass
+        try:
+            #a list of valid table names
+            valid_table_list = ['UserInfo','UserData']
+            #validates if the given string is in the list
+            if db_table_class in valid_table_list:
+                #find the table class object by the given string
+                table_name_obj = globals().get(db_table_class)
+                #retriving data by sqlalchemy's query and filter
+                retrieved_data = table_name_obj.query.filter_by(_username=username).first()
+                #if user does not exist, return nothing
+                if retrieved_data is None:
+                    print(f"Invalid username entered: {username}")
+                    return None
+                #user information object returned
+                return retrieved_data
+            else:
+                raise ValueError(f"Invalid table name: {db_table_class}") #handles invalid table name string
+        except Exception as e:
+            
+            print(f"Error in querying user information from {db_table_class}: {e}")
+            return None
+
 
     @staticmethod
     def delete(username: str):
@@ -448,7 +472,7 @@ if __name__=='__main__':
             raise
         """
         
-        
+        """
         #testing delete method
         try:
             deletion_successful = Database.delete('me_john')
@@ -460,7 +484,19 @@ if __name__=='__main__':
         except Exception as e:
             print(f'Error during deletion: {e}')
             raise
-        
+        """
+
+        query_result = Database.query('you_john','UserData')
+        if query_result is not None:
+            print("Query result:")
+            print(query_result)  # Print the query result object
+
+            print("\nUsername:", query_result._username)
+            #print("Password:", query_result._password)
+            print("Email:", query_result._email)
+            #print("WPM:", query_result._wpm)
+        else:
+            print("No user data found for the provided username.")
 
 
     app.run(host="localhost", debug=True)
