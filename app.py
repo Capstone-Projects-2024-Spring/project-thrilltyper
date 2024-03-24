@@ -17,7 +17,7 @@ class App:
     _db : database connection which allows for interaction with the SQL database
     """
     _app = Flask(__name__)
-    _app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+    _app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ThrillTyper.db'
     db = SQLAlchemy(_app)
 
     # Explicitly load env
@@ -385,4 +385,10 @@ class UserData(App.db.Model):
 
 if __name__=='__main__':
     app = App()
+    
+    #creates database tables and used for testing purposes(insert/update/delete)
+    with app._app.app_context():
+
+        app.db.create_all()
+
     app.run(host="localhost", debug=True)
