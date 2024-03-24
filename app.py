@@ -4,7 +4,6 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for, s
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime
-from pytz import UTC #timezone - Coordinated Universial Time
 from sqlalchemy.orm import validates #for validation of data in tables
 
 from player import player
@@ -323,14 +322,14 @@ class UserInfo(App.db.Model):
     _password : can not be null, password of a user's account
     _email : the unique email address of the user 
     _profile_photo : the url representation of the user's profile photo in email
-    _registered_date : record of the date and time in UTC when user registered
+    _registered_date : record of the date and time in the database system when user registered
     """
     _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
     _password =App.db.Column(App.db.String(30), nullable=False)
     _email = App.db.Column(App.db.String(60), unique=True)
     _profile_photo = App.db.Column(App.db.String(255))
     #record the time the user account is created
-    _registered_date = App.db.Column(App.db.DateTime, default=lambda:datetime.now(UTC))
+    _registered_date = App.db.Column(App.db.DateTime, default=App.db.func.current_timestamp())
 
 class UserData(App.db.Model):
     """
@@ -386,7 +385,7 @@ class UserData(App.db.Model):
 if __name__=='__main__':
     app = App()
     
-    #creates database tables and used for testing purposes(insert/update/delete)
+    #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
         app.db.create_all()
