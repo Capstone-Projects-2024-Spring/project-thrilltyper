@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime
 from sqlalchemy.orm import validates #for validation of data in tables
+from sqlalchemy import Column #used for reference to tables' column name
 
 from player import player
 #STR_MAX_SIZE = 65535
@@ -232,34 +233,44 @@ class Database:
         self._models = models
 
     @staticmethod
-    def insert(username: str, psw: str, wpm: int = None, accuracy: float = None,
-               wins: int = None, losses: int = None,
-               freq_mistyped_words: str = None):
+    def insert(db_table, **kwargs):
         """
         Insert a new user record into the database.
 
-        :param username: Unique identifier of the user.
-        :type username: str
-        :param psw: password of the user
-        :type psw: String
-        :param wpm: Words per minute. Defaults to None.
-        :type wpm: int, optional
-        :param accuracy: Percent of words typed correctly. Defaults to None.
-        :type accuracy: float, optional
-        :param wins: Number of multiplayer matches won. Defaults to None.
-        :type wins: int, optional
-        :param losses: Number of multiplayer matches lost. Defaults to None.
-        :type losses: int, optional
-        :param freq_mistyped_words: String of words/phrases frequently mistyped separated by the '|' character. Defaults to None.
-        :type freq_mistyped_words: str, optional
+        :param db_table: The SQLalchemy model class representing a database table
+        :type db_table: SQlalchemy model class
+        :param kwargs: this is the keyword arguments that represents field names and the corresponding value
+        :type kwargs: dict
 
-        :precondition: `username` must not be empty.
-        :precondition: `username` must be unique.
-        :precondition: `psw` must not be empty.
+        :precondition: All required fields for the model class must be provided in kwargs (for example: non-nullable fields must be provided)
         :precondition: If provided, `wpm`, `accuracy`, `wins`, `losses`, and `freq_mistyped_words` must be of the correct data types and within acceptable ranges.
         :postcondition: If successful, a new user record is inserted into the database with password hashed. 
         """
-        pass
+        
+        #check the provided key arguments based on valid column names 
+        #raise ValueError if invalid column names are found
+        valid_columns = db_table.__table__.columns.keys() #retrieve all columns' name in the table
+        #this is the required columns that must have a value entered (nullable=False)
+        required_columns = set(Column.name for Column in db_table.__table__.columns if not Column.nullable)
+        #invliad columns are the set of argument keys minus the set of valid columns and non-required columns
+        #this required column is need to find all non-required columns
+        #this is needed to prevent crash when a valid column is not present in the insert, and viewed as an invliad column
+        invalid_columns = set(kwargs.keys()) - set(valid_columns) - (set(valid_columns) - required_columns)
+        if invalid_columns:
+            raise ValueError(f"Invalid column(s) provided: {','.join(invalid_columns)}") #list of the invalid columns
+        
+        #instance of the model with specified column names in parameter
+        new_row = db_table(**kwargs)
+
+        try:
+            App.db.session.add(new_row) #add the new row to database table
+            App.db.session.commit() #commit the transaction/changes
+            return new_row
+        except Exception as e:
+            App.db.session.rollback() #rollback the change made
+            raise e 
+
+
 
     @staticmethod
     def update(username: str, **kwargs):
@@ -389,5 +400,29 @@ if __name__=='__main__':
     with app._app.app_context():
 
         app.db.create_all()
+        #sample insert
+        try:
+            user_info_data = {
+                '_username': 'me_john',
+                '_password': '123456789',
+                '_email': 'mejohn123@gmail.com'
+            }
+
+            user_data_data = {
+                '_username': 'me_john', #username must kept the same for integrity
+                #if _username is not the same, it will not pass the @validates(_username) method, and an exception will be raised
+                '_wpm': 60,
+                '_accuracy': '90.0'
+            }
+
+            #insertion in the respective table
+            user_info_instance = Database.insert(UserInfo, **user_info_data)
+            user_data_instance = Database.insert(UserData, **user_data_data)
+
+            print('Data Insertion Successfully!')
+        except Exception as e:
+            print(f'Error in Inserting Data: {e}')
+            raise
+
 
     app.run(host="localhost", debug=True)
