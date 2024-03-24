@@ -402,6 +402,7 @@ if __name__=='__main__':
 
         app.db.create_all()
         #sample insert
+        #this line is for testing
         try:
             user_info_data = {
                 '_username': 'he_john',
