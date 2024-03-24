@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime
 from pytz import UTC #timezone - Coordinated Universial Time
+from sqlalchemy.orm import validates #for validation of data in tables
 
 from player import player
 #STR_MAX_SIZE = 65535
@@ -358,6 +359,19 @@ class UserData(App.db.Model):
     #uselist set to False meaning one-to-one relationship between the two table
     #one instance of the user_info is related to one and only one user_data instance (1:1))
     user_info_ref = App.db.relationship('UserInfo', backref=App.db.backref('user_data_ref', uselist=False))
+
+
+    #validation of whether the username exists in table 'user_info' when adding to user_data table
+    #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
+    #when inserting/update a row into user_data
+    #try/except should be used to catch ValueError exception to avoid crash of system
+    @validates('_username')
+    def validate_username(self, key, _username):
+        #selects the first result filtered using username by sqlalchemy 
+        user_info = UserInfo.query.filter_by(_username=_username).first()
+        if user_info is None: # user_info is None if user does not exist
+            raise ValueError(f"User '{_username}' does not exist")
+        return _username
 
     def repr(self):
         """
