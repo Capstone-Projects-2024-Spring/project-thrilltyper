@@ -270,6 +270,37 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
+    ''' #not functioning properly
+    @staticmethod
+    def update_username(old_username: str, new_username: str):
+        """
+        Update the username in both tables in the parent-child relationship
+
+        :param old_username: the existing username in the database
+        :type old_username: str
+        :param new_username: the updating to username
+        :type new_username: str
+        """
+        try:
+            user_info_record = UserInfo.query.filter_by(_username=old_username).first()
+            if user_info_record:
+                user_info_record._username = new_username
+                App.db.session.commit()
+
+                user_data_record = UserData.query.filter_by(_username=old_username).first()
+                if user_data_record:
+                    user_data_record._username = new_username
+                    App.db.session.commit()
+                    print(f"Username updated from '{old_username}' to '{new_username}' successfully")
+                else:
+                    print(f"User '{old_username}' is not updated in the UserData table")
+            else:
+                print(f"User '{old_username}' is not updated in the UserInfo table")
+        except Exception as e:
+            App.db.session.rollback()
+            print(f"Erorr in updating: {e}")
+    '''
+
 
 
     @staticmethod
@@ -328,6 +359,11 @@ class Database:
                     setattr(user_information, key, value)
                 else:
                     raise AttributeError(f"Attribute '{key}' does not exist in the '{db_table_name}' table")
+                
+
+            #if new_username and new_username != username:
+                #Database.update_username(username, new_username)
+
             #commit the updated values and fields
             App.db.session.commit()
             print(f"User '{username}' record updated successfully in table '{db_table_name}'")
@@ -447,6 +483,7 @@ class UserData(App.db.Model):
     _losses : number of multiplayer matches lost
     _freq_mistyped_words : string of words/phrases frequently mistyped separated by the '|' character
     _total_playing_time : record the total number of time the user is playing the game
+    _play_date : record the date and time user log on and plays the game
     """
     _user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
     _username = App.db.Column(App.db.String(30),App.db.ForeignKey('user_info._username'), nullable=False) #foreign key referencing UserInfo table
@@ -458,7 +495,7 @@ class UserData(App.db.Model):
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
-
+    _play_date = App.db.Column(App.db.DateTime)
 
     #validation of whether the username exists in table 'user_info' when adding to user_data table
     #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
@@ -480,7 +517,7 @@ class UserData(App.db.Model):
         """
         return f"<UserData(username={self._username}, wpm={self._wpm}, accuracy={self._accuracy}, " \
                f"wins={self._wins}, losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
-               f"total_playing_time={self._total_playing_time})>"
+               f"total_playing_time={self._total_playing_time}, play_date={self._play_date})>"
 
 
 if __name__=='__main__':
@@ -493,7 +530,7 @@ if __name__=='__main__':
 
         app.db.create_all()
         #sample insert
-        """
+        
         try:
             user_info_data = {
                 '_username': 'me_john',
@@ -517,7 +554,7 @@ if __name__=='__main__':
         except Exception as e:
             print(f'Error in Inserting Data: {e}')
             raise
-        """
+        
         
         
         """
@@ -533,9 +570,7 @@ if __name__=='__main__':
             print(f'Error during deletion: {e}')
             raise
         """
-
-        
-        updating = Database.update('me_john','UserInfo',_email="abcdef@gmail.com")
+        #updating = Database.update('me_john','UserInfo',_username="he_john")
         """
         query_result = Database.query('you_john','UserData')
         if query_result is not None:
