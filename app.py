@@ -1,13 +1,18 @@
+#permanent import
 import os
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
 from sqlalchemy import Column #used for reference to tables' column name
-
 from player import player
+
+#temporary imports, which will be deleted later
+
+
+
 #STR_MAX_SIZE = 65535
 
 class App:
@@ -232,6 +237,40 @@ class Database:
         self._app = app
         self._models = models
 
+    #temporary auto populate and inserting method for anyone want to test the database
+    #which will be deleted later
+    @staticmethod
+    def populate_sample_date(num_rows):
+        """
+        no need for documentation
+        """
+        try:
+            current_datetime =datetime.now(timezone.utc)
+            for i in range(1, num_rows + 1):
+                user_info_data = {
+                    '_username': f'user{i}',
+                    '_password': f'password{i}',
+                    '_email': f'user{i}@gmail.com',
+                    '_profile_photo': f'https://example.com/user{i}.jpg'
+                }
+
+                user_data_data = {
+                    '_username': f'user{i}',
+                    '_wpm': 10+i,
+                    '_accuracy': 80 + (i*0.5),
+                    '_wins': 10+i,
+                    '_losses': 1+i,
+                    '_freq_mistyped_words': f'word{i}|mistake{i}',
+                    '_total_playing_time': 3600*i,
+                    '_play_date': current_datetime
+
+                }
+                Database.insert(UserInfo, **user_info_data)
+                Database.insert(UserData, **user_data_data)
+            print(f'{num_rows} sample users added successfully')
+        except Exception as e:
+            print(f'Error while populating sample rows: {e}')
+
     @staticmethod
     def insert(db_table, **kwargs):
         """
@@ -270,6 +309,7 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
+
     ''' #not functioning properly
     @staticmethod
     def update_username(old_username: str, new_username: str):
@@ -300,7 +340,6 @@ class Database:
             App.db.session.rollback()
             print(f"Erorr in updating: {e}")
     '''
-
 
 
     @staticmethod
@@ -426,6 +465,7 @@ class Database:
         :precondition: `username` must be a valid user identifier.
         :postcondition: If a user with the provided username exists in the database, the corresponding user record is deleted.
         """
+        
         try:
 
             #the first index/result filtered by the username
@@ -443,6 +483,7 @@ class Database:
             #roll back transaction if error occurred
             App.db.session.rollback()
             return False
+
 
 #these two tables/classes are not limited to parent/child relationship
 #they're bidirectional, you can retrieve the relative data of the other table by calling either table
@@ -520,17 +561,30 @@ class UserData(App.db.Model):
                f"total_playing_time={self._total_playing_time}, play_date={self._play_date})>"
 
 
+
 if __name__=='__main__':
     app = App()
-    
+
+
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
         #app.db.drop_all()
 
         app.db.create_all()
+
         #sample insert
-        
+        #there is limitation and constraints in the Columns
+        #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
+        #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
+        Database.populate_sample_date(21) #after testing, you can repeat the number, but preferrably not to do that
+
+        #the lower comment section is kept for everyone to checkout how to use these methods
+        #change the arugments in each methods parameter based on what is in the database tables to prevent raise of ValueError 
+        #(which is not handled and will crash the program)
+
+        #method of insert
+        """
         try:
             user_info_data = {
                 '_username': 'me_john',
@@ -554,9 +608,9 @@ if __name__=='__main__':
         except Exception as e:
             print(f'Error in Inserting Data: {e}')
             raise
+        """
         
-        
-        
+        #method of delete
         """
         #testing delete method
         try:
@@ -570,7 +624,11 @@ if __name__=='__main__':
             print(f'Error during deletion: {e}')
             raise
         """
+
+        #one line of method update, change the argument according to what you have in your tables
         #updating = Database.update('me_john','UserInfo',_username="he_john")
+
+        #method of query
         """
         query_result = Database.query('you_john','UserData')
         if query_result is not None:
