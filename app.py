@@ -273,12 +273,14 @@ class Database:
 
 
     @staticmethod
-    def update(username: str, **kwargs):
+    def update(username: str, db_table_name: str, **kwargs):
         """
         Update a user record in the database.
 
         :param username: Unique identifier of the user to be updated.
         :type username: str
+        :param db_table_name : the input class table name
+        :type db_table_name : str
         :param **kwargs: Keyword arguments representing fields to be updated. Valid fields are '_pswd', '_wpm',
             '_accuracy', '_wins', '_losses', and '_freq_mistyped_words'.
 
@@ -287,7 +289,52 @@ class Database:
         :precondition: If provided, values for fields must be of the correct data types and within acceptable ranges.
         :postcondition: If successful, the user record is updated with the provided values.
         """
-        pass
+        try:
+            #first validate the table name given in string
+            valid_table_list = ['UserInfo','UserData']
+            if db_table_name not in valid_table_list:
+                raise ValueError(f"Invalid table name: {db_table_name}")
+            
+            #get the table class obj by given table name in string
+            table_obj = globals().get(db_table_name)
+            if table_obj is None:
+                raise ValueError(f"Table Class Object not found for table name: {db_table_name}")
+            
+            #query for user information
+            user_information = table_obj.query.filter_by(_username=username).first()
+            if user_information is None:
+                raise ValueError(f"User '{username}' does not exist in the Database")
+            
+
+            #after user information is query, perform a check of if user is trying to update their _username
+            #check if the updating username is unique in the database
+            new_username = kwargs.get('_username') #get the value based on the key
+            if new_username and new_username != username: #unique
+                existing_user = table_obj.query.filter_by(_username=new_username).first()
+                if existing_user:
+                    raise ValueError(f"Username '{new_username}' already exists in the Database")
+            #does the same check for email address
+            new_email = kwargs.get('_email')
+            if new_email and new_email != user_information._email:
+                existing_email = table_obj.query.filter_by(_email=new_email).first()
+                if existing_email:
+                    raise ValueError(f"Email '{new_email}' already exists in the Database")
+            
+            #validates and update the provided fields
+            #key is the column name, value is the updating data
+            for key, value in kwargs.items():
+                #ensuring the fields/columns exist in the according table
+                if hasattr(table_obj, key): #table_obj is referring to the table class object
+                    setattr(user_information, key, value)
+                else:
+                    raise AttributeError(f"Attribute '{key}' does not exist in the '{db_table_name}' table")
+            #commit the updated values and fields
+            App.db.session.commit()
+            print(f"User '{username}' record updated successfully in table '{db_table_name}'")
+        except Exception as e:
+            App.db.session.rollback()
+            print(f"Error in updating user '{username}' in table '{db_table_name}' : {e}")
+
 
     @staticmethod
     def query(username: str, db_table_class: str):
@@ -472,6 +519,7 @@ if __name__=='__main__':
             raise
         """
         
+        
         """
         #testing delete method
         try:
@@ -486,6 +534,9 @@ if __name__=='__main__':
             raise
         """
 
+        
+        updating = Database.update('me_john','UserInfo',_email="abcdef@gmail.com")
+        """
         query_result = Database.query('you_john','UserData')
         if query_result is not None:
             print("Query result:")
@@ -493,10 +544,12 @@ if __name__=='__main__':
 
             print("\nUsername:", query_result._username)
             #print("Password:", query_result._password)
-            print("Email:", query_result._email)
-            #print("WPM:", query_result._wpm)
+            #print("Email:", query_result._email) #can not handle if a non-existing column in the table is printed, it will crash
+            print("WPM:", query_result._wpm)
+            print('WINS:', query_result._wins)
         else:
             print("No user data found for the provided username.")
-
+        """
+        
 
     app.run(host="localhost", debug=True)
