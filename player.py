@@ -78,3 +78,10 @@ class player():
         :return: None
         """
         self.score += additional_points
+
+    def __json__(self):
+        """
+        Return JSON serializable format of the instance
+        :return: dict of the instance
+        """
+        return {"userinfo": {"given_name" : self.username}}
