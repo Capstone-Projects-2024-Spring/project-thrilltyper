@@ -32,7 +32,7 @@ class App:
             server. See :func:`werkzeug.serving.run_simple` for more
             information.
         """
-        self._app.run()
+        self._app.run(host,port,debug,load_dotenv)
 
     @_app.route('/',methods=["POST","GET"])
     def log_in():
