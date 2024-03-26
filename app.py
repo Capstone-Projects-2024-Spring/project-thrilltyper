@@ -120,7 +120,7 @@ class App:
                 # Handle the case where access is denied (user cancelled the login)
                 return "Access denied: Google login was canceled or failed."
             # Redirect to the desired page after successful authentication
-            return redirect("/")
+            return redirect("menu")
         except Exception as e:
             # Handle other OAuth errors gracefully
             # return "OAuth Error: {}".format(str(e))
@@ -138,7 +138,7 @@ class App:
                 d =  player(username)
                 # Store the Player object in the session
                 session['user'] = d.__json__()
-                return redirect("/")
+                return redirect("menu")
             else:
                return "Authentication Failed" 
         except Exception as e:
@@ -189,7 +189,7 @@ class App:
         Postcondition: an integer from the range 0 to the number of game modes minus 1 will be selected and sent as part of the /game/<int:mode> request
         :return : a Response object that redirects the user to a game session of the game mode they selected
         """
-        return ""
+        return "Welcome to the menu!"
     
     @_app.route('/game/<int:mode>')
     def game(mode:int):
@@ -569,7 +569,7 @@ if __name__=='__main__':
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        #app.db.drop_all()
+        app.db.drop_all()
 
         app.db.create_all()
 
