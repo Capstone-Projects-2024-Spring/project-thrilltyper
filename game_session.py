@@ -26,6 +26,12 @@ class Game_Session():
         :type scores: dict, optional
         """
         pass
+
+    def generate_text():
+        """
+        Generates the text that shall be typed by users for a game
+        """
+        pass
     
     def start_race(self):
         """
