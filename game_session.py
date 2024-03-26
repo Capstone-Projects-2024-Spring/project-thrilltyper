@@ -1,4 +1,4 @@
-class game_session():
+class Game_Session():
     """
     Represents a game session for the Type Racer Flask app.
 
