@@ -29,3 +29,43 @@ body {
 .stats {
     margin: 0 10px;
 }
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+#register-ops button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #5C6BC0;
+    color: white;
+    cursor: pointer;
+}
+
+#register-ops button:hover {
+    background-color: #3F51B5;
+}
+
+.my-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #5C6BC0;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    margin-right: 10px;
+}

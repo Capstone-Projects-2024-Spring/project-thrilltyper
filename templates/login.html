@@ -2,6 +2,7 @@
 <title>Thrill Typer</title>
 <link rel="stylesheet" href="{{url_for('static', filename='css/logged.css')}}">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" hrel="stylesheet">
+<link rel="stylesheet" type="text/css" href="../static/css/navBar.css">
 {% endblock %}
 
 {% block body %}
@@ -19,8 +20,8 @@
             </div>
 
             <div id="login-ops">
-                <button type="submit">Login</button>
-                <a href="{{url_for('register')}}">Signup</a>
+                <button type="submit" class="my-button">Login</button>
+                <a href="{{url_for('register')}}" class="my-button">Signup</a>
             </div>
         </form>
         <!--Google Login Redirection-->
