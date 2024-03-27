@@ -1,0 +1,35 @@
+{% block head %}
+<title>Thrill Typer</title>
+<link rel="stylesheet" href="{{url_for('static', filename='css/logged.css')}}">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" hrel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div id="content">
+    <div id="register-ctn">
+        <form id="main-form" action="{{url_for('register')}}" method="POST">
+            <h2>Register</h2>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+
+            <div id="register-ops">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
