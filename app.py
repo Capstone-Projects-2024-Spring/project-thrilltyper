@@ -73,29 +73,43 @@ class App:
         """
         self._app.run(host, port)
 
-    @_app.route('/login')
-    def log_in():
+    @_app.route('/login', methods=['GET', 'POST'])
+    def login():
         """
-        Handles the requests made to the welcome page where users can log in, register, or continue as guests 
-        :postcondition: a new user will be registered with a message saying "Successfully registered" and the database will update with the new user
-        info, a message with "Incorrect username or password", or the user will be redirected to /menu
-        :return : a Response object that redirects the user to the menu page on success, otherwise a str message appears saying either the username or password was incorrect
+        Handles the requests made to the login page where users can log in
+        :return : a Response object that redirects the user to the login page
         """
-
-        # Query user to log in
-        if session.get("user") is None:
-            return render_template('Login_Register.html')
+        if request.method == 'POST':
+            # Authenticate the user Close Session when done
+            pass
         
-        # Show messages to user if logged
-        return render_template('Login_Register.html', userSession=session.get("user"))
 
+        return render_template('login.html')
+
+    @_app.route('/register', methods=['GET', 'POST'])
+    def register():
+        """
+        Handles the requests made to the register page where users can register
+        :return : a Response object that redirects the user to the register page
+        """
+        if request.method == 'POST':
+            #Save the new user to the database
+            pass
+
+        return render_template('register.html')
+    
     @_app.route('/')
     def home():
         """
         Handles the requests made to the home page.
         :return : a Response object that redirects the user to the home page
         """
-        return render_template('home.html')
+        if 'user' in session:
+            # If the user is logged in, render the logged-in home page
+            return render_template('home_logged_in.html')
+        else:
+            # If the user is not logged in, render the regular home page
+            return render_template('home.html')
 
     @_app.route('/google-signin', methods=['GET','POST'])
     def google_login():
@@ -151,35 +165,7 @@ class App:
                return "Authentication Failed" 
         except Exception as e:
             return "Authentication Failed"
-
     
-    @_app.route('/signup', methods=['GET', 'POST'])
-    def signup():
-        return render_template("Login_Register.html")
-
-    @_app.route('/register', methods=['POST'])
-    def register():
-        """
-        Created and logged a new user account
-        :precondition: form contained valid input
-        """
-        # Get input
-        username = request.form["username"]
-        password = request.form["password"]
-        # Validate input
-        # Store database
-        # Store session
-        d =  player(username)
-    
-        # Store the Player object in the session
-        session['user'] = d.__json__()
-        p = session.get('player')
-
-        print("hahahaha")
-        print(username + " : " + password)
-        return redirect("/")
-    
-       
     @_app.route('/logout', methods=['GET', 'POST'])
     def logout():
         """
