@@ -73,7 +73,7 @@ class App:
         """
         self._app.run(host, port)
 
-    @_app.route('/')
+    @_app.route('/login')
     def log_in():
         """
         Handles the requests made to the welcome page where users can log in, register, or continue as guests 
@@ -84,10 +84,18 @@ class App:
 
         # Query user to log in
         if session.get("user") is None:
-            return render_template('index.html')
+            return render_template('Login_Register.html')
         
         # Show messages to user if logged
-        return render_template('index.html', userSession=session.get("user"))
+        return render_template('Login_Register.html', userSession=session.get("user"))
+
+    @_app.route('/')
+    def home():
+        """
+        Handles the requests made to the home page.
+        :return : a Response object that redirects the user to the home page
+        """
+        return render_template('home.html')
 
     @_app.route('/google-signin', methods=['GET','POST'])
     def google_login():
@@ -147,7 +155,7 @@ class App:
     
     @_app.route('/signup', methods=['GET', 'POST'])
     def signup():
-        return render_template("index.html")
+        return render_template("Login_Register.html")
 
     @_app.route('/register', methods=['POST'])
     def register():
