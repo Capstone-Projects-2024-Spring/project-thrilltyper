@@ -27,7 +27,11 @@ class Game_Session():
         """
         pass
 
-    def getWordList(self):
+    def getWordList(self) -> list[str]:
+        """
+        Reads from wordList.txt to create an array of the words in it
+        @return wordList : list of words contained in wordList.txt
+        """
         wordListFile = open("wordList.txt","r")
         wordList = []
         currWord = wordListFile.readline()
