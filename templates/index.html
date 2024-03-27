@@ -7,6 +7,7 @@
 {% block body %}
 {% if userSession %}
 <div class="welcome-ctn">
+    <img src="{{userSession.avatar}}" alt="profile photo" loading="lazy">
     <p>Welcome {{userSession.userinfo.given_name}}!</p>
     <div id="welcome-message">
         <h1>Welcome to our website!</h1>
