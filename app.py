@@ -1,7 +1,9 @@
 #permanent import
 import os
+import uuid
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timezone
@@ -22,6 +24,9 @@ class App:
     _db : database connection which allows for interaction with the SQL database
     """
     _app = Flask(__name__)
+    # Use cors to faciliates api requests/responses time
+    # Particularly to retrieve userinfo from google servers
+    CORS(_app)
     _app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ThrillTyper.db'
     db = SQLAlchemy(_app)
 
@@ -115,39 +120,80 @@ class App:
             if 'id_token' in token:
                 # If the 'id_token' is present, indicating a successful login
                 # Extract and store necessary user information in the session
-                session["user"] = token
+                uname = token["userinfo"]["given_name"]
+                picture = token["userinfo"]["picture"]
+
+                # Instantiate a player object to store in user session
+                playerObj = player(username=uname, avatar=picture)
+                # Establish user session, use the json format of the website
+                session["user"] = playerObj.__json__()
+
+                # Insert user info into the database if doesn't exists yet
+                if Database.query(token["userinfo"]["given_name"], "UserInfo") is None:
+                    print("Haha")
+                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
             else:
                 # Handle the case where access is denied (user cancelled the login)
                 return "Access denied: Google login was canceled or failed."
+            
             # Redirect to the desired page after successful authentication
             return redirect("/")
         except Exception as e:
             # Handle other OAuth errors gracefully
-            # return "OAuth Error: {}".format(str(e))
-            return redirect("/")
+            return "OAuth Error: {}".format(str(e))
         
     @_app.route('/authentication', methods=['POST'])
     def authenticate():
-        # Temp account
-        uname = "admin"
-        upsw = "admin"
         try:
+            # Retrieves data from the requests
+            # The keys must exist
             username = request.form["username"]
             password = request.form["password"]
-            if username == uname and password == upsw:
-                d =  player(username)
-                # Store the Player object in the session
-                session['user'] = d.__json__()
+
+            # Retrieve data from database
+            # Exist if returned value of query is not None
+            user = Database.query(username, "UserInfo")
+
+            # Performs validation 
+            if user is None:
+                raise ValueError(f"{username} does not exist")
+            elif user._password == password:
+                # Gets avatar
+                playerObj = player(username, user._profile_photo)
+                # Stores the Player object in the session
+                session['user'] = playerObj.__json__()
+                # Redirects to a desired page when authentication success
                 return redirect("/")
             else:
-               return "Authentication Failed" 
+               # Raises an error for wrong match
+               raise ValueError("Invalid username or password")
         except Exception as e:
-            return "Authentication Failed"
-
+            # Handles errors
+            return f"Authentication Error: '{e}'. Provides the error information to our customer support if you believe it's a error"
     
     @_app.route('/signup', methods=['GET', 'POST'])
     def signup():
+        """
+        A route path for signup page layout
+        :return: Response page for signup layout 
+        """
         return render_template("index.html")
+    
+    @_app.route('/login-guest', methods=['GET', 'POST'])
+    def loginGuest():
+        """
+        A route path for guest login
+        :return: Response page for the main view of the website
+        """ 
+        # Generates a randon id
+        guest_id = uuid.uuid4()
+        # Instantiates a player object
+        playerObj = player(username=guest_id, avatar=url_for("static", filename="pics/anonymous.png"))
+        # Establishes session
+        session["user"] = playerObj.__json__();
+
+        # Redirects to a desired page
+        return redirect("/")
 
     @_app.route('/register', methods=['POST'])
     def register():
@@ -155,20 +201,19 @@ class App:
         Created and logged a new user account
         :precondition: form contained valid input
         """
-        # Get input
+        # Gets input
         username = request.form["username"]
         password = request.form["password"]
-        # Validate input
-        # Store database
+        # Stores into database
+        avatar = url_for("static", filename="pics/anonymous.png")
+        Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
         # Store session
-        d =  player(username)
+        playerObj =  player(username, avatar)
     
-        # Store the Player object in the session
-        session['user'] = d.__json__()
-        p = session.get('player')
+        # Stores the Player object in the session
+        session['user'] = playerObj.__json__()
 
-        print("hahahaha")
-        print(username + " : " + password)
+        # Redirects to the result page
         return redirect("/")
     
        
@@ -569,7 +614,7 @@ if __name__=='__main__':
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        #app.db.drop_all()
+        app.db.drop_all()
 
         app.db.create_all()
 
@@ -577,7 +622,7 @@ if __name__=='__main__':
         #there is limitation and constraints in the Columns
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
-        Database.populate_sample_date(21) #after testing, you can repeat the number, but preferrably not to do that
+        Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
 
         #the lower comment section is kept for everyone to checkout how to use these methods
         #change the arugments in each methods parameter based on what is in the database tables to prevent raise of ValueError 
