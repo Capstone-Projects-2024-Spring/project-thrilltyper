@@ -50,12 +50,6 @@
 
     <script>
     "use strict";
-        /*
-            BUGS
-            1. off by 1 error, the last character was not counted (in this example, the period after dog)
-            2. off by 1 error, if user types a letter and immidiately deletes it, the text shows incorrect green text
-               and red text 
-        */
         const text = "The quick brown fox jumps over the lazy dog.";
         const words = text.split(" ");
 
@@ -65,57 +59,61 @@
         let timerInterval;
         let userInputCorrectText = "";
 
-        function testing(){
-            console.log("substring(0, 0): " + text.substring(0,0));
-            console.log("subttring(0, 1): " + text.substring(0,1));
-            console.log("substring(0, length-1): " + text.substring(0, text.length-1));
-            console.log("substring(0, length): " + text.substring(0, text.length));
-
-            var newText = "The  quick brown fox jumps over the lazy dog.";
-            var newWords = newText.split(" ");
-
-            console.log("splits[0] = [" + words[0] + "]");
-            console.log("splits[1] = [" + words[1] + "]");
-            console.log("splits[2] = [" + words[2] + "]");
-            console.log("splits[3] = [" + words[3] + "]");
-        }
-
-        //BUG: userInputFullText longer than text
         //update text color as user types text
         //green text if user typed correctly
-        //red background if user typed incorrectly
+        //red background text if user typed incorrectly
+        /*
+            The whole function logic is based on following assumption, we divide text into 3 sections
+            correct text | incorrect text | untyped text
+        */
+       //if you don't get what is going on here, open a type racer game and type some wrong text
         function updateText(){
             var str = text
             var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
-            //var userInputFullText = document.getElementById("input-box").value;
 
             var greenText = "";          //correct text
             var redText = "";           //incorrect text
             var uncoloredText = "";     //untyped text
 
-            //find the last index of the correct text + 1 (for substring)
-            var greenTextIndex = 0;
-            for(var i=0; i<text.length; i++){
-                if(userInputFullText[i] == text[i]){
-                    greenTextIndex = i;
+            //green text
+            //start index is fixed to 0
+            //end index is number of matched letters, until the first incorrect letter
+            var greenStartIndex = 0;
+            var greenEndIndex = 0;
+            var numMatchLetters = 0;
+            for(var i=0; i<userInputFullText.length; i++){   
+                if(userInputFullText[i] == text[i]){    //what if userInputFullText is longer than text? could not happend because submission
+                    numMatchLetters++;
                 }else{
                     break;
                 }
+            }   
+            
+            greenEndIndex = numMatchLetters;
+            greenText = text.substring(greenStartIndex, greenEndIndex);
+            
+            //red text
+            //start index is the first unmatched letter, if it exists. It equals to greenEndIndex
+            //end index is the last index of user input text
+            var redStartIndex = greenEndIndex; 
+            var redEndIndex = greenEndIndex;
+            if(numMatchLetters < userInputFullText.length){    //if number of matched letters less than input letters means there are wrong input letters
+                redEndIndex = userInputFullText.length > text.length ? text.length : userInputFullText.length;  //in case user input text is longer than text
             }
-            greenText = text.substring(0, greenTextIndex+1);
-            
-            //find the last index of the incorrect text
-            //notice that user input text may be longer than text
-            var redTextIndex = userInputFullText.length > text.length ? text.length : userInputFullText.length;
-            redText = text.substring(greenTextIndex+1, redTextIndex);
-            
-            //uncoloredText is just the rest of the text
-            uncoloredText = text.substring(redTextIndex);
 
-            //console.log("greenText: " + greenText);
-            //console.log("red text: " + redText);
-            //console.log("uncoloredText: " + uncoloredText);
+            redText = text.substring(redStartIndex, redEndIndex);
 
+            //uncoloredText is the rest of the text starting from redEndIndex
+            uncoloredText = str.substring(redEndIndex);
+            
+            /* debug
+            console.log("updateText debugging");
+            console.log("userInputFullText: " + userInputFullText);
+            console.log("greenText: " + greenText);
+            console.log("red text: " + redText);
+            console.log("uncoloredText: " + uncoloredText + "\n");
+            */
+            
             var updatedText = `<span style="color: #9CCE52">${greenText}</span>` + 
             `<span style="background: #F0A3A3">${redText}</span>` + uncoloredText;
         
@@ -160,7 +158,7 @@
 
             if(userInputText.substring(0, userInputText.length-1) == words[currentWordIndex] && userInputLastChar == ' '){
                 currentWordIndex++;
-                userInputCorrectText += userInputText;
+                userInputCorrectText += userInputText;  //saves correct text
                 document.getElementById("input-box").value = "";
             }
 
@@ -169,7 +167,7 @@
             }
 
             //submit input
-            if(currentCharIndex == text.length-1){
+            if(currentCharIndex == text.length){
                 submitInput();
             }
         }
