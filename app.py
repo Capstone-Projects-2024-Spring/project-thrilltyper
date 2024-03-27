@@ -128,21 +128,26 @@ class App:
         
     @_app.route('/authentication', methods=['POST'])
     def authenticate():
-        # Temp account
-        uname = "admin"
-        upsw = "admin"
         try:
             username = request.form["username"]
             password = request.form["password"]
-            if username == uname and password == upsw:
-                d =  player(username)
+
+            # Retrieve data from database
+            # Exist if returned value of query is not None
+            user = Database.query(username, "UserInfo")
+
+            if user is None:
+                raise ValueError(f"{username} does not exist")
+            elif user._password == password:
+                # Profile Photo
+                playerObj = player(username, user._profile_photo)
                 # Store the Player object in the session
-                session['user'] = d.__json__()
+                session['user'] = playerObj.__json__()
                 return redirect("/")
             else:
-               return "Authentication Failed" 
+               raise ValueError("Invalid username or password")
         except Exception as e:
-            return "Authentication Failed"
+            return f"Authentication Error: '{e}'. Provides the error information to our customer support if you believe it's a error"
 
     
     @_app.route('/signup', methods=['GET', 'POST'])
@@ -160,14 +165,13 @@ class App:
         password = request.form["password"]
         # Validate input
         # Store database
+        Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
         # Store session
         d =  player(username)
     
         # Store the Player object in the session
         session['user'] = d.__json__()
-        p = session.get('player')
 
-        print("hahahaha")
         print(username + " : " + password)
         return redirect("/")
     
@@ -569,7 +573,7 @@ if __name__=='__main__':
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        #app.db.drop_all()
+        app.db.drop_all()
 
         app.db.create_all()
 
@@ -577,7 +581,7 @@ if __name__=='__main__':
         #there is limitation and constraints in the Columns
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
-        Database.populate_sample_date(21) #after testing, you can repeat the number, but preferrably not to do that
+        Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
 
         #the lower comment section is kept for everyone to checkout how to use these methods
         #change the arugments in each methods parameter based on what is in the database tables to prevent raise of ValueError 
