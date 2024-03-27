@@ -27,6 +27,15 @@ class Game_Session():
         """
         pass
 
+    def getWordList(self):
+        wordListFile = open("wordList.txt","r")
+        wordList = []
+        currWord = wordListFile.readline()
+        while currWord:
+            wordList.append(currWord.strip('\n'))
+            currWord = wordListFile.readline()
+        return wordList
+
     def generate_text():
         """
         Generates the text that shall be typed by users for a game
@@ -89,3 +98,6 @@ class Game_Session():
         pass
     
     
+if __name__=="__main__":
+    gs = Game_Session(0)
+    print(gs.getWordList())
