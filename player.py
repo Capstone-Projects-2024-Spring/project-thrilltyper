@@ -18,7 +18,7 @@ class player():
     :type freq_mistyped_words: str
     """
     
-    def __init__(self, username, profile_photo):
+    def __init__(self, username, avatar):
         """
         Initialize a new player with default performance metrics.
 
@@ -34,7 +34,7 @@ class player():
         :type freq_mistyped_words: str
         """
         self.username = username
-        self.profile_photo = profile_photo
+        self.picture = avatar
         self.score = 0
         self.accuracy = 0.0
         self.wpm = 0
@@ -85,4 +85,6 @@ class player():
         Return JSON serializable format of the instance
         :return: dict of the instance
         """
-        return {"userinfo": {"given_name" : self.username}}
+        return {"userinfo": {"given_name" : self.username}, 
+                "avatar" : self.picture
+                }
