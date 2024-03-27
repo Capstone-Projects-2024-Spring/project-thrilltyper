@@ -47,9 +47,16 @@
         <button onclick="startTimer()">Start</button>
     </div>
     
-
     <script>
     "use strict";
+
+
+        /*
+            known bugs
+            #1: for unknown reason, if you click start button in the middle of typing, you can not submit the game and finish
+                (the result is not showing) (fixed)
+            #2
+        */
         const text = "The quick brown fox jumps over the lazy dog.";
         const words = text.split(" ");
 
@@ -66,7 +73,7 @@
             The whole function logic is based on following assumption, we divide text into 3 sections
             correct text | incorrect text | untyped text
         */
-       //if you don't get what is going on here, open a type racer game and type some wrong text
+        //if you don't get what is going on here, open a type racer game and type some wrong text
         function updateText(){
             var str = text
             var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
@@ -125,11 +132,14 @@
             currentWordIndex = 0;   //initializes value for play again
             currentCharIndex = 0;
             userInputCorrectText = "";
-            displayText();
             document.getElementById("input-box").value = "";
             document.getElementById("result").innerHTML = "";
+
             startTime = new Date().getTime();
+            displayText();
             enableInput();
+            
+            clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 10);
         }
 
@@ -156,6 +166,8 @@
             //updates text color
             updateText();
 
+            //idk what this is 
+            //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
             if(userInputText.substring(0, userInputText.length-1) == words[currentWordIndex] && userInputLastChar == ' '){
                 currentWordIndex++;
                 userInputCorrectText += userInputText;  //saves correct text
@@ -166,8 +178,8 @@
                 currentCharIndex++;
             }
 
-            //submit input
-            if(currentCharIndex == text.length){
+            //submit input if last letter is typed
+            if(currentCharIndex >= text.length){
                 submitInput();
             }
         }
