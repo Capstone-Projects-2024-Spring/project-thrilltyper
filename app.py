@@ -1,5 +1,6 @@
 #permanent import
 import os
+import uuid
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_cors import CORS
@@ -177,6 +178,22 @@ class App:
         :return: Response page for signup layout 
         """
         return render_template("index.html")
+    
+    @_app.route('/login-guest', methods=['GET', 'POST'])
+    def loginGuest():
+        """
+        A route path for guest login
+        :return: Response page for the main view of the website
+        """ 
+        # Generates a randon id
+        guest_id = uuid.uuid4()
+        # Instantiates a player object
+        playerObj = player(username=guest_id, avatar=url_for("static", filename="pics/anonymous.png"))
+        # Establishes session
+        session["user"] = playerObj.__json__();
+
+        # Redirects to a desired page
+        return redirect("/")
 
     @_app.route('/register', methods=['POST'])
     def register():
@@ -184,20 +201,19 @@ class App:
         Created and logged a new user account
         :precondition: form contained valid input
         """
-        # Get input
+        # Gets input
         username = request.form["username"]
         password = request.form["password"]
-        # Validate input
-        # Store database
+        # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
         Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
         # Store session
-        d =  player(username, avatar)
+        playerObj =  player(username, avatar)
     
-        # Store the Player object in the session
-        session['user'] = d.__json__()
+        # Stores the Player object in the session
+        session['user'] = playerObj.__json__()
 
-        print(username + " : " + password)
+        # Redirects to the result page
         return redirect("/")
     
        
