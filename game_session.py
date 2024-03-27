@@ -33,12 +33,7 @@ class Game_Session():
         @return wordList : list of words contained in wordList.txt
         """
         wordListFile = open("wordList.txt","r")
-        wordList = []
-        currWord = wordListFile.readline()
-        while currWord:
-            wordList.append(currWord.strip('\n'))
-            currWord = wordListFile.readline()
-        return wordList
+        return wordListFile.read().split('\n')
 
     def generate_text():
         """
