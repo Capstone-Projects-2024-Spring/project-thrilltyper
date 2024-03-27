@@ -51,8 +51,11 @@
             <div id="login-ops">
                 <button type="submit">Login</button>
                 <a href="{{url_for('signup')}}">Signup</a>
+                
             </div>
         </form>
+        <a href="{{url_for('loginGuest')}}">Continue As Guest</a>
+        <br>
         <a href="{{url_for('google_login')}}">
             <button class="gsi-material-button">
                 <div class="gsi-material-button-state"></div>
