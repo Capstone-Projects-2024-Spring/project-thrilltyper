@@ -90,18 +90,6 @@ class App:
         
 
         return render_template('login.html')
-
-    @_app.route('/register', methods=['GET', 'POST'])
-    def register():
-        """
-        Handles the requests made to the register page where users can register
-        :return : a Response object that redirects the user to the register page
-        """
-        if request.method == 'POST':
-            #Save the new user to the database
-            pass
-
-        return render_template('register.html')
     
     @_app.route('/')
     def home():
@@ -199,7 +187,7 @@ class App:
         A route path for signup page layout
         :return: Response page for signup layout 
         """
-        return render_template("index.html")
+        return render_template("signup.html")
     
     @_app.route('/login-guest', methods=['GET', 'POST'])
     def loginGuest():

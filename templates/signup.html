@@ -7,8 +7,8 @@
 
 {% block body %}
 <div id="content">
-    <div id="register-ctn">
-        <form id="main-form" action="{{url_for('register')}}" method="POST">
+    <div id="signup-ctn">
+        <form id="main-form" action="{{url_for('signup')}}" method="POST">
             <h2>Register</h2>
             <div class="form-group">
                 <label for="username">Username:</label>
@@ -27,8 +27,8 @@
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
 
-            <div id="register-ops">
-                <button type="submit">Register</button>
+            <div id="signup-ops">
+                <button type="submit">Signup</button>
             </div>
         </form>
     </div>
