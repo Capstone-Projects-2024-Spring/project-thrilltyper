@@ -214,6 +214,9 @@ class App:
         # Gets input
         username = request.form["username"]
         password = request.form["password"]
+        # Validates contraints
+        if Database.query(username, "UserInfo"):
+            return "User already Exist"
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
         Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
