@@ -1,35 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Thrill Typer</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/login.css')}}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" hrel="stylesheet">
-</head>
-
-<body>
-    <div id="content">
-        <div id="login-ctn">
+function login() {
+    // Holding templates for login pages 
+    return `<div id="login-ctn">
             <form id="main-form" action="{{url_for('authenticate')}}" method="POST">
                 <h2>Login</h2>
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" required />
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required />
                 </div>
 
                 <div id="login-ops">
-                    <button type="submit" class="my-button">Login</button>
-                    <a href="{{url_for('signup')}}" class="my-button">Signup</a>
+                    <button type="submit">Login</button>
+                    <a href="{{url_for('signup')}}">Signup</a>
                 </div>
             </form>
-            <!--Google Login Redirection-->
             <a href="{{url_for('google_login')}}">
                 <button class="gsi-material-button">
                     <div class="gsi-material-button-state"></div>
@@ -57,7 +44,5 @@
                     </div>
                 </button>
             </a>
-        </div>
-    </div>
-</body>
-</html>
+        </div>`;
+}

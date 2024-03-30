@@ -1,0 +1,77 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+#main, 
+#main #brand,
+#main #brand .brand-title,
+#main nav {
+    display: flex;
+    align-items: center;
+}
+
+#main {
+    height: 10vh;
+    width: 100%;
+    background-color: #005dbb;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+/* Brand of the websites */
+#main #brand, 
+#main #brand a, 
+#main #brand .brand-logo, 
+#main #brand .brand-title {
+    height: 100%;
+}
+
+#main .brand-title {
+    font-size: 1.25rem;
+}
+
+#main #brand a {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+}
+
+#main a {
+    color: white;
+    font-size: 1.25rem;
+    text-decoration: none;
+    padding: 6px 12px;
+}
+
+#main nav ul {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    list-style-type: none;
+}
+
+#main nav ul li {
+    display: inline-block;
+}
+
+#main nav ul li a button {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 50px;
+}
+
+#main nav ul li a #signUp {
+    color: white;
+    background-color: #005dbb;
+    border: 2px solid white;
+}
+
+#main nav ul li a #logIn, #logOut {
+    color: #005dbb;
+    background-color: white;
+    border: 2px solid black;
+}
