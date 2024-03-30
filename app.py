@@ -97,12 +97,7 @@ class App:
         Handles the requests made to the home page.
         :return : a Response object that redirects the user to the home page
         """
-        if 'user' in session:
-            # If the user is logged in, render the logged-in home page
-            return render_template('home_logged_in.html')
-        else:
-            # If the user is not logged in, render the regular home page
-            return render_template('home.html')
+        return render_template("base.html", userSession=session.get("user"))
 
     @_app.route('/google-signin', methods=['GET','POST'])
     def google_login():
