@@ -55,6 +55,10 @@ button {
     height: 100%;
 }
 
+#main .brand-logo {
+    filter: brightness(0) invert(1);
+}
+
 #main .brand-title {
     font-size: 1.25rem;
 }

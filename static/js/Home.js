@@ -7,7 +7,7 @@ function Home({ userSession }) {
             <header id="main">
                 <div id="brand">
                     <Link to="/">
-                        <img className="brand-logo" src="./static/pics/anonymous.png" alt="Thrill Typer" />
+                        <img className="brand-logo" src="./static/pics/icon.png" alt="Thrill Typer" />
                     </Link>
                     <Link to="/"><h1 className="brand-title">Thrill Typer</h1></Link>
                 </div>
