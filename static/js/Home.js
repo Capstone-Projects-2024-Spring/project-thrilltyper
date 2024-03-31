@@ -1,4 +1,4 @@
-function Home({ userSession }) {
+function Home({ userSession, MenuComp }) {
     const Link = ReactRouterDOM.Link;
     const Route = ReactRouterDOM.Route;
 
@@ -14,16 +14,16 @@ function Home({ userSession }) {
 
                 <nav>
                     <Link to="/">Home</Link>
-                    <Link to="/">Play</Link>
+                    <Link to="/menu">Play</Link>
                     <Link to="/">Leaderboards</Link>
                     <Link to="/">About</Link>
                 </nav>
                 <Profile userSession={userSession} />
             </header>
             <div id="content">
-
+                {/* <Route path="/" exact component="" /> */}
+                <Route path="/menu" component={MenuComp} />
             </div>
-
         </ReactRouterDOM.HashRouter>
     );
 }
