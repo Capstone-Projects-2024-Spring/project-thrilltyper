@@ -3,11 +3,44 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- You need these two CDNs to use react, their version numbers must match -->
+    <title>Thrill Typer</title>
+    <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
+
+    <!-- This next CDN lets you use JSX (looks like HTML tags in JS) -->
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+
+    <!-- This lets you use React Routing -->
+    <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/main.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/menu.css')}}">
     {% block head %} {% endblock %}
 </head>
 
 <body>
+    <div id="root">
+
+    </div>
     {% block body %} {% endblock %}
+
+    <!-- Imports of necessary js components -->
+    <script type="text/babel" src="{{url_for('static', filename='js/Profile.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/Home.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/Menu.js')}}"></script>
+
+    <!-- Pure JS code -->
+    <script>
+        // Access Jinja context variables directly within the script tag, explicitly convert it to json
+        const userSession = {{ userSession | tojson }};
+    </script>
+
+    <!-- JSX code with REACT -->
+    <script type="text/babel">
+        // REACT component for Home page, available across all child htmls
+        ReactDOM.render(<Home userSession={userSession} MenuComp={Menu} />, document.getElementById("root"));
+    </script>
 </body>
 
 </html>

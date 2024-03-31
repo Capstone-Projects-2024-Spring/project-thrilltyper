@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typing Game</title>
+<style>
+  .correct { color: green; }
+  .incorrect { color: red; }
+</style>
+</head>
+<body>
+<script>
+
+
+// initalize 
+
+// this will be changed to the actually database later 
+const database = "Hello World";
+
+
+// use to display database on the website and the input bar
+const paragraphDiv = document.createElement('div');
+const userInput = document.createElement('input');
+
+// attruibes
+
+paragraphDiv.id = 'paragraph';
+userInput.type = 'text';
+userInput.id = 'userInput';
+
+// appeands the elements and add to web and discript 
+
+document.body.appendChild(paragraphDiv);
+document.body.appendChild(userInput);
+
+
+  // Set up and allow database discplay 
+  let index = 0;
+  characterValidation();
+
+
+  // validates the Users typed Character
+
+  // logic of function- split into character > map over character > check index vs user input position > join back/ set HTML content 
+ function characterValidation() {
+
+    // split into array of chars
+    const paragraphText = database.split('').map((char, i) => {
+
+    // If the index of the character is less than the current index of the user's input
+    // set as the wrap char as correct 
+      if (i < index) {
+        return `<span class="correct">${char}</span>`;
+
+    // return character wrap 
+      } else if (i === index) {
+        return `<span>${char}</span>`;
+    // return as it is 
+      } else {
+        return char;
+      }
+
+      // join back as a string 
+    }).join('');
+    // set the hmlt to the new contruct phara 
+    paragraphDiv.innerHTML = paragraphText;
+  }
+
+
+// Listen for input events for real time data and input 
+
+userInput.addEventListener('input', function() {
+    const inputText = this.value;
+    const paragraphText = database.substring(0, inputText.length);
+  
+    if (inputText === paragraphText) {
+      // Check if the input matches the corresponding portion of the paragraph
+      this.classList.remove('incorrect');
+      this.classList.add('correct');
+      index = inputText.length;
+
+      characterValidation();
+
+    } else {
+      this.classList.remove('correct');
+      this.classList.add('incorrect');
+    }
+  });
+
+
+
+
+
+
+</script>
+</body>
+</html>
+
