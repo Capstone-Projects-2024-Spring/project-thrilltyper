@@ -542,7 +542,47 @@ class Database:
             #roll back transaction if error occurred
             App.db.session.rollback()
             return False
+        
+    @staticmethod    
+    def get_top_n_letters(username: str, n: int):
+        """
+        Return a (sorted in DESC)list of letters according to the Top-N largest corresponding values(mistyped letter times) in UserLetter Table
 
+        :param username: the Username of the user
+        :type username: str
+        :param n: the selected number of Top-N largest letter to retrieve, max is 26
+        :type n: int
+
+        :return: List containing the Top-N letters in DESC order
+        :rtype: list
+        """
+        try: 
+            #validate if user exist in UserInfo
+            user_info = UserInfo.query.filter_by(_username=username).first()
+            if not user_info:
+                print(f"User '{username}' does not exist")
+                return []    
+            #validate n
+            if n < 1 or n > 26:
+                print("Invalid value for 'n', Only 26 Letters")
+                return []
+            #query using username the user letter data
+            user_letter_data = UserLetter.query.filter_by(_username=username).first()
+            #return empty list if user letter data is None
+            if not user_letter_data:
+                print(f"No Data Found For User '{username}'")
+                return []
+            #a dictionary with letters as keys and mistyped letter times as the number value
+            #loop through each letter in the alaphbets
+            letter_number_dict = {f'_{letter}': getattr(user_letter_data, f'_{letter}') for letter in string.ascii_lowercase}
+            #sort the dict by top-n values in desc order, returning a list
+            sorted_values = sorted(letter_number_dict, key=letter_number_dict.get, reverse=True)[:n] #n here is not inclusive
+            #since there is a _ as the first index, it needs to be removed, starting each string with [1:] 
+            rm_underscore = [letter[1:] for letter in sorted_values]
+            return rm_underscore
+        except Exception as e:
+            print(f"Error while retrieving top {n} largest values for corresponding letters for user '{username}' : {e}")
+            return []
 
 #these two tables/classes are not limited to parent/child relationship
 #they're bidirectional, you can retrieve the relative data of the other table by calling either table
@@ -686,7 +726,7 @@ if __name__=='__main__':
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        app.db.drop_all()
+        #app.db.drop_all()
 
         app.db.create_all()
 
@@ -694,7 +734,11 @@ if __name__=='__main__':
         #there is limitation and constraints in the Columns
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
-        Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
+        #Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
+
+        #this method returns a list represention of top-n largest mistyped letters
+        top_n_letters = Database.get_top_n_letters('user1', 26)
+        print(top_n_letters)
 
 
     app.run(host="localhost", debug=True)
