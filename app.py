@@ -562,11 +562,12 @@ class UserInfo(App.db.Model):
     #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
     #uselist set to False meaning one-to-one relationship between the two table
     #one instance of the user_info is related to one and only one user_data instance (1:1))
-    user_data_ref = App.db.relationship('UserData', backref=App.db.backref('user_info_ref', uselist=False), cascade="all, delete-orphan", single_parent=True)
+    user_data_ref = App.db.relationship('UserData', backref=App.db.backref('user_info_ref_data', uselist=False), cascade="all, delete-orphan", single_parent=True)
     #cascade = "all, delete-orphan" when userinfo/data row is deleted, the parent/child row will also be deleted in one-to-one relationship
     #since cascade default to be many-to-one relationship(1 userinfo - Many userdata rows), single_parent flag need to set to be True(ensures 1:1)
 
     #another backref relationship for UserLetter class (for delete)
+    user_letter_ref = App.db.relationship('UserLetter', backref=App.db.backref('user_info_ref_letter', uselist=False), cascade="all,delete-orphan", single_parent=True)
 
 class UserData(App.db.Model):
     """
@@ -600,10 +601,15 @@ class UserData(App.db.Model):
     #mainly used for update/query/delete method, insert cannot be checked by this validation
     @validates('_username')
     def validate_username(self, key, _username):
-        #selects the first result filtered using username by sqlalchemy 
-        user_info = UserInfo.query.filter_by(_username=_username).first()
-        if user_info is None: # user_info is None if user does not exist
-            raise ValueError(f"User '{_username}' does not exist")
+
+        try:
+            #selects the first result filtered using username by sqlalchemy 
+            user_info = UserInfo.query.filter_by(_username=_username).first()
+            if user_info is None: # user_info is None if user does not exist
+                raise ValueError(f"User '{_username}' does not exist")
+        except ValueError as e: #handled within the method
+            print(f"Error: {e}")
+            return None
         return _username
 
     def repr(self):
@@ -625,6 +631,48 @@ class UserLetter(App.db.Model):
     _a - _z : 26 columns representing the 26 letters in the alphabets 
     """
 
+    _user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey('user_info._username'), nullable=False)
+    _a = App.db.Column(App.db.Integer, default=0)
+    _b = App.db.Column(App.db.Integer, default=0)
+    _c = App.db.Column(App.db.Integer, default=0)
+    _d = App.db.Column(App.db.Integer, default=0)
+    _e = App.db.Column(App.db.Integer, default=0)
+    _f = App.db.Column(App.db.Integer, default=0)
+    _g = App.db.Column(App.db.Integer, default=0)
+    _h = App.db.Column(App.db.Integer, default=0)
+    _i = App.db.Column(App.db.Integer, default=0)
+    _j = App.db.Column(App.db.Integer, default=0)
+    _k = App.db.Column(App.db.Integer, default=0)
+    _l = App.db.Column(App.db.Integer, default=0)
+    _m = App.db.Column(App.db.Integer, default=0)
+    _n = App.db.Column(App.db.Integer, default=0)
+    _o = App.db.Column(App.db.Integer, default=0)
+    _p = App.db.Column(App.db.Integer, default=0)
+    _q = App.db.Column(App.db.Integer, default=0)
+    _r = App.db.Column(App.db.Integer, default=0)
+    _s = App.db.Column(App.db.Integer, default=0)
+    _t = App.db.Column(App.db.Integer, default=0)
+    _u = App.db.Column(App.db.Integer, default=0)
+    _v = App.db.Column(App.db.Integer, default=0)
+    _w = App.db.Column(App.db.Integer, default=0)
+    _x = App.db.Column(App.db.Integer, default=0)
+    _y = App.db.Column(App.db.Integer, default=0)
+    _z = App.db.Column(App.db.Integer, default=0)
+
+    #auto checks(by sqlalchemy) whether user exist in the user info table whenever data is inserting/updating
+    @validates('_username')
+    def validate_username(self, key, _username):
+        try:
+            user_info_uname = UserInfo.query.filter_by(_username=_username).first()
+            if user_info_uname is None:
+                raise ValueError(f"User '{_username}' does not exist")
+        except ValueError as e:
+            print(f"Error: {e}")
+            return None
+        return _username
+
+
 
 if __name__=='__main__':
     app = App()
@@ -642,5 +690,35 @@ if __name__=='__main__':
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
+
+
+        #testing methods against UserLetter table
+        try:
+            user_letter_data = {
+                '_username' : 'user1',
+                '_a' : 10,
+                '_c' : 30
+            }
+            user_letter_data2 = {
+                '_username' : 'user2',
+                '_a' : 20,
+                '_c' : 80
+            }
+            user_letter_instance =Database.insert(UserLetter, **user_letter_data) #**unpacking
+            user_letter_instance2 =Database.insert(UserLetter, **user_letter_data2) #**unpacking
+        except Exception as e:
+            print(f"Error : {e}")
+            raise
+
+        updating = Database.update('user1','UserLetter', _a=100)
+
+        query_letter = Database.query('user2','UserLetter')
+        if query_letter is not None:
+            print("Query result:")
+            print(query_letter)  # Print the query result object
+            print(f"_a = {query_letter._a}")
+            print(f"_c = {query_letter._c}")
+        else:
+            print("No user data found for the provided username.")
 
     app.run(host="localhost", debug=True)
