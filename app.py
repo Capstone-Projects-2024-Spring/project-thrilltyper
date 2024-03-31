@@ -12,9 +12,8 @@ from sqlalchemy import Column #used for reference to tables' column name
 from player import player
 
 #temporary imports, which will be deleted later
-
-
-
+import random
+import string
 #STR_MAX_SIZE = 65535
 
 class App:
@@ -318,8 +317,15 @@ class Database:
                     '_play_date': current_datetime
 
                 }
+
+                user_letter_data = {
+                    '_username': f'user{i}',
+                    **{f'_{letter}': random.randint(0,100) for letter in string.ascii_lowercase}
+                }
+
                 Database.insert(UserInfo, **user_info_data)
                 Database.insert(UserData, **user_data_data)
+                Database.insert(UserLetter, **user_letter_data)
             print(f'{num_rows} sample users added successfully')
         except Exception as e:
             print(f'Error while populating sample rows: {e}')
@@ -673,7 +679,6 @@ class UserLetter(App.db.Model):
         return _username
 
 
-
 if __name__=='__main__':
     app = App()
 
@@ -691,34 +696,5 @@ if __name__=='__main__':
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
 
-
-        #testing methods against UserLetter table
-        try:
-            user_letter_data = {
-                '_username' : 'user1',
-                '_a' : 10,
-                '_c' : 30
-            }
-            user_letter_data2 = {
-                '_username' : 'user2',
-                '_a' : 20,
-                '_c' : 80
-            }
-            user_letter_instance =Database.insert(UserLetter, **user_letter_data) #**unpacking
-            user_letter_instance2 =Database.insert(UserLetter, **user_letter_data2) #**unpacking
-        except Exception as e:
-            print(f"Error : {e}")
-            raise
-
-        updating = Database.update('user1','UserLetter', _a=100)
-
-        query_letter = Database.query('user2','UserLetter')
-        if query_letter is not None:
-            print("Query result:")
-            print(query_letter)  # Print the query result object
-            print(f"_a = {query_letter._a}")
-            print(f"_c = {query_letter._c}")
-        else:
-            print("No user data found for the provided username.")
 
     app.run(host="localhost", debug=True)
