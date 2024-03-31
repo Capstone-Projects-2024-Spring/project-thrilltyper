@@ -15,6 +15,7 @@
     <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
 
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/main.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/menu.css')}}">
     {% block head %} {% endblock %}
 </head>
 
@@ -27,6 +28,7 @@
     <!-- Imports of necessary js components -->
     <script type="text/babel" src="{{url_for('static', filename='js/Profile.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/Home.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/Menu.js')}}"></script>
 
     <!-- Pure JS code -->
     <script>
@@ -37,7 +39,7 @@
     <!-- JSX code with REACT -->
     <script type="text/babel">
         // REACT component for Home page, available across all child htmls
-        ReactDOM.render(<Home userSession={userSession}/>, document.getElementById("root"));
+        ReactDOM.render(<Home userSession={userSession} MenuComp={Menu} />, document.getElementById("root"));
     </script>
 </body>
 
