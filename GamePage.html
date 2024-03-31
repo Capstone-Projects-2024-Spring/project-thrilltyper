@@ -41,7 +41,7 @@
         #stats {
             margin-top: 20px;
         }
-        
+
     </style>
 </head>
 <body>
@@ -50,6 +50,7 @@
         <div id="text-display"></div>
         <input type="text" id="input-box" oninput="checkInput()" disabled>
         <div id="result"></div>
+        <div id="stats"></div>
         <button onclick="startTimer()">Start</button>
     </div>
     
@@ -87,6 +88,28 @@
         function updateText(){
             var str = text
             var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
+
+
+
+            // jimmy1
+             // Calculate words per minute and accuracy
+             
+             const elapsedTime = (new Date().getTime() - startTime) / 1000;
+             const wordsPerMinute = Math.round((currentWordIndex / elapsedTime) * 60);
+             const accuracy = (correctCharsTyped / totalCharsTyped) * 100;
+
+
+            // Display WPM and accuracy
+            const statsDisplay = `Speed: ${wordsPerMinute} WPM | Accuracy: ${accuracy.toFixed(2)}%`;
+            document.getElementById("stats").innerHTML = statsDisplay;
+
+
+
+
+
+
+
+
 
             var greenText = "";          //correct text
             var redText = "";           //incorrect text
