@@ -368,8 +368,8 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
-
-    ''' #not functioning properly, will continue implemention if this feature is needed in later development
+    '''
+    #not functioning properly, will continue implemention if this feature is needed in later development
     @staticmethod
     def update_username(old_username: str, new_username: str):
         """
@@ -390,15 +390,20 @@ class Database:
                 if user_data_record:
                     user_data_record._username = new_username
                     App.db.session.commit()
-                    print(f"Username updated from '{old_username}' to '{new_username}' successfully")
-                else:
-                    print(f"User '{old_username}' is not updated in the UserData table")
+
+                user_letter_record = UserLetter.query.filter_by(_username=old_username).first()
+                if user_letter_record:
+                    user_letter_record._username = new_username
+                    App.db.session.commit()
+                print(f"Username updated from '{old_username}' to '{new_username}' successfully")
             else:
                 print(f"User '{old_username}' is not updated in the UserInfo table")
         except Exception as e:
             App.db.session.rollback()
             print(f"Erorr in updating: {e}")
-    '''
+        '''
+        
+    
 
 
     @staticmethod
@@ -613,7 +618,7 @@ class UserInfo(App.db.Model):
     #since cascade default to be many-to-one relationship(1 userinfo - Many userdata rows), single_parent flag need to set to be True(ensures 1:1)
 
     #another backref relationship for UserLetter class (for delete)
-    user_letter_ref = App.db.relationship('UserLetter', backref=App.db.backref('user_info_ref_letter', uselist=False), cascade="all,delete-orphan", single_parent=True)
+    user_letter_ref = App.db.relationship('UserLetter', backref=App.db.backref('user_info_ref_letter', uselist=False), cascade="all, delete-orphan", single_parent=True)
 
 class UserData(App.db.Model):
     """
@@ -678,7 +683,7 @@ class UserLetter(App.db.Model):
     """
 
     _user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
-    _username = App.db.Column(App.db.String(30), App.db.ForeignKey('user_info._username'), nullable=False)
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey('user_info._username'), nullable=False) #onupdate="CASCADE"
     _a = App.db.Column(App.db.Integer, default=0)
     _b = App.db.Column(App.db.Integer, default=0)
     _c = App.db.Column(App.db.Integer, default=0)
@@ -717,6 +722,12 @@ class UserLetter(App.db.Model):
             print(f"Error: {e}")
             return None
         return _username
+    
+    #display the instance's attributes
+    def repr(self):
+        letters = [f"{chr(97+i)}={getattr(self, '_' + chr(97+i))}" for i in range(26)] #97 in Unicode = 'a'
+        letters_repr = ', '.join(letters)
+        return f"<username={self._username}, {letters_repr}>"
 
 
 if __name__=='__main__':
@@ -726,7 +737,7 @@ if __name__=='__main__':
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        #app.db.drop_all()
+        app.db.drop_all()
 
         app.db.create_all()
 
@@ -737,8 +748,7 @@ if __name__=='__main__':
         #Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
 
         #this method returns a list represention of top-n largest mistyped letters
-        top_n_letters = Database.get_top_n_letters('user1', 26)
-        print(top_n_letters)
-
+        #top_n_letters = Database.get_top_n_letters('user1', 26)
+        #print(top_n_letters)
 
     app.run(host="localhost", debug=True)
