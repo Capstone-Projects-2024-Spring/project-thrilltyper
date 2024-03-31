@@ -363,7 +363,7 @@ class Database:
             raise e 
 
 
-    ''' #not functioning properly
+    ''' #not functioning properly, will continue implemention if this feature is needed in later development
     @staticmethod
     def update_username(old_username: str, new_username: str):
         """
@@ -414,7 +414,7 @@ class Database:
         """
         try:
             #first validate the table name given in string
-            valid_table_list = ['UserInfo','UserData']
+            valid_table_list = ['UserInfo','UserData','UserLetter']
             if db_table_name not in valid_table_list:
                 raise ValueError(f"Invalid table name: {db_table_name}")
             
@@ -483,7 +483,7 @@ class Database:
         """
         try:
             #a list of valid table names
-            valid_table_list = ['UserInfo','UserData']
+            valid_table_list = ['UserInfo','UserData','UserLetter']
             #validates if the given string is in the list
             if db_table_class in valid_table_list:
                 #find the table class object by the given string
@@ -550,7 +550,7 @@ class UserInfo(App.db.Model):
     _password : can not be null, password of a user's account
     _email : the unique email address of the user 
     _profile_photo : the url representation of the user's profile photo in email
-    _registered_date : record of the date and time in UTC when user registered
+    _registered_date : record of the date and time in UTC when user registered 
     """
     _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
     _password =App.db.Column(App.db.String(30)) #password can be null for login with email
@@ -565,6 +565,8 @@ class UserInfo(App.db.Model):
     user_data_ref = App.db.relationship('UserData', backref=App.db.backref('user_info_ref', uselist=False), cascade="all, delete-orphan", single_parent=True)
     #cascade = "all, delete-orphan" when userinfo/data row is deleted, the parent/child row will also be deleted in one-to-one relationship
     #since cascade default to be many-to-one relationship(1 userinfo - Many userdata rows), single_parent flag need to set to be True(ensures 1:1)
+
+    #another backref relationship for UserLetter class (for delete)
 
 class UserData(App.db.Model):
     """
@@ -614,6 +616,15 @@ class UserData(App.db.Model):
                f"total_playing_time={self._total_playing_time}, play_date={self._play_date})>"
 
 
+class UserLetter(App.db.Model):
+    """
+    Representing the database table of user's in game data 
+    the number of times a player mistyped a certain letter
+    _user_letter_id : the primary key of the table, auto generatetd by flask_sqlalchemy
+    _username : non-nullable identifier and foreign key of UserInfo table
+    _a - _z : 26 columns representing the 26 letters in the alphabets 
+    """
+
 
 if __name__=='__main__':
     app = App()
@@ -631,71 +642,5 @@ if __name__=='__main__':
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
-
-        #the lower comment section is kept for everyone to checkout how to use these methods
-        #change the arugments in each methods parameter based on what is in the database tables to prevent raise of ValueError 
-        #(which is not handled and will crash the program)
-
-        #method of insert
-        """
-        try:
-            user_info_data = {
-                '_username': 'me_john',
-                '_password': '20222024',
-                '_email': 'hejohn456@gmail.com' #email must be unique
-            }
-
-            user_data_data = {
-                '_username': 'me_john', #username must kept the same for integrity
-                #if _username is not the same, it will not pass the @validates(_username) method, and an exception will be raised
-                '_wpm': 50,
-                '_accuracy': '80.0',
-                #'you_good': '60' if this line is ran, the program will crash since it is not a existing column
-            }
-
-            #insertion in the respective table
-            user_info_instance = Database.insert(UserInfo, **user_info_data)
-            user_data_instance = Database.insert(UserData, **user_data_data)
-
-            print('Data Insertion Successfully!')
-        except Exception as e:
-            print(f'Error in Inserting Data: {e}')
-            raise
-        """
-        
-        #method of delete
-        """
-        #testing delete method
-        try:
-            deletion_successful = Database.delete('me_john')
-                
-            if deletion_successful:
-                print('Deletion Successful!')
-            else:
-                print('Deletion Failed: User not found!')
-        except Exception as e:
-            print(f'Error during deletion: {e}')
-            raise
-        """
-
-        #one line of method update, change the argument according to what you have in your tables
-        #updating = Database.update('me_john','UserInfo',_username="he_john")
-
-        #method of query
-        """
-        query_result = Database.query('you_john','UserData')
-        if query_result is not None:
-            print("Query result:")
-            print(query_result)  # Print the query result object
-
-            print("\nUsername:", query_result._username)
-            #print("Password:", query_result._password)
-            #print("Email:", query_result._email) #can not handle if a non-existing column in the table is printed, it will crash
-            print("WPM:", query_result._wpm)
-            print('WINS:', query_result._wins)
-        else:
-            print("No user data found for the provided username.")
-        """
-        
 
     app.run(host="localhost", debug=True)
