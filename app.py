@@ -75,7 +75,7 @@ class App:
             server. See :func:`werkzeug.serving.run_simple` for more
             information.
         """
-        self._app.run(host, port)
+        self._app.run(host,port,debug,load_dotenv)
 
     @_app.route('/login', methods=['GET', 'POST'])
     def login():
@@ -90,7 +90,7 @@ class App:
 
         return render_template('login.html')
     
-    @_app.route('/')
+    @_app.route('/',methods=["POST","GET"])
     def home():
         """
         Handles the requests made to the home page.
@@ -141,7 +141,7 @@ class App:
                 return "Access denied: Google login was canceled or failed."
             
             # Redirect to the desired page after successful authentication
-            return redirect("/")
+            return redirect("menu")
         except Exception as e:
             # Handle other OAuth errors gracefully
             return "OAuth Error: {}".format(str(e))
@@ -167,7 +167,7 @@ class App:
                 # Stores the Player object in the session
                 session['user'] = playerObj.__json__()
                 # Redirects to a desired page when authentication success
-                return redirect("/")
+                return redirect("menu")
             else:
                # Raises an error for wrong match
                raise ValueError("Invalid username or password")
@@ -194,7 +194,7 @@ class App:
         # Instantiates a player object
         playerObj = player(username=guest_id, avatar=url_for("static", filename="pics/anonymous.png"))
         # Establishes session
-        session["user"] = playerObj.__json__();
+        session["user"] = playerObj.__json__()
 
         # Redirects to a desired page
         return redirect("/")
@@ -241,7 +241,7 @@ class App:
         Postcondition: an integer from the range 0 to the number of game modes minus 1 will be selected and sent as part of the /game/<int:mode> request
         :return : a Response object that redirects the user to a game session of the game mode they selected
         """
-        pass
+        return "Welcome to the menu!"
     
     @_app.route('/game/<int:mode>')
     def game(mode:int):
@@ -251,7 +251,7 @@ class App:
         :param mode : number representing the game mode selected by the user
         :return : string indicating the end of the game and the user's wpm and percent of words typed correct
         """
-        pass
+        return ""
 
 class Database:
     """

@@ -1,12 +1,12 @@
 #test.py
-from flask import FlaskClient
+import requests
 
 class Test_App():
     """
     Class for testing the App class
     """
     #Client that sends requests to endpoints of the application
-    client = FlaskClient()
+    
     
     def test_registration():
         """
