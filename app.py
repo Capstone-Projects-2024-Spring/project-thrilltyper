@@ -12,9 +12,8 @@ from sqlalchemy import Column #used for reference to tables' column name
 from player import player
 
 #temporary imports, which will be deleted later
-
-
-
+import random
+import string
 #STR_MAX_SIZE = 65535
 
 class App:
@@ -318,8 +317,15 @@ class Database:
                     '_play_date': current_datetime
 
                 }
+
+                user_letter_data = {
+                    '_username': f'user{i}',
+                    **{f'_{letter}': random.randint(0,100) for letter in string.ascii_lowercase}
+                }
+
                 Database.insert(UserInfo, **user_info_data)
                 Database.insert(UserData, **user_data_data)
+                Database.insert(UserLetter, **user_letter_data)
             print(f'{num_rows} sample users added successfully')
         except Exception as e:
             print(f'Error while populating sample rows: {e}')
@@ -362,8 +368,8 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
-
-    ''' #not functioning properly
+    '''
+    #not functioning properly, will continue implemention if this feature is needed in later development
     @staticmethod
     def update_username(old_username: str, new_username: str):
         """
@@ -384,15 +390,20 @@ class Database:
                 if user_data_record:
                     user_data_record._username = new_username
                     App.db.session.commit()
-                    print(f"Username updated from '{old_username}' to '{new_username}' successfully")
-                else:
-                    print(f"User '{old_username}' is not updated in the UserData table")
+
+                user_letter_record = UserLetter.query.filter_by(_username=old_username).first()
+                if user_letter_record:
+                    user_letter_record._username = new_username
+                    App.db.session.commit()
+                print(f"Username updated from '{old_username}' to '{new_username}' successfully")
             else:
                 print(f"User '{old_username}' is not updated in the UserInfo table")
         except Exception as e:
             App.db.session.rollback()
             print(f"Erorr in updating: {e}")
-    '''
+        '''
+        
+    
 
 
     @staticmethod
@@ -414,7 +425,7 @@ class Database:
         """
         try:
             #first validate the table name given in string
-            valid_table_list = ['UserInfo','UserData']
+            valid_table_list = ['UserInfo','UserData','UserLetter']
             if db_table_name not in valid_table_list:
                 raise ValueError(f"Invalid table name: {db_table_name}")
             
@@ -483,7 +494,7 @@ class Database:
         """
         try:
             #a list of valid table names
-            valid_table_list = ['UserInfo','UserData']
+            valid_table_list = ['UserInfo','UserData','UserLetter']
             #validates if the given string is in the list
             if db_table_class in valid_table_list:
                 #find the table class object by the given string
@@ -536,7 +547,47 @@ class Database:
             #roll back transaction if error occurred
             App.db.session.rollback()
             return False
+        
+    @staticmethod    
+    def get_top_n_letters(username: str, n: int):
+        """
+        Return a (sorted in DESC)list of letters according to the Top-N largest corresponding values(mistyped letter times) in UserLetter Table
 
+        :param username: the Username of the user
+        :type username: str
+        :param n: the selected number of Top-N largest letter to retrieve, max is 26
+        :type n: int
+
+        :return: List containing the Top-N letters in DESC order
+        :rtype: list
+        """
+        try: 
+            #validate if user exist in UserInfo
+            user_info = UserInfo.query.filter_by(_username=username).first()
+            if not user_info:
+                print(f"User '{username}' does not exist")
+                return []    
+            #validate n
+            if n < 1 or n > 26:
+                print("Invalid value for 'n', Only 26 Letters")
+                return []
+            #query using username the user letter data
+            user_letter_data = UserLetter.query.filter_by(_username=username).first()
+            #return empty list if user letter data is None
+            if not user_letter_data:
+                print(f"No Data Found For User '{username}'")
+                return []
+            #a dictionary with letters as keys and mistyped letter times as the number value
+            #loop through each letter in the alaphbets
+            letter_number_dict = {f'_{letter}': getattr(user_letter_data, f'_{letter}') for letter in string.ascii_lowercase}
+            #sort the dict by top-n values in desc order, returning a list
+            sorted_values = sorted(letter_number_dict, key=letter_number_dict.get, reverse=True)[:n] #n here is not inclusive
+            #since there is a _ as the first index, it needs to be removed, starting each string with [1:] 
+            rm_underscore = [letter[1:] for letter in sorted_values]
+            return rm_underscore
+        except Exception as e:
+            print(f"Error while retrieving top {n} largest values for corresponding letters for user '{username}' : {e}")
+            return []
 
 #these two tables/classes are not limited to parent/child relationship
 #they're bidirectional, you can retrieve the relative data of the other table by calling either table
@@ -550,7 +601,7 @@ class UserInfo(App.db.Model):
     _password : can not be null, password of a user's account
     _email : the unique email address of the user 
     _profile_photo : the url representation of the user's profile photo in email
-    _registered_date : record of the date and time in UTC when user registered
+    _registered_date : record of the date and time in UTC when user registered 
     """
     _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
     _password =App.db.Column(App.db.String(30)) #password can be null for login with email
@@ -562,9 +613,12 @@ class UserInfo(App.db.Model):
     #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
     #uselist set to False meaning one-to-one relationship between the two table
     #one instance of the user_info is related to one and only one user_data instance (1:1))
-    user_data_ref = App.db.relationship('UserData', backref=App.db.backref('user_info_ref', uselist=False), cascade="all, delete-orphan", single_parent=True)
+    user_data_ref = App.db.relationship('UserData', backref=App.db.backref('user_info_ref_data', uselist=False), cascade="all, delete-orphan", single_parent=True)
     #cascade = "all, delete-orphan" when userinfo/data row is deleted, the parent/child row will also be deleted in one-to-one relationship
     #since cascade default to be many-to-one relationship(1 userinfo - Many userdata rows), single_parent flag need to set to be True(ensures 1:1)
+
+    #another backref relationship for UserLetter class (for delete)
+    user_letter_ref = App.db.relationship('UserLetter', backref=App.db.backref('user_info_ref_letter', uselist=False), cascade="all, delete-orphan", single_parent=True)
 
 class UserData(App.db.Model):
     """
@@ -598,10 +652,15 @@ class UserData(App.db.Model):
     #mainly used for update/query/delete method, insert cannot be checked by this validation
     @validates('_username')
     def validate_username(self, key, _username):
-        #selects the first result filtered using username by sqlalchemy 
-        user_info = UserInfo.query.filter_by(_username=_username).first()
-        if user_info is None: # user_info is None if user does not exist
-            raise ValueError(f"User '{_username}' does not exist")
+
+        try:
+            #selects the first result filtered using username by sqlalchemy 
+            user_info = UserInfo.query.filter_by(_username=_username).first()
+            if user_info is None: # user_info is None if user does not exist
+                raise ValueError(f"User '{_username}' does not exist")
+        except ValueError as e: #handled within the method
+            print(f"Error: {e}")
+            return None
         return _username
 
     def repr(self):
@@ -613,6 +672,62 @@ class UserData(App.db.Model):
                f"wins={self._wins}, losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
                f"total_playing_time={self._total_playing_time}, play_date={self._play_date})>"
 
+
+class UserLetter(App.db.Model):
+    """
+    Representing the database table of user's in game data 
+    the number of times a player mistyped a certain letter
+    _user_letter_id : the primary key of the table, auto generatetd by flask_sqlalchemy
+    _username : non-nullable identifier and foreign key of UserInfo table
+    _a - _z : 26 columns representing the 26 letters in the alphabets 
+    """
+
+    _user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey('user_info._username'), nullable=False) #onupdate="CASCADE"
+    _a = App.db.Column(App.db.Integer, default=0)
+    _b = App.db.Column(App.db.Integer, default=0)
+    _c = App.db.Column(App.db.Integer, default=0)
+    _d = App.db.Column(App.db.Integer, default=0)
+    _e = App.db.Column(App.db.Integer, default=0)
+    _f = App.db.Column(App.db.Integer, default=0)
+    _g = App.db.Column(App.db.Integer, default=0)
+    _h = App.db.Column(App.db.Integer, default=0)
+    _i = App.db.Column(App.db.Integer, default=0)
+    _j = App.db.Column(App.db.Integer, default=0)
+    _k = App.db.Column(App.db.Integer, default=0)
+    _l = App.db.Column(App.db.Integer, default=0)
+    _m = App.db.Column(App.db.Integer, default=0)
+    _n = App.db.Column(App.db.Integer, default=0)
+    _o = App.db.Column(App.db.Integer, default=0)
+    _p = App.db.Column(App.db.Integer, default=0)
+    _q = App.db.Column(App.db.Integer, default=0)
+    _r = App.db.Column(App.db.Integer, default=0)
+    _s = App.db.Column(App.db.Integer, default=0)
+    _t = App.db.Column(App.db.Integer, default=0)
+    _u = App.db.Column(App.db.Integer, default=0)
+    _v = App.db.Column(App.db.Integer, default=0)
+    _w = App.db.Column(App.db.Integer, default=0)
+    _x = App.db.Column(App.db.Integer, default=0)
+    _y = App.db.Column(App.db.Integer, default=0)
+    _z = App.db.Column(App.db.Integer, default=0)
+
+    #auto checks(by sqlalchemy) whether user exist in the user info table whenever data is inserting/updating
+    @validates('_username')
+    def validate_username(self, key, _username):
+        try:
+            user_info_uname = UserInfo.query.filter_by(_username=_username).first()
+            if user_info_uname is None:
+                raise ValueError(f"User '{_username}' does not exist")
+        except ValueError as e:
+            print(f"Error: {e}")
+            return None
+        return _username
+    
+    #display the instance's attributes
+    def repr(self):
+        letters = [f"{chr(97+i)}={getattr(self, '_' + chr(97+i))}" for i in range(26)] #97 in Unicode = 'a'
+        letters_repr = ', '.join(letters)
+        return f"<username={self._username}, {letters_repr}>"
 
 
 if __name__=='__main__':
@@ -630,72 +745,10 @@ if __name__=='__main__':
         #there is limitation and constraints in the Columns
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
-        Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
+        #Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
 
-        #the lower comment section is kept for everyone to checkout how to use these methods
-        #change the arugments in each methods parameter based on what is in the database tables to prevent raise of ValueError 
-        #(which is not handled and will crash the program)
-
-        #method of insert
-        """
-        try:
-            user_info_data = {
-                '_username': 'me_john',
-                '_password': '20222024',
-                '_email': 'hejohn456@gmail.com' #email must be unique
-            }
-
-            user_data_data = {
-                '_username': 'me_john', #username must kept the same for integrity
-                #if _username is not the same, it will not pass the @validates(_username) method, and an exception will be raised
-                '_wpm': 50,
-                '_accuracy': '80.0',
-                #'you_good': '60' if this line is ran, the program will crash since it is not a existing column
-            }
-
-            #insertion in the respective table
-            user_info_instance = Database.insert(UserInfo, **user_info_data)
-            user_data_instance = Database.insert(UserData, **user_data_data)
-
-            print('Data Insertion Successfully!')
-        except Exception as e:
-            print(f'Error in Inserting Data: {e}')
-            raise
-        """
-        
-        #method of delete
-        """
-        #testing delete method
-        try:
-            deletion_successful = Database.delete('me_john')
-                
-            if deletion_successful:
-                print('Deletion Successful!')
-            else:
-                print('Deletion Failed: User not found!')
-        except Exception as e:
-            print(f'Error during deletion: {e}')
-            raise
-        """
-
-        #one line of method update, change the argument according to what you have in your tables
-        #updating = Database.update('me_john','UserInfo',_username="he_john")
-
-        #method of query
-        """
-        query_result = Database.query('you_john','UserData')
-        if query_result is not None:
-            print("Query result:")
-            print(query_result)  # Print the query result object
-
-            print("\nUsername:", query_result._username)
-            #print("Password:", query_result._password)
-            #print("Email:", query_result._email) #can not handle if a non-existing column in the table is printed, it will crash
-            print("WPM:", query_result._wpm)
-            print('WINS:', query_result._wins)
-        else:
-            print("No user data found for the provided username.")
-        """
-        
+        #this method returns a list represention of top-n largest mistyped letters
+        #top_n_letters = Database.get_top_n_letters('user1', 26)
+        #print(top_n_letters)
 
     app.run(host="localhost", debug=True)
