@@ -23,7 +23,6 @@ abstract
 abstracts
 abu
 abuse
-ac
 academic
 academics
 academy
@@ -224,11 +223,8 @@ agreements
 agrees
 agricultural
 agriculture
-ah
 ahead
-ai
 aid
-aids
 aim
 aimed
 aims
@@ -241,7 +237,6 @@ airplane
 airport
 airports
 aka
-al
 alabama
 alan
 alarm
