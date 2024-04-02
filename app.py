@@ -253,6 +253,9 @@ class App:
         """
         return ""
 
+    def get_test_client(self):
+        return self._app.test_client()
+
 class Database:
     """
     A class representing a database connection and operations.
