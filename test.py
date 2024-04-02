@@ -3,6 +3,13 @@ import pytest
 from app import App
 from app import Database
 
+#Client that sends requests to endpoints of the application
+@pytest.fixture
+def client():
+    app = App()
+    with app.get_test_client() as client:
+        yield client
+
 #--------------------------------------------------------------------------------App Tests-----------------------------------------------------------------------------
 def test_registration(client):
     """
