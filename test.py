@@ -16,7 +16,10 @@ def test_registration(client):
     Test: That the user can register a username and password and can log in with the new credentials successfully
     Result: True if the username and password have been successfully stored
     """
-    pass
+    username = "uname"
+    password = "pswrd"
+    client.post("/register",data={"username":username,"password":password})
+    assert Database.query(username,"UserInfo")
 
 def test_invalid_login():
     """
