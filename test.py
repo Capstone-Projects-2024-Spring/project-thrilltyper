@@ -13,8 +13,8 @@ def client():
 #--------------------------------------------------------------------------------App Tests-----------------------------------------------------------------------------
 def test_registration(client):
     """
-    Test: That the user can register a username and password and can log in with the new credentials successfully
-    Result: True if the username and password have been successfully stored
+    Test: That the user can register a username and password
+    Result: True if the username and password have been successfully stored in the database
     """
     username = "uname"
     password = "pswrd"
