@@ -21,12 +21,15 @@ def test_registration(client):
     client.post("/register",data={"username":username,"password":password})
     assert Database.query(username,"UserInfo")
 
-def test_invalid_login():
+def test_invalid_login(client):
     """
     Test: When users enter invalid credentials and click log in, a message saying that either username or password was invalid should appear
     Result: True if the invalid credentials cause a str message to be returned saying the username or password was invalid
     """
-    pass
+    username = "user1"
+    password = "pswd3"
+    req = client.post("/authentication",data={"username":username,"password":password})
+    assert "Authentication Error" in req.data.decode()
 
 def test_continue_as_guest():
     """
