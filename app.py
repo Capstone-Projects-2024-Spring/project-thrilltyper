@@ -476,7 +476,11 @@ class Database:
 
 
     @staticmethod
-    def query(username: str, db_table_class: str):
+    def query(username: str, db_table_class: str): 
+        #changes to be made: being able to query by _email
+        #changes the parameter of this method to accept various choices of arguments in the Columns
+        #since _email is unique, it should be able to be used by query
+        #but the other columns in the tables should not be able to be used for querying
         """
         Query a user record from the database.
 
