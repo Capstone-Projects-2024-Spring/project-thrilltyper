@@ -37,6 +37,7 @@ body {
     letter-spacing: 0.2rem; /* spaces out letters a bit */
     white-space: nowrap;  /* don't allow the title to wrap */
     font-weight: bold;
+    padding: 5px 5px;
 }
 
 #navBarRight{
@@ -44,23 +45,24 @@ body {
     padding-right: 3rem;
     margin-left: auto;
     white-space: nowrap;
+    display: flex;
 }
 
 #navBarRight a{  /* css shared by both sign up and log in button*/
     font-size: 16px;
     border-radius: 10%/20%;     /* little curve around corner */
-    /*text-decoration: none;*/
-    padding: 7px 13px;
-    width: 200px;
-    height: 1000px;
-
+    text-decoration: none;
+    padding: 5px 5px;
+    width: 70px;
+    height: 25px;
+    vertical-align: center;
+    text-align: center;
+    font-weight: bold;
 }
 
 #signUpButton{
     background-color: transparent;
     color: white;
-    /*font-weight: bold;*/
-
     border: 1.5px solid white;
     border-color:white;
     margin-right: 10px;
@@ -69,8 +71,6 @@ body {
 #logInButton{
     background-color: white;
     color: #084F8E;
-    /*font-weight: bold; */
-
     border: 2px solid white;
     border-color:white;
 
