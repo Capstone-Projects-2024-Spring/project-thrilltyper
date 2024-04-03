@@ -156,13 +156,22 @@ class Test_Database():
             assert retrieved_record._profile_photo == updated_record['_profile_photo']
             assert retrieved_record._google_id == updated_record['_google_id']
 
-    def test_query(self):
+    def test_query(self, sample_user_info, cleanup):
         """
         Test: That the correct user record is retrieved from the database
-        Input: A username 
+        Input: A username with the corresponding table name
         Result: True if the correct user record is retrieved from the database
         """
-        pass
+        app = App()
+        with app._app.app_context():
+            Database.insert(UserInfo, **sample_user_info)
+
+            retrieved_record = Database.query(sample_user_info['_username'], 'UserInfo')
+
+            assert retrieved_record is not None
+            assert retrieved_record._username == sample_user_info['_username']
+            assert retrieved_record._email == sample_user_info['_email']
+            assert retrieved_record._password == sample_user_info['_password']
 
     def test_delete(self):
         """
