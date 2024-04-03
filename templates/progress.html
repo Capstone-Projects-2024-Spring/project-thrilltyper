@@ -5,27 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Progress Circle</title>
     <style>
-      .progress-circle {
+      .progress-container {
+        position: relative;
         width: 120px;
         height: 120px;
-        background-color: #f3f3f3;
-        border-radius: 50%;
-        position: relative;
       }
-      .progress-circle .progress {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        clip: rect(0, 60px, 120px, 0);
-        border-radius: 50%;
-      }
-      .progress-circle .progress-fill {
-        /* Initial properties */
-        clip: rect(0, 0, 0, 0); /* Hide the fill initially */
-        background-color: green;
-        /* Other properties */
-      }
-      .progress-circle .progress-text {
+      .progress-text {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -35,42 +20,59 @@
         font-weight: bold;
         color: #333;
       }
+      svg {
+        transform: rotate(-90deg);
+      }
+      .progress-ring__circle {
+        fill: none;
+        stroke-width: 10;
+        stroke-linecap: round;
+      }
     </style>
   </head>
   <body>
-    <div class="progress-circle" id="progressCircle">
-      <div class="progress">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
+    <div class="progress-container">
+      <svg class="progress-ring" width="120" height="120">
+        <circle
+          class="progress-ring__circle"
+          stroke="lightgrey"
+          cx="60"
+          cy="60"
+          r="52"
+        />
+        <circle
+          class="progress-ring__circle"
+          id="progressCircle"
+          stroke="green"
+          cx="60"
+          cy="60"
+          r="52"
+        />
+      </svg>
       <div class="progress-text" id="progressText">0%</div>
     </div>
 
     <script>
-      // Function to update progress circle based on letters typed
       function updateProgress(lettersTyped, totalLetters) {
-        let percentage = (lettersTyped / totalLetters) * 100;
-        let progressFill = document.getElementById("progressFill");
-        let progressText = document.getElementById("progressText");
+        const percentage = Math.min((lettersTyped / totalLetters) * 100, 100);
+        const progressText = document.getElementById("progressText");
+        const progressCircle = document.getElementById("progressCircle");
 
-        if (percentage > 100) {
-          percentage = 100;
-        }
+        const circumference = 2 * Math.PI * 52; // Circle circumference
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset =
+          circumference - (percentage / 100) * circumference;
 
-        // Calculate the degrees of rotation based on percentage
-        let degrees = (percentage / 100) * 360;
-        // This line adjusts the fill rotation to properly reflect the percentage
-        progressFill.style.clip = "rect(auto, auto, auto, auto)";
-        progressFill.style.transform = `rotate(${degrees}deg)`;
-
-        // Ensuring a smooth transition for fills less than 50%
-        if (percentage <= 50) {
-          progressFill.style.clip = "rect(0, 60px, 120px, 0)";
-        } else {
-          progressFill.style.clip = "rect(auto, 120px, 120px, 0)";
-        }
-
-        progressText.textContent = percentage.toFixed(0) + "%";
+        progressText.textContent = `${Math.round(percentage)}%`;
       }
+
+      // function runTest() {
+      //   let lettersTyped = 50; // For example purposes
+      //   let totalLetters = 100;
+      //   updateProgress(lettersTyped, totalLetters);
+      // }
+
+      // window.onload = runTest;
     </script>
   </body>
 </html>
