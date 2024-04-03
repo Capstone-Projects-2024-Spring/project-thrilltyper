@@ -314,6 +314,7 @@ class Database:
 
                 user_data_data = {
                     '_username': f'user{i}',
+                    '_email': f'user{i}@gmail.com',
                     '_wpm': 10+i,
                     '_accuracy': 80 + (i*0.5),
                     '_wins': 10+i,
@@ -326,6 +327,7 @@ class Database:
 
                 user_letter_data = {
                     '_username': f'user{i}',
+                    '_email': f'user{i}@gmail.com',
                     **{f'_{letter}': random.randint(0,100) for letter in string.ascii_lowercase}
                 }
 
@@ -633,6 +635,7 @@ class UserData(App.db.Model):
     Representation of user in game data stored in the database under the UserData table
     _user_data_id : the primary key of the table, auto increment by sqlalchemy
     _username : non-nullable and unique identifier of a user, act as the foreign key referencing UserInfo table
+    _email : nullable email address of user
     _wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
@@ -643,6 +646,7 @@ class UserData(App.db.Model):
     """
     _user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
     _username = App.db.Column(App.db.String(30),App.db.ForeignKey('user_info._username'), nullable=False) #foreign key referencing UserInfo table
+    _email = App.db.Column(App.db.String(60))
     #this 'user_info' from the above line is mentioning the table name of UserInfo
     #this underscore and the lower case is automated by the system
     _wpm = App.db.Column(App.db.SmallInteger)
@@ -676,8 +680,9 @@ class UserData(App.db.Model):
         Returns a string representation of the user data
         :return :
         """
-        return f"<UserData(username={self._username}, wpm={self._wpm}, accuracy={self._accuracy}, " \
-               f"wins={self._wins}, losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
+        return f"<UserData(username={self._username}, email={self._email}, wpm={self._wpm}, " \
+               f"accuracy={self._accuracy}, wins={self._wins}, " \
+               f"losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
                f"total_playing_time={self._total_playing_time}, play_date={self._play_date})>"
 
 
@@ -687,11 +692,13 @@ class UserLetter(App.db.Model):
     the number of times a player mistyped a certain letter
     _user_letter_id : the primary key of the table, auto generatetd by flask_sqlalchemy
     _username : non-nullable identifier and foreign key of UserInfo table
+    _email : nullable email address of user
     _a - _z : 26 columns representing the 26 letters in the alphabets 
     """
 
     _user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
     _username = App.db.Column(App.db.String(30), App.db.ForeignKey('user_info._username'), nullable=False) #onupdate="CASCADE"
+    _email = App.db.Column(App.db.String(60))
     _a = App.db.Column(App.db.Integer, default=0)
     _b = App.db.Column(App.db.Integer, default=0)
     _c = App.db.Column(App.db.Integer, default=0)
@@ -735,7 +742,7 @@ class UserLetter(App.db.Model):
     def repr(self):
         letters = [f"{chr(97+i)}={getattr(self, '_' + chr(97+i))}" for i in range(26)] #97 in Unicode = 'a'
         letters_repr = ', '.join(letters)
-        return f"<username={self._username}, {letters_repr}>"
+        return f"<username={self._username}, email={self._email}, {letters_repr}>"
 
 
 if __name__=='__main__':

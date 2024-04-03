@@ -71,12 +71,61 @@ def test_game_results():
 
 #--------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 class Test_User_Data():
-    def test_repr(self):
+
+    @pytest.fixture
+    def sample_user_info(self):
+        #a string of date and time with a random 4 character as the randomly generated username to prevent fail/error when running pytest
+        unique_suffix = datetime.now().strftime("%Y%m%d%H%M%S") + ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        return{
+            '_username': f'test_user_{unique_suffix}',
+            '_password': 'test_password',
+            '_email': f'test_user_{unique_suffix}@example.com',
+            '_profile_photo': 'https://example.com/test_user.jpg',
+            '_google_id': f'test_google_{unique_suffix}'
+        }
+    
+    @pytest.fixture
+    #cleanup the previous user data before next test, this can prevent duplicate data in db
+    def cleanup(request, sample_user_info):
+        app = App()
+        with app._app.app_context():
+            yield
+            Database.delete(sample_user_info['_username'])
+    
+
+    def test_repr(self, sample_user_info, cleanup):
         """
         Test: That a string representation of a row's data is returned
         Result: True if a string with a row's data is returned
         """
-        pass
+        app = App()
+        with app._app.app_context():
+            Database.insert(UserInfo, **sample_user_info)
+            
+            #randomly generated user data info
+            random_user_data = {
+                '_username': sample_user_info['_username'],
+                '_email': sample_user_info['_email'],
+                '_wpm': random.randint(50, 100),
+                '_accuracy': round(random.uniform(80, 100), 2),
+                '_wins': random.randint(0, 100),
+                '_losses': random.randint(0, 100),
+                '_freq_mistyped_words': '|'.join(random.choices(["word1", "word2", "word3", "word4", "word5"], k=3)),
+                '_total_playing_time': random.randint(0, 1000),
+                '_play_date': datetime.now()
+            }
+
+            Database.insert(UserData, **random_user_data)
+            #retrieve the user data with the username
+            user_data = Database.query(sample_user_info['_username'], 'UserData')
+            # Assert individual attributes of user_data object
+            assert user_data._username == sample_user_info['_username']
+            assert user_data._email == sample_user_info['_email']
+            assert user_data._wpm == random_user_data['_wpm']
+            assert float(user_data._accuracy) == random_user_data['_accuracy']
+            assert user_data._wins == random_user_data['_wins']
+            assert user_data._losses == random_user_data['_losses']
+        
 
 class Test_User_Letter():
     def test_repr(self):
