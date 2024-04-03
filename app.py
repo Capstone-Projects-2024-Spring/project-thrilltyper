@@ -8,12 +8,12 @@ from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
-from sqlalchemy import Column #used for reference to tables' column name
+from sqlalchemy import Column, or_ #used for reference to tables' column name
 from player import player
+import string
 
 #temporary imports, which will be deleted later
 import random
-import string
 #STR_MAX_SIZE = 65535
 
 class App:
@@ -142,7 +142,7 @@ class App:
                 return "Access denied: Google login was canceled or failed."
             
             # Redirect to the desired page after successful authentication
-            return redirect("menu")
+            return redirect("/")
         except Exception as e:
             # Handle other OAuth errors gracefully
             return "OAuth Error: {}".format(str(e))
@@ -258,6 +258,9 @@ class App:
         """
         return ""
 
+    def get_test_client(self):
+        return self._app.test_client()
+
 class Database:
     """
     A class representing a database connection and operations.
@@ -304,15 +307,19 @@ class Database:
         try:
             current_datetime =datetime.now(timezone.utc)
             for i in range(1, num_rows + 1):
+
+                sample_google_id = ''.join(random.choices(string.ascii_letters + string.digits, k=10)) #set length of id to ten
                 user_info_data = {
                     '_username': f'user{i}',
                     '_password': f'password{i}',
                     '_email': f'user{i}@gmail.com',
-                    '_profile_photo': f'https://example.com/user{i}.jpg'
+                    '_profile_photo': f'https://example.com/user{i}.jpg',
+                    '_google_id': sample_google_id
                 }
 
                 user_data_data = {
                     '_username': f'user{i}',
+                    '_email': f'user{i}@gmail.com',
                     '_wpm': 10+i,
                     '_accuracy': 80 + (i*0.5),
                     '_wins': 10+i,
@@ -325,6 +332,7 @@ class Database:
 
                 user_letter_data = {
                     '_username': f'user{i}',
+                    '_email': f'user{i}@gmail.com',
                     **{f'_{letter}': random.randint(0,100) for letter in string.ascii_lowercase}
                 }
 
@@ -372,43 +380,6 @@ class Database:
         except Exception as e:
             App.db.session.rollback() #rollback the change made
             raise e 
-
-    '''
-    #not functioning properly, will continue implemention if this feature is needed in later development
-    @staticmethod
-    def update_username(old_username: str, new_username: str):
-        """
-        Update the username in both tables in the parent-child relationship
-
-        :param old_username: the existing username in the database
-        :type old_username: str
-        :param new_username: the updating to username
-        :type new_username: str
-        """
-        try:
-            user_info_record = UserInfo.query.filter_by(_username=old_username).first()
-            if user_info_record:
-                user_info_record._username = new_username
-                App.db.session.commit()
-
-                user_data_record = UserData.query.filter_by(_username=old_username).first()
-                if user_data_record:
-                    user_data_record._username = new_username
-                    App.db.session.commit()
-
-                user_letter_record = UserLetter.query.filter_by(_username=old_username).first()
-                if user_letter_record:
-                    user_letter_record._username = new_username
-                    App.db.session.commit()
-                print(f"Username updated from '{old_username}' to '{new_username}' successfully")
-            else:
-                print(f"User '{old_username}' is not updated in the UserInfo table")
-        except Exception as e:
-            App.db.session.rollback()
-            print(f"Erorr in updating: {e}")
-        '''
-        
-    
 
 
     @staticmethod
@@ -481,21 +452,22 @@ class Database:
 
 
     @staticmethod
-    def query(username: str, db_table_class: str):
+    def query(identifier: str, db_table_class: str): 
+        #changes made: being able to query by  either _username or _email using or_ operator provided by sqlalchemy
         """
-        Query a user record from the database.
+        Query a user record from the database using either username or email address.
 
-        :param username: Unique identifier of the user to be queried.
-        :type username: str
+        :param identifier: A unique identifier of the user to be queried.
+        :type identifier: str
 
         :param db_table_class: the name of the table class
         :type db_table_class: str
 
-        :return: Returns the UserData object if found, else None.
-        :rtype: UserData or None
+        :return: Returns the User table object if found, else None.
+        :rtype: User Data table object or None
 
-        :precondition: `username` must be a valid user identifier.
-        :postcondition: If a user with the provided username exists in the database, returns the corresponding UserData object; otherwise, returns None.
+        :precondition: `identifier` must be a valid user identifier/column in the data table.
+        :postcondition: If a user with the provided username/email exists in the database, returns the corresponding User Data object; otherwise, returns None.
         """
         try:
             #a list of valid table names
@@ -505,10 +477,11 @@ class Database:
                 #find the table class object by the given string
                 table_name_obj = globals().get(db_table_class)
                 #retriving data by sqlalchemy's query and filter
-                retrieved_data = table_name_obj.query.filter_by(_username=username).first()
+                retrieved_data = table_name_obj.query.filter(or_(table_name_obj._username == identifier, table_name_obj._email == identifier)).first()
+                #filter_by takes kwargs, not positional arguments
                 #if user does not exist, return nothing
                 if retrieved_data is None:
-                    print(f"Invalid username entered: {username}")
+                    print(f"Invalid username/email entered: {identifier}")
                     return None
                 #user information object returned
                 return retrieved_data
@@ -607,13 +580,15 @@ class UserInfo(App.db.Model):
     _email : the unique email address of the user 
     _profile_photo : the url representation of the user's profile photo in email
     _registered_date : record of the date and time in UTC when user registered 
+    _google_id : identification for third party user(sign in via email)
     """
     _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
     _password =App.db.Column(App.db.String(30)) #password can be null for login with email
-    _email = App.db.Column(App.db.String(60), unique=True)
+    _email = App.db.Column(App.db.String(60), unique=True) #this will be kept nullable for now, if required later, this will be changed, along with the other tables
     _profile_photo = App.db.Column(App.db.String(255))
     #record the time the user account is created
     _registered_date = App.db.Column(App.db.DateTime, default=App.db.func.current_timestamp()) #still in UTC timezone
+    _google_id = App.db.Column(App.db.String(100)) 
 
     #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
     #uselist set to False meaning one-to-one relationship between the two table
@@ -630,6 +605,7 @@ class UserData(App.db.Model):
     Representation of user in game data stored in the database under the UserData table
     _user_data_id : the primary key of the table, auto increment by sqlalchemy
     _username : non-nullable and unique identifier of a user, act as the foreign key referencing UserInfo table
+    _email : nullable email address of user
     _wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
@@ -640,6 +616,7 @@ class UserData(App.db.Model):
     """
     _user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
     _username = App.db.Column(App.db.String(30),App.db.ForeignKey('user_info._username'), nullable=False) #foreign key referencing UserInfo table
+    _email = App.db.Column(App.db.String(60))
     #this 'user_info' from the above line is mentioning the table name of UserInfo
     #this underscore and the lower case is automated by the system
     _wpm = App.db.Column(App.db.SmallInteger)
@@ -673,8 +650,9 @@ class UserData(App.db.Model):
         Returns a string representation of the user data
         :return :
         """
-        return f"<UserData(username={self._username}, wpm={self._wpm}, accuracy={self._accuracy}, " \
-               f"wins={self._wins}, losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
+        return f"<UserData(username={self._username}, email={self._email}, wpm={self._wpm}, " \
+               f"accuracy={self._accuracy}, wins={self._wins}, " \
+               f"losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
                f"total_playing_time={self._total_playing_time}, play_date={self._play_date})>"
 
 
@@ -684,11 +662,13 @@ class UserLetter(App.db.Model):
     the number of times a player mistyped a certain letter
     _user_letter_id : the primary key of the table, auto generatetd by flask_sqlalchemy
     _username : non-nullable identifier and foreign key of UserInfo table
+    _email : nullable email address of user
     _a - _z : 26 columns representing the 26 letters in the alphabets 
     """
 
     _user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
     _username = App.db.Column(App.db.String(30), App.db.ForeignKey('user_info._username'), nullable=False) #onupdate="CASCADE"
+    _email = App.db.Column(App.db.String(60))
     _a = App.db.Column(App.db.Integer, default=0)
     _b = App.db.Column(App.db.Integer, default=0)
     _c = App.db.Column(App.db.Integer, default=0)
@@ -728,13 +708,6 @@ class UserLetter(App.db.Model):
             return None
         return _username
     
-    #display the instance's attributes
-    def repr(self):
-        letters = [f"{chr(97+i)}={getattr(self, '_' + chr(97+i))}" for i in range(26)] #97 in Unicode = 'a'
-        letters_repr = ', '.join(letters)
-        return f"<username={self._username}, {letters_repr}>"
-
-
 if __name__=='__main__':
     app = App()
 
@@ -750,7 +723,8 @@ if __name__=='__main__':
         #there is limitation and constraints in the Columns
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
-        #Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
+        #after testing, you can repeat the number, but preferrably not to do that
+        Database.populate_sample_date(100)
 
         #this method returns a list represention of top-n largest mistyped letters
         #top_n_letters = Database.get_top_n_letters('user1', 26)
