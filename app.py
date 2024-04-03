@@ -83,12 +83,13 @@ class App:
         Handles the requests made to the login page where users can log in
         :return : a Response object that redirects the user to the login page
         """
+        error = session.pop("error", None)
         if request.method == 'POST':
             # Authenticate the user Close Session when done
             pass
         
 
-        return render_template('login.html')
+        return render_template('login.html', error=error)
     
     @_app.route('/',methods=["POST","GET"])
     def home():
@@ -167,13 +168,15 @@ class App:
                 # Stores the Player object in the session
                 session['user'] = playerObj.__json__()
                 # Redirects to a desired page when authentication success
-                return redirect("menu")
+                return redirect("/")
             else:
                # Raises an error for wrong match
                raise ValueError("Invalid username or password")
         except Exception as e:
             # Handles errors
-            return f"Authentication Error: '{e}'. Provides the error information to our customer support if you believe it's a error"
+            error = f"Authentication Error: '{e}'. Provides the error information to our customer support if you believe it's a error"
+            session["error"] = error
+            return redirect("login")
     
     @_app.route('/signup', methods=['GET', 'POST'])
     def signup():
@@ -181,7 +184,8 @@ class App:
         A route path for signup page layout
         :return: Response page for signup layout 
         """
-        return render_template("signup.html")
+        error = session.pop("error", None)
+        return render_template("signup.html", error=error)
     
     @_app.route('/login-guest', methods=['GET', 'POST'])
     def loginGuest():
@@ -210,7 +214,8 @@ class App:
         password = request.form["password"]
         # Validates contraints
         if Database.query(username, "UserInfo"):
-            return "User already Exist"
+            session["error"] = "Username already used "
+            return redirect("/signup")
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
         Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
