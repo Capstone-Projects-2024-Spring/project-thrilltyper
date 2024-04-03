@@ -8,12 +8,12 @@ from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
-from sqlalchemy import Column #used for reference to tables' column name
+from sqlalchemy import Column, or_ #used for reference to tables' column name
 from player import player
+import string
 
 #temporary imports, which will be deleted later
 import random
-import string
 #STR_MAX_SIZE = 65535
 
 class App:
@@ -299,11 +299,14 @@ class Database:
         try:
             current_datetime =datetime.now(timezone.utc)
             for i in range(1, num_rows + 1):
+
+                sample_google_id = ''.join(random.choices(string.ascii_letters + string.digits, k=10)) #set length of id to ten
                 user_info_data = {
                     '_username': f'user{i}',
                     '_password': f'password{i}',
                     '_email': f'user{i}@gmail.com',
-                    '_profile_photo': f'https://example.com/user{i}.jpg'
+                    '_profile_photo': f'https://example.com/user{i}.jpg',
+                    '_google_id': sample_google_id
                 }
 
                 user_data_data = {
@@ -404,8 +407,6 @@ class Database:
         '''
         
     
-
-
     @staticmethod
     def update(username: str, db_table_name: str, **kwargs):
         """
@@ -476,25 +477,22 @@ class Database:
 
 
     @staticmethod
-    def query(username: str, db_table_class: str): 
-        #changes to be made: being able to query by _email
-        #changes the parameter of this method to accept various choices of arguments in the Columns
-        #since _email is unique, it should be able to be used by query
-        #but the other columns in the tables should not be able to be used for querying
+    def query(identifier: str, db_table_class: str): 
+        #changes made: being able to query by  either _username or _email using or_ operator provided by sqlalchemy
         """
-        Query a user record from the database.
+        Query a user record from the database using either username or email address.
 
-        :param username: Unique identifier of the user to be queried.
-        :type username: str
+        :param identifier: A unique identifier of the user to be queried.
+        :type identifier: str
 
         :param db_table_class: the name of the table class
         :type db_table_class: str
 
-        :return: Returns the UserData object if found, else None.
-        :rtype: UserData or None
+        :return: Returns the User table object if found, else None.
+        :rtype: User Data table object or None
 
-        :precondition: `username` must be a valid user identifier.
-        :postcondition: If a user with the provided username exists in the database, returns the corresponding UserData object; otherwise, returns None.
+        :precondition: `identifier` must be a valid user identifier/column in the data table.
+        :postcondition: If a user with the provided username/email exists in the database, returns the corresponding User Data object; otherwise, returns None.
         """
         try:
             #a list of valid table names
@@ -504,10 +502,11 @@ class Database:
                 #find the table class object by the given string
                 table_name_obj = globals().get(db_table_class)
                 #retriving data by sqlalchemy's query and filter
-                retrieved_data = table_name_obj.query.filter_by(_username=username).first()
+                retrieved_data = table_name_obj.query.filter(or_(table_name_obj._username == identifier, table_name_obj._email == identifier)).first()
+                #filter_by takes kwargs, not positional arguments
                 #if user does not exist, return nothing
                 if retrieved_data is None:
-                    print(f"Invalid username entered: {username}")
+                    print(f"Invalid username/email entered: {identifier}")
                     return None
                 #user information object returned
                 return retrieved_data
@@ -606,13 +605,15 @@ class UserInfo(App.db.Model):
     _email : the unique email address of the user 
     _profile_photo : the url representation of the user's profile photo in email
     _registered_date : record of the date and time in UTC when user registered 
+    _google_id : identification for third party user(sign in via email)
     """
     _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
     _password =App.db.Column(App.db.String(30)) #password can be null for login with email
-    _email = App.db.Column(App.db.String(60), unique=True)
+    _email = App.db.Column(App.db.String(60), unique=True) #this will be kept nullable for now, if required later, this will be changed, along with the other tables
     _profile_photo = App.db.Column(App.db.String(255))
     #record the time the user account is created
     _registered_date = App.db.Column(App.db.DateTime, default=App.db.func.current_timestamp()) #still in UTC timezone
+    _google_id = App.db.Column(App.db.String(100)) 
 
     #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
     #uselist set to False meaning one-to-one relationship between the two table
@@ -749,7 +750,8 @@ if __name__=='__main__':
         #there is limitation and constraints in the Columns
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
-        #Database.populate_sample_date(100) #after testing, you can repeat the number, but preferrably not to do that
+        #after testing, you can repeat the number, but preferrably not to do that
+        Database.populate_sample_date(100)
 
         #this method returns a list represention of top-n largest mistyped letters
         #top_n_letters = Database.get_top_n_letters('user1', 26)
