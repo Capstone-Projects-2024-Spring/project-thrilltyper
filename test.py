@@ -90,6 +90,7 @@ class Test_Database():
 
     @pytest.fixture
     def sample_user_info(self):
+        #a string of date and time with a random 4 character as the randomly generated username to prevent fail/error when running pytest
         unique_suffix = datetime.now().strftime("%Y%m%d%H%M%S") + ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
         return{
             '_username': f'test_user_{unique_suffix}',
@@ -100,12 +101,12 @@ class Test_Database():
         }
     
     @pytest.fixture
-    #cleanup the previous user data before next test
+    #cleanup the previous user data before next test, this can prevent duplicate data in db
     def cleanup(request, sample_user_info):
         app = App()
         with app._app.app_context():
             yield
-            #Database.delete(sample_user_info['_username'])
+            Database.delete(sample_user_info['_username'])
 
     def test_insert(self, sample_user_info, cleanup):
         """
@@ -124,13 +125,36 @@ class Test_Database():
             assert inserted_user_info == retrieved_user_info
 
 
-    def test_update(self):
+    def test_update(self, sample_user_info, cleanup):
         """
         Test: That a user record is correctly updated in the database
         Input: A user’s name with or without other fields 
         Result: True if the user record is updated in the database
         """
-        pass
+        app = App()
+        with app._app.app_context():
+            #insert a sample user record
+            Database.insert(UserInfo, **sample_user_info)
+
+            #update the user record
+            updated_record = {
+                #randomly generates unique input for every column to prevent fail/error when encountering unique constraint
+                '_username': sample_user_info['_username'], #this must be the same as the sample_user_info
+                '_password': ''.join(random.choices(string.ascii_letters + string.digits, k=10)),
+                '_email': f'updated_email_{random.randint(100,999)}@example.com',
+                '_profile_photo': f'https://example.com/updated_profile_photo_{random.randint(100,999)}.jpg',
+                '_google_id': f'updated_google_id_{random.randint(100,999)}'
+            }
+
+            Database.update(sample_user_info['_username'], 'UserInfo', **updated_record)
+
+            #query the updated record obj, it is not a list so retrieved_record[xxx] is not referecing anything
+            retrieved_record = Database.query(sample_user_info['_username'], 'UserInfo')
+
+            assert retrieved_record._password == updated_record['_password']
+            assert retrieved_record._email == updated_record['_email']
+            assert retrieved_record._profile_photo == updated_record['_profile_photo']
+            assert retrieved_record._google_id == updated_record['_google_id']
 
     def test_query(self):
         """
