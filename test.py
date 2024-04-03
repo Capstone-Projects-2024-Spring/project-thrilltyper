@@ -192,6 +192,40 @@ class Test_Database():
             assert retrieved_record_after is None
             #check the return value of Database.delete, it is suppose to return true if delete succeed
             assert delete_record is True
+    
+    def test_get_top_n_letters(self, sample_user_info):
+        """
+        Test: That the method correctly retrieves the top-N letters stored in the database for a specific user
+        Input: A username andd the value for N
+        Result: True is the method returns the correct list of letters in the correrct order
+        """
+        app = App()
+        with app._app.app_context():
+            #first there should be a parent table/row for the UserLetter, UserLetter is a child of UserInfo table
+            Database.insert(UserInfo, **sample_user_info)
+
+            #initiate a row of UserLetter
+            user_letter_data = {
+                '_username': sample_user_info['_username'],
+                '_a': 5,
+                '_b': 10,
+                '_c': 3,
+                '_x': 20,
+                '_y': 8,
+                '_z': 50
+            }
+            #insertion to UserLetter table
+            Database.insert(UserLetter, **user_letter_data)
+
+            #call the test method
+            top_n_letters = Database.get_top_n_letters(sample_user_info['_username'], 5)
+
+            #make sure the correct number of letters is returned
+            assert len(top_n_letters) == 5
+
+            #the top_n_letters is a list since this method returns a list
+            expected_letters = ['z', 'x', 'b', 'y', 'a'] #c is not returned or included in the list since this is the top 5
+            assert top_n_letters == expected_letters
 
 
 #--------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
