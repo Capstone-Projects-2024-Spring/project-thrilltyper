@@ -1,7 +1,10 @@
 #test.py
 import pytest
 from app import App
-from app import Database
+from app import Database, UserInfo, UserData, UserLetter
+from datetime import datetime, timezone
+import random
+import string
 
 #Client that sends requests to endpoints of the application
 @pytest.fixture
@@ -66,6 +69,7 @@ def test_game_results():
     """
     pass
 
+#--------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 class Test_User_Data():
     def test_repr(self):
         """
@@ -74,14 +78,51 @@ class Test_User_Data():
         """
         pass
 
+class Test_User_Letter():
+    def test_repr(self):
+        """
+        Test: That a string presentation of a row's data is returned
+        Result: True if a string with a row's data is returned
+        """
+        pass
+
 class Test_Database():
-    def test_insert(self):
+
+    @pytest.fixture
+    def sample_user_info(self):
+        unique_suffix = datetime.now().strftime("%Y%m%d%H%M%S") + ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        return{
+            '_username': f'test_user_{unique_suffix}',
+            '_password': 'test_password',
+            '_email': f'test_user_{unique_suffix}@example.com',
+            '_profile_photo': 'https://example.com/test_user.jpg',
+            '_google_id': f'test_google_{unique_suffix}'
+        }
+    
+    @pytest.fixture
+    #cleanup the previous user data before next test
+    def cleanup(request, sample_user_info):
+        app = App()
+        with app._app.app_context():
+            yield
+            #Database.delete(sample_user_info['_username'])
+
+    def test_insert(self, sample_user_info, cleanup):
         """
         Test: That a new user record is correctly inserted into the database
         Input: User fields 
         Result: True if the user record is inserted into the database
         """
-        pass
+        app = App()
+        with app._app.app_context():
+            inserted_user_info = Database.insert(UserInfo, **sample_user_info)
+
+            retrieved_user_info = Database.query(sample_user_info['_username'], 'UserInfo')
+
+            assert inserted_user_info is not None
+            assert retrieved_user_info is not None
+            assert inserted_user_info == retrieved_user_info
+
 
     def test_update(self):
         """
@@ -106,7 +147,7 @@ class Test_Database():
         Result: True if the user record is deleted from the database
         """
         pass
-
+#--------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
 class Test_Game():
     '''
     Class for testing the game_session class
@@ -160,6 +201,7 @@ class Test_Game():
         Result: True if the player is removed and cannot be retrieved from the game session
         """
         pass
+#--------------------------------------------------------------------------------Player Tests-----------------------------------------------------------------------------
 
 class Test_Player():
     '''
