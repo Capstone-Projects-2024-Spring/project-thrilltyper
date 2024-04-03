@@ -376,42 +376,7 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
-    '''
-    #not functioning properly, will continue implemention if this feature is needed in later development
-    @staticmethod
-    def update_username(old_username: str, new_username: str):
-        """
-        Update the username in both tables in the parent-child relationship
 
-        :param old_username: the existing username in the database
-        :type old_username: str
-        :param new_username: the updating to username
-        :type new_username: str
-        """
-        try:
-            user_info_record = UserInfo.query.filter_by(_username=old_username).first()
-            if user_info_record:
-                user_info_record._username = new_username
-                App.db.session.commit()
-
-                user_data_record = UserData.query.filter_by(_username=old_username).first()
-                if user_data_record:
-                    user_data_record._username = new_username
-                    App.db.session.commit()
-
-                user_letter_record = UserLetter.query.filter_by(_username=old_username).first()
-                if user_letter_record:
-                    user_letter_record._username = new_username
-                    App.db.session.commit()
-                print(f"Username updated from '{old_username}' to '{new_username}' successfully")
-            else:
-                print(f"User '{old_username}' is not updated in the UserInfo table")
-        except Exception as e:
-            App.db.session.rollback()
-            print(f"Erorr in updating: {e}")
-        '''
-        
-    
     @staticmethod
     def update(username: str, db_table_name: str, **kwargs):
         """
@@ -738,13 +703,6 @@ class UserLetter(App.db.Model):
             return None
         return _username
     
-    #display the instance's attributes
-    def repr(self):
-        letters = [f"{chr(97+i)}={getattr(self, '_' + chr(97+i))}" for i in range(26)] #97 in Unicode = 'a'
-        letters_repr = ', '.join(letters)
-        return f"<username={self._username}, email={self._email}, {letters_repr}>"
-
-
 if __name__=='__main__':
     app = App()
 

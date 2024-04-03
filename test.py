@@ -126,15 +126,7 @@ class Test_User_Data():
             assert user_data._wins == random_user_data['_wins']
             assert user_data._losses == random_user_data['_losses']
         
-
-class Test_User_Letter():
-    def test_repr(self):
-        """
-        Test: That a string presentation of a row's data is returned
-        Result: True if a string with a row's data is returned
-        """
-        pass
-
+        
 class Test_Database():
 
     @pytest.fixture
