@@ -173,13 +173,27 @@ class Test_Database():
             assert retrieved_record._email == sample_user_info['_email']
             assert retrieved_record._password == sample_user_info['_password']
 
-    def test_delete(self):
+    def test_delete(self, sample_user_info, cleanup):
         """
         Test: That a user record is correctly deleted from the database
-        Input: A username 
+        Input: A username with the table name
         Result: True if the user record is deleted from the database
         """
-        pass
+        app = App()
+        with app._app.app_context():
+            Database.insert(UserInfo, **sample_user_info)
+            #query the data and check if insertion is successful before deleting
+            retrieved_record_before = Database.query(sample_user_info['_username'], 'UserInfo')
+            assert retrieved_record_before is not None
+
+            delete_record = Database.delete(sample_user_info['_username'])
+            #query data after deletion to ensure successful delete
+            retrieved_record_after = Database.query(sample_user_info['_username'], 'UserInfo')
+            assert retrieved_record_after is None
+            #check the return value of Database.delete, it is suppose to return true if delete succeed
+            assert delete_record is True
+
+
 #--------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
 class Test_Game():
     '''
