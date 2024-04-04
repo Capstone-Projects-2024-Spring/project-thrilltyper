@@ -234,15 +234,6 @@ class App:
         session.pop("user", None)
         return redirect("/")
 
-    @_app.route('/menu')
-    def menu():
-        """
-        Handles the requests made to the menu page with the game mode selection and options/preferences button
-        Postcondition: an integer from the range 0 to the number of game modes minus 1 will be selected and sent as part of the /game/<int:mode> request
-        :return : a Response object that redirects the user to a game session of the game mode they selected
-        """
-        return "Welcome to the menu!"
-    
     @_app.route('/game/<int:mode>')
     def game(mode:int):
         """
