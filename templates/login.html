@@ -8,6 +8,7 @@
     <title>Thrill Typer</title>
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/main.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/form.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/modal.css')}}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" hrel="stylesheet">
 </head>
 
@@ -27,7 +28,7 @@
 
                 <div class="login-ops form-ops">
                     <button type="submit" class="logIn">Login</button>
-                    <a href="{{url_for('signup')}}"><button class="signUp">Signup</button></a>
+                    <a class="signup-link" href="{{url_for('signup')}}"><button class="signUp">Signup</button></a>
                 </div>
             </form>
             <!--Google Login Redirection-->
@@ -60,5 +61,19 @@
             </a>
         </div>
     </div>
+    <script>
+        // Redirects signup-pae from login page
+        document.getElementsByClassName('signup-link')[0].addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent default link behavior
+            window.location.href = this.href; // Redirect to the signup page
+        });
+    </script>
+    {% if error %}
+    <script src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
+    <script>
+        modal.alert('{{ error | string }}');
+    </script>
+    {% endif %}
 </body>
+
 </html>

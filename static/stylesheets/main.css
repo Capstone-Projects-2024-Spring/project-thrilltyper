@@ -80,6 +80,10 @@ button {
     padding: 6px 12px;
 }
 
+#main nav a:hover {
+    color: yellow;
+}
+
 #main nav ul {
     display: flex;
     align-items: center;

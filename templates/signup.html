@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/form.css')}}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" hrel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../static/stylesheets/main.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/modal.css')}}">
 </head>
 
 <body>
@@ -38,6 +39,12 @@
             </form>
         </div>
     </div>
+    {% if error %}
+    <script src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
+    <script>
+        modal.alert('{{ error | string }}');
+    </script>
+    {% endif %}
 </body>
 
 </html>
