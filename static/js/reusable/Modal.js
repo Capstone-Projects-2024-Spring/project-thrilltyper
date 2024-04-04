@@ -4,7 +4,6 @@ var modal = {};
 // This is an IIFE, an immediately executing (anonymous) function.
 // It will adorn the public object with a couple of public methods.
 (function () {
-    console.log("ran modal")
     // create div for modal window and attach it to the <body> tag. 
     // The initial styling (set by "modalStyle" class rule in modal.css) 
     // makes the div initially invisible.

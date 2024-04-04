@@ -16,6 +16,7 @@
 
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/main.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/menu.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/typeInterface.css')}}">
     {% block head %} {% endblock %}
 </head>
 
@@ -29,6 +30,7 @@
     <script type="text/babel" src="{{url_for('static', filename='js/content/Profile.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Home.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Menu.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/PracticeMode.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
 
     <!-- Pure JS code -->
@@ -64,6 +66,7 @@
                 <div id="content">
                     {/* <Route path="/" exact component="" /> */}
                     <Route path="/menu" component={MenuComp} />
+                    <Route path="/practice" component={ThrillTyperGame}></Route>
                 </div>
             </ReactRouterDOM.HashRouter>
         );
