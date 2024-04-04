@@ -56,9 +56,9 @@ def test_continue_as_guest(client):
 def test_google_login(client):
     """
     Test: When users tries to log in through Google and is successful, the user should be redirected to the google callback page 
-    Result: True if the returned response indicates a redirection to the google callback page
+    Result: True if the returned response location indicates a redirection to the google callback page
     """
-    pass
+    assert "google-logged" in client.post("/google-signin").location
 
 def test_google_callback():
     """
