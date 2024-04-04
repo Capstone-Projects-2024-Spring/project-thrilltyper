@@ -1,0 +1,29 @@
+{
+  "name": "project-thrilltyper",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">",
+  "main": "Cosmetics.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Capstone-Projects-2024-Spring/project-thrilltyper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Capstone-Projects-2024-Spring/project-thrilltyper/issues"
+  },
+  "homepage": "https://github.com/Capstone-Projects-2024-Spring/project-thrilltyper#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jsdom": "^24.0.0"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/test.js"
+    ]
+  }
+}
