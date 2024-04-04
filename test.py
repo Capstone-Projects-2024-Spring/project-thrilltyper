@@ -34,12 +34,12 @@ def test_invalid_login(client):
     req = client.post("/authentication",data={"username":username,"password":password})
     assert "Authentication Error" in req.data.decode()
 
-def test_continue_as_guest():
+def test_continue_as_guest(client):
     """
-    Test: When users click continue as guest, the user should be redirected to the game page
-    Result: True if the returned response indicates a redirection to the menu page
+    Test: When users click the play tab, the user should be redirected to the game menu page
+    Result: True if request for the game menu page is successful
     """
-    pass
+    assert client.post("/#/menu").status_code==200
 
 def test_google_login():
     """
