@@ -31,8 +31,10 @@ def test_invalid_login(client):
     """
     username = "user1"
     password = "pswd3"
-    req = client.post("/authentication",data={"username":username,"password":password})
-    assert "Authentication Error" in req.data.decode()
+    req = client.post("/authentication",data={"username":username,"password":password}, follow_redirects=True)
+    
+    # Check if the error message containing "Invalid" is present in the rendered HTML
+    assert 'Invalid' in req.data.decode('utf-8')
 
 def test_continue_as_guest():
     """
