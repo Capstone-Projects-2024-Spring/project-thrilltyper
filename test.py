@@ -27,7 +27,7 @@ def test_registration(client):
 def test_invalid_login(client):
     """
     Test: When users enter invalid credentials and click log in, a message saying that either username or password was invalid should appear
-    Result: True if the invalid credentials cause a str message to be returned saying the username or password was invalid
+    Result: True if the invalid credentials cause a response that says there was an Authentication error
     """
     username = "user1"
     password = "pswd3"
@@ -35,6 +35,10 @@ def test_invalid_login(client):
     assert "Authentication Error" in response.data.decode()
 
 def test_valid_login(client):
+    """
+    Test: When users enter valid credentials that they registered with and click log in, they should be redirected to the menu 
+    Result: True if the redirect location is "/"
+    """
     username = "uname"
     password = "pswrd"
     client.post("/register",data={"username":username,"password":password})
@@ -49,7 +53,7 @@ def test_continue_as_guest(client):
     """
     assert client.post("/#/menu").status_code==200
 
-def test_google_login():
+def test_google_login(client):
     """
     Test: When users tries to log in through Google and is successful, the user should be redirected to the google callback page 
     Result: True if the returned response indicates a redirection to the google callback page
