@@ -31,8 +31,16 @@ def test_invalid_login(client):
     """
     username = "user1"
     password = "pswd3"
-    req = client.post("/authentication",data={"username":username,"password":password})
-    assert "Authentication Error" in req.data.decode()
+    response = client.post("/authentication",data={"username":username,"password":password})
+    assert "Authentication Error" in response.data.decode()
+
+def test_valid_login(client):
+    username = "uname"
+    password = "pswrd"
+    client.post("/register",data={"username":username,"password":password})
+    response = client.post("/authentication",data={"username":username,"password":password})
+    print(response.status_code)
+    assert "/" is response.location
 
 def test_continue_as_guest(client):
     """
