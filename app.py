@@ -144,7 +144,7 @@ class App:
             return redirect("/")
         except Exception as e:
             # Handle other OAuth errors gracefully
-            return "OAuth Error: {}".format(str(e))
+            return redirect("/login")
         
     @_app.route('/authentication', methods=['POST'])
     def authenticate():
