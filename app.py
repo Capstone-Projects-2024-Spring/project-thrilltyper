@@ -160,9 +160,7 @@ class App:
             user = Database.query(username, "UserInfo")
 
             # Performs validation 
-            if user is None:
-                raise ValueError(f"{username} does not exist")
-            elif user._password == password:
+            if user is not None and user._password == password:
                 # Gets avatar
                 playerObj = player(username, user._profile_photo)
                 # Stores the Player object in the session
@@ -174,7 +172,7 @@ class App:
                raise ValueError("Invalid username or password")
         except Exception as e:
             # Handles errors
-            error = f"Authentication Error: '{e}'. Provides the error information to our customer support if you believe it's a error"
+            error = f"{e}"
             session["error"] = error
             return redirect("login")
     

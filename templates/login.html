@@ -69,7 +69,7 @@
         });
     </script>
     {% if error %}
-    <script src="{{url_for('static', filename='js/Modal.js')}}"></script>
+    <script src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
     <script>
         modal.alert('{{ error | string }}');
     </script>

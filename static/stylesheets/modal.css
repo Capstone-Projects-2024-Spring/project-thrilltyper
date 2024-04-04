@@ -7,8 +7,8 @@
     max-height: 200px;
     overflow-y: auto; /* Enable vertical scroll if needed */
 
-    left: 25%;
-    width: 50%;
+    left: 35%;
+    width: 30%;
 
     padding: 20px;
     padding-top: 10px;
@@ -47,4 +47,8 @@
 
 .modalStyle INPUT {
     margin-left: 1ex;
+}
+
+.modalStyle p {
+    text-align: center;
 }
