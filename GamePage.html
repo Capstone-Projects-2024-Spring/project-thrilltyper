@@ -68,7 +68,22 @@
                 (the result is not showing) (fixed)
             #2
         */
-        const text = "The quick brown fox jumps over the lazy dog.";
+
+
+
+        // read database from file
+
+        const fs = require('fs');
+        const sentences = fs.readFileSync('easy_sentences.txt', 'utf8').split('\n');
+        const randomIndex = Math.floor(Math.random() * sentences.length);
+        const randomSentence = sentences[randomIndex];
+        const text = randomSentence.trim();
+
+
+
+
+
+        //const text = "The quick brown fox jumps over the lazy dog.";
         const words = text.split(" ");
 
         let currentCharIndex = 0;   //only increment when user has typed correct letter
