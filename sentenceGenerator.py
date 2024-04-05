@@ -1,17 +1,18 @@
-
 import random
 
-def get_random_sentence(filename):
-    with open(filename, 'r', encoding='utf-8') as file:
-        sentences = file.readlines()
-    random_sentence = random.choice(sentences).strip()
-    return random_sentence
+with open('easy_sentences.txt', 'r', encoding='latin-1') as file:
+    easy_sentences = file.readlines()
+easy_random_sentence = random.choice(easy_sentences).strip()
 
-# Get random sentences from each file
-easy_random_sentence = get_random_sentence('easy_sentences.txt')
-medium_random_sentence = get_random_sentence('medium_sentences.txt')
-hard_random_sentence = get_random_sentence('hard_sentences.txt')
+with open('medium_sentences.txt', 'r', encoding='latin-1') as file:
+    medium_sentences = file.readlines()
+medium_random_sentence = random.choice(medium_sentences).strip()
 
-print("Easy Sentence:", easy_random_sentence)
-print("Medium Sentence:", medium_random_sentence)
-print("Hard Sentence:", hard_random_sentence)
+with open('hard_sentences.txt', 'r', encoding='latin-1') as file:
+    hard_sentences = file.readlines()
+hard_random_sentence = random.choice(hard_sentences).strip()
+
+
+print(easy_random_sentence)
+print(medium_random_sentence)
+print(hard_random_sentence)
