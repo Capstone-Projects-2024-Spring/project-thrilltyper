@@ -189,31 +189,33 @@
         }
 
         function checkInput() {
-            var userInputText = document.getElementById("input-box").value;
-            var userInputLastChar = userInputText[userInputText.length-1];
-
+            var userInputText = document.getElementById("input-box").value.trim();
+            var userInputLastChar = userInputText[userInputText.length - 1];
+    
             //updates text color
             updateText();
             // Call displayhtml function to update WPM and accuracy
             displayhtml();
-
-            //idk what this is 
-            //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
-            if(userInputText.substring(0, userInputText.length-1) == words[currentWordIndex] && userInputLastChar == ' '){
+    
+            //if typed word matches with text word and last letter is not space, clear input box and add word to userInputCorrectText
+            if (userInputText === words[currentWordIndex] && userInputLastChar !== ' ') {
                 currentWordIndex++;
-                userInputCorrectText += userInputText;  //saves correct text
+                userInputCorrectText += userInputText + ' '; //saves correct text with space
                 document.getElementById("input-box").value = "";
             }
-
-            if(userInputLastChar == text[currentCharIndex]){ //works but logic is bad
-                currentCharIndex++;
+    
+            if (userInputLastChar === text[currentCharIndex]) {
                 correctCharsTyped++; // Increment correct characters typed
             }
             totalCharsTyped++; // Increment total characters
-
-
+    
+            // Move to next character only if it's within the text length
+            if (currentCharIndex < text.length) {
+                currentCharIndex++;
+            }
+    
             //submit input if last letter is typed
-            if(currentCharIndex >= text.length){
+            if (currentCharIndex >= text.length) {
                 submitInput();
             }
         }
