@@ -134,7 +134,6 @@ class App:
 
                 # Insert user info into the database if doesn't exists yet
                 if Database.query(token["userinfo"]["given_name"], "UserInfo") is None:
-                    print("Haha")
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
             else:
                 # Handle the case where access is denied (user cancelled the login)
@@ -143,7 +142,7 @@ class App:
             # Redirect to the desired page after successful authentication
             return redirect("/")
         except Exception as e:
-            # Handle other OAuth errors gracefully
+            # For if user cancels the login
             return redirect("/login")
         
     @_app.route('/authentication', methods=['POST'])
