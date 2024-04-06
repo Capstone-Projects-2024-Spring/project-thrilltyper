@@ -135,7 +135,6 @@ class App:
 
                 # Insert user info into the database if doesn't exists yet
                 if Database.query(token["userinfo"]["given_name"], "UserInfo") is None:
-                    print("Haha")
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
             else:
                 # Handle the case where access is denied (user cancelled the login)
@@ -144,8 +143,8 @@ class App:
             # Redirect to the desired page after successful authentication
             return redirect("/")
         except Exception as e:
-            # Handle other OAuth errors gracefully
-            return "OAuth Error: {}".format(str(e))
+            # For if user cancels the login
+            return redirect("/login")
         
     @_app.route('/authentication', methods=['POST'])
     def authenticate():
@@ -237,15 +236,6 @@ class App:
         session.pop("user", None)
         return redirect("/")
 
-    @_app.route('/menu')
-    def menu():
-        """
-        Handles the requests made to the menu page with the game mode selection and options/preferences button
-        Postcondition: an integer from the range 0 to the number of game modes minus 1 will be selected and sent as part of the /game/<int:mode> request
-        :return : a Response object that redirects the user to a game session of the game mode they selected
-        """
-        return "Welcome to the menu!"
-    
     @_app.route('/game/<int:mode>')
     def game(mode:int):
         """

@@ -27,28 +27,38 @@ def test_registration(client):
 def test_invalid_login(client):
     """
     Test: When users enter invalid credentials and click log in, a message saying that either username or password was invalid should appear
-    Result: True if the invalid credentials cause a str message to be returned saying the username or password was invalid
+    Result: True if the invalid credentials cause a response that says there was an Authentication error
     """
     username = "user1"
     password = "pswd3"
-    req = client.post("/authentication",data={"username":username,"password":password}, follow_redirects=True)
-    
-    # Check if the error message containing "Invalid" is present in the rendered HTML
-    assert 'Invalid' in req.data.decode('utf-8')
+    response = client.post("/authentication",data={"username":username,"password":password})
+    assert "Authentication Error" in response.data.decode()
 
-def test_continue_as_guest():
+def test_valid_login(client):
     """
-    Test: When users click continue as guest, the user should be redirected to the game page
-    Result: True if the returned response indicates a redirection to the menu page
+    Test: When users enter valid credentials that they registered with and click log in, they should be redirected to the menu 
+    Result: True if the redirect location is "/"
     """
-    pass
+    username = "uname"
+    password = "pswrd"
+    client.post("/register",data={"username":username,"password":password})
+    response = client.post("/authentication",data={"username":username,"password":password})
+    print(response.status_code)
+    assert "/" is response.location
 
-def test_google_login():
+def test_continue_as_guest(client):
+    """
+    Test: When users click the play tab, the user should be redirected to the game menu page
+    Result: True if request for the game menu page is successful
+    """
+    assert client.post("/#/menu").status_code==200
+
+def test_google_login(client):
     """
     Test: When users tries to log in through Google and is successful, the user should be redirected to the google callback page 
-    Result: True if the returned response indicates a redirection to the google callback page
+    Result: True if the returned response location indicates a redirection to the google callback page
     """
-    pass
+    assert "google-logged" in client.post("/google-signin").location
 
 def test_google_callback():
     """
