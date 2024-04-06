@@ -1,8 +1,13 @@
+from flask import Flask, render_template
 import random
+
+
 
 with open('easy_sentences.txt', 'r', encoding='latin-1') as file:
     easy_sentences = file.readlines()
 easy_random_sentence = random.choice(easy_sentences).strip()
+return render_template('GamePage.html', easy_random_sentence=easy_random_sentence)
+
 
 with open('medium_sentences.txt', 'r', encoding='latin-1') as file:
     medium_sentences = file.readlines()
