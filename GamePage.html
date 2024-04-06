@@ -68,15 +68,6 @@
                 (the result is not showing) (fixed)
             #2
         */
-
-
-        //const text= `{{ easy_random_sentence }}`;;
-
-
-
-   
-
-
         const text = "The quick brown fox jumps over the lazy dog.";
         const words = text.split(" ");
 
@@ -200,30 +191,32 @@
         function checkInput() {
             var userInputText = document.getElementById("input-box").value;
             var userInputLastChar = userInputText[userInputText.length-1];
-        
+
             //updates text color
             updateText();
             // Call displayhtml function to update WPM and accuracy
             displayhtml();
-        
-            if (userInputText.trim() === words[currentWordIndex]) { // Check if the whole word has been typed
+
+            //idk what this is 
+            //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
+            if(userInputText.substring(0, userInputText.length-1) == words[currentWordIndex] && userInputLastChar == ' '){
                 currentWordIndex++;
-                userInputCorrectText += userInputText + " "; // Add space after completing the word
-                document.getElementById("input-box").value = ""; // Clear input box
+                userInputCorrectText += userInputText;  //saves correct text
+                document.getElementById("input-box").value = "";
             }
-        
-            if(userInputLastChar == text[currentCharIndex]){ // Check if the last character typed is correct
+
+            if(userInputLastChar == text[currentCharIndex]){ //works but logic is bad
                 currentCharIndex++;
                 correctCharsTyped++; // Increment correct characters typed
             }
             totalCharsTyped++; // Increment total characters
-        
-            // Submit input if all characters have been typed
+
+
+            //submit input if last letter is typed
             if(currentCharIndex >= text.length){
                 submitInput();
             }
         }
-        
 
         function submitInput() {
             clearInterval(timerInterval);
