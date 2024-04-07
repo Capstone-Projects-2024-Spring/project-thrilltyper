@@ -4,11 +4,11 @@ body {
 
     /* background-color: black; */
     /* background-image:url("../pics/stars.png"); */
-    /* background-repeat: no-repeat;   prevents background image from repeat */
+    background-repeat: no-repeat; /*  prevents background image from repeat */
     /* background-size: cover;  make the image fill the browser */
     font-size: 1rem;
     line-height:1.5rem;
-    background-image: url("../pics/stars.png"), linear-gradient(0deg, #084f8e, #083466 80%);
+    background-image: url("../pics/stars.png"), linear-gradient(0deg, #084f8e, #083466 80%); /* do not change this */
     /* overflow: hidden; */
 }
 
@@ -54,12 +54,11 @@ body {
     padding: 5px 5px;
     width: 70px;
     height: 25px;
-    vertical-align: center;
     text-align: center;
     font-weight: bold;
 
     cursor: pointer;
-    transition-duration: 0.5; /* add transition effect */
+    transition-duration: 0.5s;
 }
 
 #signUpButton{
@@ -86,17 +85,88 @@ body {
 }
 
 #content {
-    padding: 1rem;
-    margin-top: 40rem;
-    margin-bottom: 2.5rem;
-    color: black;
+    /* reserved for react inject */
 }
 
 #moon {
     border-radius: 100%;
     position: absolute;
     top: 30%;
-    left: 12%;
+    left: 18%;
     box-shadow: 0 0 80px rgba(255, 255, 255, 0.6);
     width: 20%;
+}
+
+#homePageTitle {
+    color: white;
+    top: 40%;
+    right: 25%;
+    position: absolute;
+    font-size: 50px;
+    /* width: 35%; */
+}
+
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 40px;
+    background-color: white;
+    animation: blink 1s step-start infinite;
+  }
+
+/* Define the blinking cursor animation */
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+#homePageButton{
+    display:flex;
+    font-size: 20px;
+    border-radius: 5%/20%;     /* little curve around corner */
+    padding: 5px 5px;
+    width: 150px;
+    height: 40px;
+    text-align: center;
+    background-color: white;
+    color: #084F8E;
+
+    justify-content: center;    /* horizontal center */
+    align-items: center;        /* vertical center */
+    text-decoration: none;
+
+    cursor: pointer;
+    transition-duration: 0.25s;
+}
+
+#homePageButton:hover{
+    color: white;
+    background-color: #1876d4;
+    transition-duration: 0.25s;
+}
+
+#homePageButton span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+  }
+  
+#homePageButton span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.25s;
+}
+
+#homePageButton:hover span {
+    padding-right: 15px;
+}
+
+#homePageButton:hover span:after {
+    opacity: 1;
+    right: 0;
 }
