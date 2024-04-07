@@ -8,7 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-image: url('images/ironman.jpg');
+            background-image: url('ironman.jpg');
             background-size: cover; /* Adjust the background size as needed */
             background-repeat: no-repeat; 
 
@@ -189,23 +189,31 @@
         }
 
         function checkInput() {
-            var userInputText = document.getElementById("input-box").value.trim();
-            var userInputLastChar = userInputText[userInputText.length - 1];
-        
+            var userInputText = document.getElementById("input-box").value;
+            var userInputLastChar = userInputText[userInputText.length-1];
+
             //updates text color
             updateText();
             // Call displayhtml function to update WPM and accuracy
             displayhtml();
-        
-            // Check if the typed word matches with the text word and last letter is not a space
-            if (userInputText === words[currentWordIndex] && userInputLastChar !== ' ') {
+
+            //idk what this is 
+            //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
+            if(userInputText.substring(0, userInputText.length-1) == words[currentWordIndex] && userInputLastChar == ' '){
                 currentWordIndex++;
-                userInputCorrectText += userInputText + ' '; // Saves correct text with space
+                userInputCorrectText += userInputText;  //saves correct text
                 document.getElementById("input-box").value = "";
             }
-          
-            // Submit input if last letter is typed
-            if (userInputCorrectText.length > text.length) {
+
+            if(userInputLastChar == text[currentCharIndex]){ //works but logic is bad
+                currentCharIndex++;
+                correctCharsTyped++; // Increment correct characters typed
+            }
+            totalCharsTyped++; // Increment total characters
+
+
+            //submit input if last letter is typed
+            if(currentCharIndex >= text.length){
                 submitInput();
             }
         }
