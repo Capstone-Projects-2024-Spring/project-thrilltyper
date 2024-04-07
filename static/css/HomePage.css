@@ -70,7 +70,11 @@ body {
 }
 
 #signUpButton:hover {
-    background-color: #09396a;
+    /* background-color: #09396a; */
+    color: white;
+    background-color: #2782de;
+    box-shadow: 0 0 40px rgba(11, 111, 194, 0.6);
+    border-color: #2782de;
 }
 
 #logInButton{
@@ -81,7 +85,11 @@ body {
 }
 
 #logInButton:hover{
-    background-color: #9fc6eb;
+    /* background-color: #9fc6eb; */
+    color: white;
+    background-color: #2782de;
+    box-shadow: 0 0 40px rgba(11, 111, 194, 0.6);
+    border-color: #2782de;
 }
 
 #content {
@@ -143,6 +151,7 @@ body {
 #homePageButton:hover{
     color: white;
     background-color: #1876d4;
+    box-shadow: 0 0 40px rgba(11, 111, 194, 0.6);
     transition-duration: 0.25s;
 }
 
