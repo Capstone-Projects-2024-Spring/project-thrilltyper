@@ -157,6 +157,8 @@
                     document.getElementById("robot-text-display").innerHTML = robotTypedText;
                 } else {
                     clearInterval(robotInterval); // Stop typing when the text is completed
+                    document.getElementById("input-box").disabled = true;
+                    robotInput();
                 }
             }, 1000 / robotSpeed);
         }
@@ -249,6 +251,18 @@
             document.getElementById("input-box").value = "";
             document.getElementById("input-box").disabled = true;
         }
+
+
+        function robotInput() {
+            clearInterval(timerInterval); // Stop the timer
+            const endTime = new Date().getTime();
+            const elapsedTime = (endTime - startTime) / 1000;
+            const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
+            document.getElementById("result").innerHTML = `Sadly, Robot finished the game first in ${elapsedTime.toFixed(2)} seconds. Robot speed: ${wordsPerMinute} WPM.`;
+            document.getElementById("input-box").value = "";
+            document.getElementById("input-box").disabled = true;
+        }
+        
     </script>
 </body>
 </html>
