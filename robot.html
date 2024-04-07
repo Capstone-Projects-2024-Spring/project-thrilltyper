@@ -143,6 +143,25 @@
         }
 
 
+
+
+        function robotType() {
+            // Simulate robot typing with random errors
+            const robotSpeed = 10; // wpm adjustment
+            let robotTypedText = '';
+            let currentIndex = 0;
+            const robotInterval = setInterval(() => {
+                if (currentIndex < text.length) {
+                    robotTypedText += text[currentIndex]; // Simulate typing the next character
+                    currentIndex++;
+                    document.getElementById("robot-text-display").innerHTML = robotTypedText;
+                } else {
+                    clearInterval(robotInterval); // Stop typing when the text is completed
+                }
+            }, 1000 / robotSpeed);
+        }
+
+
         function startTimer() {
             currentWordIndex = 0;   //initializes value for play again
             currentCharIndex = 0;
@@ -156,6 +175,7 @@
             
             clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 10);
+            robotType();
         }
 
         function updateTimer() {
