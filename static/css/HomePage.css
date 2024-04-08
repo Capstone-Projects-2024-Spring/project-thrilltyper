@@ -1,11 +1,7 @@
 body { 
     margin:0;                   /* no white border around browser window */
     font-family: sans-serif;    /* no tails on the font like Times New Roman */
-
-    /* background-color: black; */
-    /* background-image:url("../pics/stars.png"); */
     background-repeat: no-repeat; /*  prevents background image from repeat */
-    /* background-size: cover;  make the image fill the browser */
     font-size: 1rem;
     line-height:1.5rem;
     background-image: url("../pics/stars.png"), linear-gradient(0deg, #084f8e, #083466 80%); /* do not change this */
@@ -85,11 +81,10 @@ body {
 }
 
 #logInButton:hover{
-    /* background-color: #9fc6eb; */
     color: white;
-    background-color: #2782de;
-    box-shadow: 0 0 40px rgba(11, 111, 194, 0.6);
-    border-color: #2782de;
+    background-color: #10bb54; /* green color ? */
+    box-shadow: 0 0 40px rgba(25, 231, 125, 0.699);
+    border-color: #10bb54;
 }
 
 #content {
