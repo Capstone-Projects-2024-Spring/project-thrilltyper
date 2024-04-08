@@ -56,6 +56,10 @@
         <div id="result"></div>
         <div id="stats"></div>
         <button onclick="startTimer()">Start</button>
+        <svg id="progressCircle" width="100" height="100">
+            <circle cx="50" cy="50" r="52" fill="none" stroke="#ccc" stroke-width="4"></circle>
+        </svg>
+        <div id="progressText"></div>
     </div>
     
     <script>
@@ -216,6 +220,8 @@
             if(currentCharIndex >= text.length){
                 submitInput();
             }
+            updateTypingProgress(currentCharIndex, text.length); // Update progress
+
         }
 
 
@@ -244,7 +250,7 @@
 
 
 
-          
+
         function submitInput() {
             clearInterval(timerInterval);
             const endTime = new Date().getTime();
