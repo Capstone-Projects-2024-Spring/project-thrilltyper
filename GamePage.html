@@ -218,6 +218,33 @@
             }
         }
 
+
+
+        function updateProgress(percentage) {
+            const progressText = document.getElementById("progressText");
+            const progressCircle = document.getElementById("progressCircle");
+    
+            const circumference = 2 * Math.PI * 52; // Circle circumference
+            progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+            progressCircle.style.strokeDashoffset =
+              circumference - (percentage / 100) * circumference;
+    
+            progressText.textContent = `${Math.round(percentage)}%`;
+          }
+    
+          // This function is expected to be called from another file
+          function updateTypingProgress(currentLetters, totalLetters) {
+            const percentage = (currentLetters / totalLetters) * 100;
+            updateProgress(percentage);
+          }
+    
+          // Example external call
+          // Assume this is how the other file updates the progress
+          // updateTypingProgress(50, 100); // You can test this by manually calling it from the console or another script
+
+
+
+          
         function submitInput() {
             clearInterval(timerInterval);
             const endTime = new Date().getTime();
