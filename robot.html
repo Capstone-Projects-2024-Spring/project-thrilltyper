@@ -52,6 +52,7 @@
     <div id="game-container">
         <h1>Thrill Typer Game</h1>
         <div id="text-display"></div>
+        <div id="robot-text-display"></div>
         <input type="text" id="input-box" oninput="checkInput()" disabled>
         <div id="result"></div>
         <div id="stats"></div>
@@ -243,14 +244,9 @@
                 submitInput();
 
             }
-
             updateTypingProgress(currentCharIndex, text.length); // Update progress
 
         }
-
-
-
-
         function updateProgress(percentage) {
             const progressText = document.getElementById("progressText");
             const progressCircle = document.getElementById("progressCircle");
@@ -272,6 +268,7 @@
           // Example external call
           // Assume this is how the other file updates the progress
           // updateTypingProgress(50, 100); // You can test this by manually calling it from the console or another script
+
 
         function submitInput() {
             clearInterval(timerInterval);
