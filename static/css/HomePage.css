@@ -9,7 +9,7 @@ body {
     font-size: 1rem;
     line-height:1.5rem;
     background-image: url("../pics/stars.png"), linear-gradient(0deg, #084f8e, #083466 80%); /* do not change this */
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 #navBar {  
@@ -178,4 +178,31 @@ body {
 #homePageButton:hover span:after {
     opacity: 1;
     right: 0;
+}
+
+#clouds1 {
+    bottom: 30px;
+    animation-timing-function: linear;
+    background: url(../pics/clouds1.png);
+  }
+  
+#clouds2 {
+    bottom:0px;
+    background: url(../pics/clouds2.png);
+    border-bottom: 10px solid white;
+}
+  
+#clouds3 {
+    bottom: 60px;
+    background-position-x: -140px;
+    background: url(../pics/clouds3.png);
+}
+  
+.clouds {
+    bottom:0;
+    display:flex;
+    position: fixed;
+    width: 100%;
+    height: 120px;
+    left: 0;
 }
