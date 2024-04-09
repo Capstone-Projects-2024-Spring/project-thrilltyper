@@ -1,5 +1,18 @@
 function ThrillTyperGame() {
-    const text = "The quick brown fox jumps over the lazy dog.";
+    let text = "The quick brown fox jumps over the lazy dog.";
+    fetch('/generate_text/?difficulty=easy&form=words&amount=200')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(txt => {
+            text=txt;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
     const words = text.split(" ");
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
