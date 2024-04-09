@@ -235,7 +235,19 @@ class App:
         # Pop out the user session
         session.pop("user", None)
         return redirect("/")
-    @_app.route("/generate_text",methods=["GET"])
+    
+    @_app.route("/generate_text/",methods=["GET"])
+    def generate_text():
+        """
+        Handles request from the games to generate text
+        :param difficulty
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'words_list'
+        Sends back text for the requestor to use
+        """
+        form = request.args.get("form")+"_list"
+        f = open(request.args.get("difficulty")+"_"+form+".txt",'r')
+        return f.readlines()
+
     @_app.route("/game/<int:mode>")
     def game(mode:int):
         """
