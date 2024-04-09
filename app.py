@@ -11,6 +11,7 @@ from sqlalchemy.orm import validates #for validation of data in tables
 from sqlalchemy import Column, or_ #used for reference to tables" column name
 from player import player
 import string
+from text_generator import Text_Generator
 
 #temporary imports, which will be deleted later
 import random
@@ -21,6 +22,7 @@ class App:
     This will serve as the Flask backend of the application which will contain the logic for each of the routes.
     _app : Flask application which creates and controls the url routes
     _db : database connection which allows for interaction with the SQL database
+    tg : Text_Generator object responsible for generating text for generate_text endpoint
     """
     _app = Flask(__name__)
     # Use cors to faciliates api requests/responses time
@@ -28,6 +30,7 @@ class App:
     CORS(_app)
     _app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ThrillTyper.db"
     db = SQLAlchemy(_app)
+    tg = Text_Generator()
 
     # Explicitly load env
     load_dotenv()
@@ -244,12 +247,12 @@ class App:
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
         Sends back text for the requestor to use
         """
-        f = None
+        file = None
         try:
-            f=open(request.args.get("difficulty")+"_"+request.args.get("form")+".txt",'r')
+            file=open(request.args.get("difficulty")+"_"+request.args.get("form")+".txt",'r')
         except:
             return "Invalid format"
-        return f.readlines()
+        return Game_Session.getTxtList(file)
 
     @_app.route("/game/<int:mode>")
     def game(mode:int):
