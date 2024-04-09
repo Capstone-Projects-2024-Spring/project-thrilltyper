@@ -65,26 +65,30 @@ class Text_Generator:
             i+=1
         return score
     
-    def is_direct_vertical(self,curr_word_ind, nxt_word_ind, is_left):
+    def is_direct_vertical(self,curr_char_keyboard_pos, nxt_char_keyboard_pos, is_left):
         """
-
+        Determines whether keys are directly vertically above or below each other
+        @precondition : the characters are on the same half (left or right) of the keyboard
+        :param curr_char_keyboard_pos : index of the current character in the representation of the left half of the keyboard if is_left or right_side otherwise
+        :param nxt_char_keyboard_pos : index of the next character in the representation of the left half of the keyboard if is_left or right_side otherwise
+        :param is_left : boolean that indicates whether the char belongs to 
         """
-        if (curr_word_ind!=-1 and nxt_word_ind!=-1):
+        if (curr_char_keyboard_pos!=-1 and nxt_char_keyboard_pos!=-1):
             #standardize the rows
             row2_start = self.right_row2_start
             row3_start = self.right_row3_start
             if is_left:
                 row2_start = self.left_row2_start
                 row3_start = self.left_row3_start
-            if curr_word_ind>row3_start:
-                curr_word_ind-=row3_start
-            elif curr_word_ind>row2_start:
-                curr_word_ind-=row2_start
-            if nxt_word_ind>row3_start:
-                nxt_word_ind-=row3_start
-            elif nxt_word_ind>row2_start:
-                nxt_word_ind-=row2_start
-            return True if abs(curr_word_ind-nxt_word_ind)<=2 else False
+            if curr_char_keyboard_pos>row3_start:
+                curr_char_keyboard_pos-=row3_start
+            elif curr_char_keyboard_pos>row2_start:
+                curr_char_keyboard_pos-=row2_start
+            if nxt_char_keyboard_pos>row3_start:
+                nxt_char_keyboard_pos-=row3_start
+            elif nxt_char_keyboard_pos>row2_start:
+                nxt_char_keyboard_pos-=row2_start
+            return True if abs(curr_char_keyboard_pos-nxt_char_keyboard_pos)<=2 else False
         else:
             return False
 
