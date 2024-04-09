@@ -14,12 +14,17 @@ class Text_Generator:
     def getTxtList(self,file) -> list[str]:
         """
         Reads from wordList.txt to create an array of the words in it
-        @return wordList : list of words contained in wordList.txt
+        :return wordList : list of words contained in wordList.txt
         """
         txtListFile = open(file,"r")
         return txtListFile.read().split('\n')
 
-    def score_word_typing_difficulty(word):
+    def score_word_typing_difficulty(word)->int:
+        """
+        Scores words according to their typing difficulty
+        :param word
+        : return score
+        """
         score = 0
         i = 0
         side_switches = 0
