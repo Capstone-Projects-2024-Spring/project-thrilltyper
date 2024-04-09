@@ -79,11 +79,10 @@ body {
 }
 
 #logInButton:hover{
-    /* background-color: #9fc6eb; */
     color: white;
-    background-color: #2782de;
-    box-shadow: 0 0 40px rgba(11, 111, 194, 0.6);
-    border-color: #2782de;
+    background-color: #10bb54; /* green color ? */
+    box-shadow: 0 0 20px rgba(25, 231, 125, 0.699);
+    border-color: #10bb54;
 }
 
 #content {
@@ -93,10 +92,31 @@ body {
 
 #modeSelectPageTitle{
     color:#084F8E;
-    font-size: 36px;;
+    font-size: 34px;
 }
 
 .divider{
-    width:75%;
+    width:60%;
     margin-top: 30px;
 }
+
+.modeBox{
+    /* border-color:#2782de; */
+    border: 1.5px solid #2782de;
+    width: 200px;
+    height: 100px;
+    /* display: flex; */
+    border-radius: 10%/20%;     /* little curve around corner */
+}
+
+.modeBox img{
+    width: 50px;
+    height: 50px;
+    margin-top: 10px;
+}
+
+.modeBox h4{
+    margin-top: 0px;
+    color: #084F8E;
+}
+
