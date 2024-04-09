@@ -1,3 +1,4 @@
+from random import randint
 class Text_Generator:
     """
     Responsible for generating text for a game to use and also separating words into different difficulties (the latter is done outside of run time)
@@ -123,8 +124,23 @@ class Text_Generator:
         with open("hard_words.txt","w") as hard_words:
             hard_words.write(hard)
 
-    def generate_text():
+    def generate_text(difficulty:str,form:str,amount:int):
         """
         Generates the text that shall be typed by users for a game
         """
-        pass
+        file = None
+        try:
+            print(f"{difficulty}_{form}.txt")
+            with open(f"{difficulty}_{form}.txt",'r') as file:
+                otpt = ""
+                txt_lst=file.readlines()
+                n = len(txt_lst)
+                amount = int(amount)
+                for i in range(amount):
+                    rand_ind = randint(0,n-1)
+                    otpt+=txt_lst.pop(rand_ind).replace('\n',' ')
+                    n-=1
+                return otpt
+        except Exception as e:
+            print(e)
+            return "Invalid arguments or missing arguments."
