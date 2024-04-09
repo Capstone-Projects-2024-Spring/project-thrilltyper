@@ -91,6 +91,37 @@ class Text_Generator:
             return True if abs(curr_char_keyboard_pos-nxt_char_keyboard_pos)<=2 else False
         else:
             return False
+    def sort_words_by_difficulty(self,word_lst:list[str]):
+        """
+        Uses the scoring function to score each of the words in the given word list and then split them off to different files based on their difficulty
+        :param word_lst
+        """
+        easy = ""
+        easy_count=0
+        medium = ""
+        med_count=0
+        hard = ""
+        hard_count=0
+        for word in word_lst:
+            score = self.score_word_typing_difficulty(word)
+            if score<1.25:
+                easy+=word+'\n'
+                easy_count+=1
+            elif score<1.75:
+                medium+=word+'\n'
+                med_count+=1
+            else:
+                hard+=word+'\n'
+                hard_count+=1
+        print(easy_count)
+        print(med_count)
+        print(hard_count)
+        with open("easy_words.txt","w") as easy_words:
+            easy_words.write(easy)
+        with open("medium_words.txt","w") as medium_words:
+            medium_words.write(medium)
+        with open("hard_words.txt","w") as hard_words:
+            hard_words.write(hard)
 
     def generate_text():
         """
