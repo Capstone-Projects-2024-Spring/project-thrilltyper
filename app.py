@@ -241,11 +241,14 @@ class App:
         """
         Handles request from the games to generate text
         :param difficulty
-        :param form : Specifies the form of text generated. Values: 'sentences' or 'words_list'
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
         Sends back text for the requestor to use
         """
-        form = request.args.get("form")+"_list"
-        f = open(request.args.get("difficulty")+"_"+form+".txt",'r')
+        f = None
+        try:
+            f=open(request.args.get("difficulty")+"_"+request.args.get("form")+".txt",'r')
+        except:
+            return "Invalid format"
         return f.readlines()
 
     @_app.route("/game/<int:mode>")
