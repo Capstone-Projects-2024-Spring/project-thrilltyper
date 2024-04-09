@@ -26,20 +26,6 @@ class Game_Session():
         :type scores: dict, optional
         """
         pass
-
-    def getTxtList(self,file) -> list[str]:
-        """
-        Reads from wordList.txt to create an array of the words in it
-        @return wordList : list of words contained in wordList.txt
-        """
-        txtListFile = open(file,"r")
-        return txtListFile.read().split('\n')
-
-    def generate_text():
-        """
-        Generates the text that shall be typed by users for a game
-        """
-        pass
     
     def start_race(self):
         """
