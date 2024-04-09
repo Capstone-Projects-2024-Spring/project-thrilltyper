@@ -19,7 +19,7 @@ class Text_Generator:
         txtListFile = open(file,"r")
         return txtListFile.read().split('\n')
 
-    def score_word_typing_difficulty(word)->int:
+    def score_word_typing_difficulty(self,word)->int:
         """
         Scores words according to their typing difficulty
         :param word
@@ -32,38 +32,61 @@ class Text_Generator:
             temp = 0
             has_next_char = i+1<len(word)
             #checking edge chars
-            if word[i] in pinkie_chars:
+            if word[i] in self.pinkie_chars:
                 temp=0.5
-                if has_next_char and word[i+1] in pinkie_chars:
+                if has_next_char and word[i+1] in self.pinkie_chars:
                     temp*=2.0
                     i+=1
                 score+=temp
-            elif word[i] in ring_fing_chars:
+            elif word[i] in self.ring_fing_chars:
                 temp=.25
-                if has_next_char and word[i+1] in ring_fing_chars:
+                if has_next_char and word[i+1] in self.ring_fing_chars:
                     temp*=3.0
                     i+=1
                 score+=temp
             #checking direct verticals and consecutive side switches
             has_next_char=i+1<len(word)
             if has_next_char:
-                curr_word_left_ind = left_side.find(word[i])
-                next_word_left_ind = left_side.find(word[i+1])
-                curr_word_right_ind = right_side.find(word[i])
-                next_word_right_ind = right_side.find(word[i+1])
+                curr_word_left_ind = self.left_side.find(word[i])
+                next_word_left_ind = self.left_side.find(word[i+1])
+                curr_word_right_ind = self.right_side.find(word[i])
+                next_word_right_ind = self.right_side.find(word[i+1])
                 if (curr_word_left_ind==-1 and next_word_left_ind!=-1) or (curr_word_left_ind!=-1 and next_word_left_ind==-1):
                     side_switches+=1
                 else:
                     if side_switches>5:
                         score+=(side_switches-5)*0.25
                     side_switches=0
-                    if is_direct_vertical(curr_word_left_ind,next_word_left_ind, True):
+                    if self.is_direct_vertical(curr_word_left_ind,next_word_left_ind, True):
                         score+=0.25
-                    elif is_direct_vertical(curr_word_right_ind,next_word_right_ind, False):
+                    elif self.is_direct_vertical(curr_word_right_ind,next_word_right_ind, False):
                         score+=0.25
             #ensures extra increment is not done after the last while loop
             i+=1
         return score
+    
+    def is_direct_vertical(self,curr_word_ind, nxt_word_ind, is_left):
+        """
+
+        """
+        if (curr_word_ind!=-1 and nxt_word_ind!=-1):
+            #standardize the rows
+            row2_start = self.right_row2_start
+            row3_start = self.right_row3_start
+            if is_left:
+                row2_start = self.left_row2_start
+                row3_start = self.left_row3_start
+            if curr_word_ind>row3_start:
+                curr_word_ind-=row3_start
+            elif curr_word_ind>row2_start:
+                curr_word_ind-=row2_start
+            if nxt_word_ind>row3_start:
+                nxt_word_ind-=row3_start
+            elif nxt_word_ind>row2_start:
+                nxt_word_ind-=row2_start
+            return True if abs(curr_word_ind-nxt_word_ind)<=2 else False
+        else:
+            return False
 
     def generate_text():
         """
