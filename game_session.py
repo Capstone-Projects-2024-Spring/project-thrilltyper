@@ -27,13 +27,13 @@ class Game_Session():
         """
         pass
 
-    def getWordList(self) -> list[str]:
+    def getTxtList(self,file) -> list[str]:
         """
         Reads from wordList.txt to create an array of the words in it
         @return wordList : list of words contained in wordList.txt
         """
-        wordListFile = open("wordList.txt","r")
-        return wordListFile.read().split('\n')
+        txtListFile = open(file,"r")
+        return txtListFile.read().split('\n')
 
     def generate_text():
         """
