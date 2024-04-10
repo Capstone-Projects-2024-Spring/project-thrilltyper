@@ -1,5 +1,5 @@
 function ThrillTyperGame() {
-    let text = "The quick brown fox jumps over the lazy dog.";
+    let text = "Click start button to start!";
     let words = text.split(" ");
 
 
