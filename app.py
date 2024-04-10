@@ -246,7 +246,7 @@ class App:
         Sends back text for the requestor to use
         """
         return Text_Generator.generate_text(request.args.get("difficulty"),request.args.get("form"),request.args.get("amount"))
-
+   
     @_app.route("/game/<int:mode>")
     def game(mode:int):
         """
