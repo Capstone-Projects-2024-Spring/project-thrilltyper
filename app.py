@@ -330,7 +330,7 @@ class Database:
                     "_username": f"user{i}",
                     "_password": f"password{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_profile_photo": f"https://example.com/user{i}.jpg",
+                    "_profile_photo":  f'./static/pics/anonymous.png',
                     "_google_id": sample_google_id
                 }
 
