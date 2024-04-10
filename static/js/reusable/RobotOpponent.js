@@ -77,7 +77,7 @@ function RobotOpponent() {
 
     function robotType() {
         // Simulate robot typing with random errors
-        const robotSpeed = 5; // wpm adjustment
+        const robotSpeed = 10; // wpm adjustment
         let robotTypedText = '';
         let currentIndex = 0;
         const robotInterval = setInterval(() => {
