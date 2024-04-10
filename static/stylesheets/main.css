@@ -21,7 +21,7 @@ button {
     border-radius: 50px;
 }
 
-/* Universal Button Styles for login, signup, and logout*/
+/* Universal Styles */
 .signUp {
     color: white;
     background-color: #005dbb;
@@ -33,6 +33,13 @@ button {
     background-color: white;
     border: 2px solid black;
 }
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 #main, 
 #main #brand,

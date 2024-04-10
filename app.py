@@ -259,6 +259,24 @@ class App:
 
     def get_test_client(self):
         return self._app.test_client()
+    
+    @_app.route('/user/<username>')
+    def get_user_data(username):
+        userData = Database.query(str(username), "UserData")
+        print(userData)
+        print(Database.query("user1", "UserData"))
+        if userData is None:
+            return jsonify({'error': 'User not found'}), 404
+        else:
+            return jsonify({
+                "userStateID": userData._user_data_id,
+                "username": userData._username,
+                "wpm" : userData._wpm,
+                "accuracy" : userData._accuracy,
+                "frequentMisTypedWord" : userData._freq_mistyped_words,
+                "totalTime" : userData._total_playing_time,
+                "frequentMisTypedWord" : userData._freq_mistyped_words
+            })
 
 class Database:
     """

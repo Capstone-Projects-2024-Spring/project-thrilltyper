@@ -1,0 +1,60 @@
+#dashboard {
+    display: flex;
+    justify-content: space-between;
+
+    height: 100%;
+    width: 100%;
+
+    padding: 4rem;
+}
+
+#dashboard #userSetting,
+#dashboard #userData {
+    /* Border radius for rounded corners */
+    border-radius: 10px;
+    /* Box shadow with blur effect */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#dashboard #userSetting {
+    width: 30%;
+}
+
+/* Username and Image Section */
+#dashboard #userProfile {
+    text-align: center;
+}
+
+#dashboard #userProfile .avatar {
+    display: block;
+
+    width: 50%;
+
+    margin: 2rem auto;
+    border-radius: 50%;
+}
+
+#dashboard .logOut {
+    margin: 2rem 0;
+}
+
+/* User Game and Performance Data */
+#dashboard #userData {
+    display: flex;
+    flex-direction: column;
+    width: calc(70% - 2rem);
+}
+
+#dashboard .dashItem {
+    display: flex;
+    justify-content: space-between;
+    flex: 2;
+
+    margin: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#dashboard .flexEven, #dashboard .userOverview {
+    flex: 1;
+}
