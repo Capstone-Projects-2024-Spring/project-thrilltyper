@@ -90,6 +90,7 @@
         let startTime;
         let timerInterval;
         let userInputCorrectText = "";
+        let userFinish = false;
 
 
         let correctCharsTyped = 0; // Track correct characters typed
@@ -160,7 +161,7 @@
 
         function robotType() {
             // Simulate robot typing with random errors
-            const robotSpeed = 10; // wpm adjustment
+            const robotSpeed = 5; // wpm adjustment
             let robotTypedText = '';
             let currentIndex = 0;
             const robotInterval = setInterval(() => {
@@ -285,6 +286,7 @@
             const elapsedTime = (endTime - startTime) / 1000;
             const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
             const accuracy = (correctCharsTyped / totalCharsTyped) * 100; // Calculate accuracy
+            userFinish = true;
             document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Accuracy: ${accuracy.toFixed(2)}%`;
             document.getElementById("input-box").value = "";
             document.getElementById("input-box").disabled = true;
@@ -292,6 +294,8 @@
 
 
         function robotInput() {
+
+            if(!userFinish){
             clearInterval(timerInterval); // Stop the timer
             const endTime = new Date().getTime();
             const elapsedTime = (endTime - startTime) / 1000;
@@ -299,6 +303,7 @@
             document.getElementById("result").innerHTML = `Sadly, Robot finished the game first in ${elapsedTime.toFixed(2)} seconds. Robot speed: ${wordsPerMinute} WPM.`;
             document.getElementById("input-box").value = "";
             document.getElementById("input-box").disabled = true;
+            }
         }
         
     </script>
