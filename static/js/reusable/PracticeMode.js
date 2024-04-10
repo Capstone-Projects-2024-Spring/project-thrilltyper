@@ -1,25 +1,32 @@
 function ThrillTyperGame() {
     let text = "The quick brown fox jumps over the lazy dog.";
-    fetch('/generate_text/?difficulty=easy&form=words&amount=30')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(txt => {
-            text=txt;
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-    const words = text.split(" ");
+    let words = text.split(" ");
+
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
     let startTime;
     let timerInterval;
     let userInputCorrectText = "";
+
+    async function fetchRandomWordList(){
+        let newText = "";
+        console.log("fetching");
+        try{
+            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
+        
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            newText = await response.text();
+            console.log("inside fetch text: " + newText);
+        }catch(error){
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        console.log("outside fetch text: " + newText);
+        return newText;
+    }
 
     //update text color as user types text
     //green text if user typed correctly
@@ -30,7 +37,7 @@ function ThrillTyperGame() {
     */
     //if you don't get what is going on here, open a type racer game and type some wrong text
     function updateText() {
-        var str = text
+        var str = text;
         var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
 
         var greenText = "";          //correct text
@@ -83,14 +90,21 @@ function ThrillTyperGame() {
     }
 
 
-    function startTimer() {
+    async function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
         document.getElementById("result").innerHTML = "";
 
+        console.log("good until now");
         startTime = new Date().getTime();
+        text = await fetchRandomWordList();
+
+        words = text.split(" ");
+        console.log("text: "+text);
+        console.log("words: "+words);
+        
         displayText();
         enableInput();
 
