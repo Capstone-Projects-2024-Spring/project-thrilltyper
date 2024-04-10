@@ -1,6 +1,6 @@
 function ThrillTyperGame() {
     let text = "The quick brown fox jumps over the lazy dog.";
-    fetch('/generate_text/?difficulty=easy&form=words&amount=200')
+    fetch('/generate_text/?difficulty=easy&form=words&amount=30')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
