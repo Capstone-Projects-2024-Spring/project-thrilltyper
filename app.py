@@ -350,7 +350,15 @@ class Database:
                 user_letter_data = {
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
-                    **{f"_{letter}": random.randint(0,100) for letter in string.ascii_lowercase}
+                    **{f"_{letter}": random.randint(0,100) for letter in string.ascii_lowercase},
+                    "_comma": random.randint(0,100),
+                    "_period": random.randint(0,100),
+                    "_exclamation": random.randint(0,100),
+                    "_question": random.randint(0,100),
+                    "_hyphen": random.randint(0,100),
+                    "_semicolon": random.randint(0,100),
+                    "_single_quote": random.randint(0,100),
+                    "_double_quote": random.randint(0,100),
                 }
 
                 user_race_data = {
@@ -573,8 +581,9 @@ class Database:
                 print(f"User '{username}' does not exist")
                 return []    
             #validate n
-            if n < 1 or n > 26:
-                print("Invalid value for 'n', Only 26 Letters")
+            max_n = 26 + 8 #eight punctuations added
+            if n < 1 or n > max_n:
+                print("Invalid value for 'n', Only 26 Letters and 8 Punctuations")
                 return []
             #query using username the user letter data
             user_letter_data = UserLetter.query.filter_by(_username=username).first()
@@ -584,12 +593,35 @@ class Database:
                 return []
             #a dictionary with letters as keys and mistyped letter times as the number value
             #loop through each letter in the alaphbets
-            letter_number_dict = {f"_{letter}": getattr(user_letter_data, f"_{letter}") for letter in string.ascii_lowercase}
+            letter_number_dict = {}
+            for letter in string.ascii_lowercase:
+                column_name = f"_{letter}"
+                letter_number_dict[letter] = getattr(user_letter_data, column_name)
+
+            #added punctuations
+            #list of added punctuations
+            punctuation_marks = [",", ".", "!", "?", "-", ";", "'", '"']
+            punct_names = {
+                ",": "_comma",
+                ".": "_period",
+                "!": "_exclamation",
+                "?": "_question",
+                "-": "_hyphen",
+                ";": "_semicolon",
+                "'": "_single_quote",
+                '"': "_double_quote"
+            }
+
+            for mark in punctuation_marks:
+                get_punct = punct_names.get(mark)
+                if get_punct:
+                    letter_number_dict[mark] = getattr(user_letter_data, get_punct)
+            
             #sort the dict by top-n values in desc order, returning a list
             sorted_values = sorted(letter_number_dict, key=letter_number_dict.get, reverse=True)[:n] #n here is not inclusive
             #since there is a _ as the first index, it needs to be removed, starting each string with [1:] 
-            rm_underscore = [letter[1:] for letter in sorted_values]
-            return rm_underscore
+            #rm_underscore = [letter[1:] for letter in sorted_values]
+            return sorted_values
         except Exception as e:
             print(f"Error while retrieving top {n} largest values for corresponding letters for user '{username}' : {e}")
             return []
@@ -687,6 +719,7 @@ class UserLetter(App.db.Model):
     _username : non-nullable identifier, acts as the primary key and foreign key(UserInfo) UserLetter table
     _email : unique email address of user
     _a - _z : 26 columns representing the 26 letters in the alphabets 
+    _punctuation : punctuations are stored in English words
     """
 
     #_user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
@@ -718,6 +751,15 @@ class UserLetter(App.db.Model):
     _x = App.db.Column(App.db.Integer, default=0)
     _y = App.db.Column(App.db.Integer, default=0)
     _z = App.db.Column(App.db.Integer, default=0)
+    _comma = App.db.Column(App.db.Integer, default=0) # ,
+    _period = App.db.Column(App.db.Integer, default=0) # .
+    _exclamation = App.db.Column(App.db.Integer, default=0) # !
+    _question = App.db.Column(App.db.Integer, default=0) # ?
+    _hyphen = App.db.Column(App.db.Integer, default=0) # -
+    _semicolon = App.db.Column(App.db.Integer, default=0) # ;
+    _single_quote = App.db.Column(App.db.Integer, default=0) # '
+    _double_quote = App.db.Column(App.db.Integer, default=0) # "
+
 
     #auto checks(by sqlalchemy) whether user exist in the user info table whenever data is inserting/updating
     @validates("_username")
@@ -768,7 +810,6 @@ class UserRace(App.db.Model):
         return _username
 
 
-
 if __name__=="__main__":
     app = App()
 
@@ -776,7 +817,7 @@ if __name__=="__main__":
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        app.db.drop_all()
+        #app.db.drop_all()
 
         app.db.create_all()
 
@@ -785,10 +826,10 @@ if __name__=="__main__":
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         #after testing, you can repeat the number, but preferrably not to do that
-        Database.populate_sample_date(100)
+        #Database.populate_sample_date(100)
 
         #this method returns a list represention of top-n largest mistyped letters
-        #top_n_letters = Database.get_top_n_letters("user1", 26)
-        #print(top_n_letters)
+        top_n_letters = Database.get_top_n_letters("user35", 6)
+        print(top_n_letters)
 
     app.run(host="localhost", debug=True)

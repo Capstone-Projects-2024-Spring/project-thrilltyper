@@ -105,7 +105,7 @@ class Test_User_Data():
             Database.delete(sample_user_info['_username'])
     
 
-    def test_repr(self, sample_user_info, cleanup):
+    def test_data_table(self, sample_user_info, cleanup):
         """
         Test: That a string representation of a row's data is returned
         Result: True if a string with a row's data is returned
