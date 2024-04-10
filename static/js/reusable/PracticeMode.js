@@ -11,7 +11,6 @@ function ThrillTyperGame() {
 
     async function fetchRandomWordList(){
         let newText = "";
-        console.log("fetching");
         try{
             const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
         
@@ -20,11 +19,9 @@ function ThrillTyperGame() {
             }
             
             newText = await response.text();
-            console.log("inside fetch text: " + newText);
         }catch(error){
             console.error('There was a problem with the fetch operation:', error);
         }
-        console.log("outside fetch text: " + newText);
         return newText;
     }
 
@@ -97,13 +94,10 @@ function ThrillTyperGame() {
         document.getElementById("input-box").value = "";
         document.getElementById("result").innerHTML = "";
 
-        console.log("good until now");
         startTime = new Date().getTime();
         text = await fetchRandomWordList();
 
         words = text.split(" ");
-        console.log("text: "+text);
-        console.log("words: "+words);
         
         displayText();
         enableInput();
