@@ -1,3 +1,4 @@
+// No longer used
 function Home({ userSession, MenuComp }) {
     const Link = ReactRouterDOM.Link;
     const Route = ReactRouterDOM.Route;
@@ -16,6 +17,7 @@ function Home({ userSession, MenuComp }) {
                     <Link to="/">Home</Link>
                     <Link to="/menu">Play</Link>
                     <Link to="/">Leaderboards</Link>
+                    <Link to="/dashboard">Profile</Link>
                     <Link to="/">About</Link>
                 </nav>
                 <Profile userSession={userSession} />
@@ -23,6 +25,7 @@ function Home({ userSession, MenuComp }) {
             <div id="content">
                 {/* <Route path="/" exact component="" /> */}
                 <Route path="/menu" component={MenuComp} />
+                <Route path="/dashboard" component={userSession} />
             </div>
         </ReactRouterDOM.HashRouter>
     );
