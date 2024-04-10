@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
-from sqlalchemy import Column, or_ #used for reference to tables" column name
+from sqlalchemy import Column, or_ #used for reference to tables' column name
 from player import player
 import string
 from text_generator import Text_Generator
