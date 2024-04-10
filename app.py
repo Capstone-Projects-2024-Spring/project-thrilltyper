@@ -337,7 +337,7 @@ class Database:
                 user_data_data = {
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_wpm": 10+i,
+                    "_history_highest_race_wpm": 10+i,
                     "_accuracy": 80 + (i*0.5),
                     "_wins": 10+i,
                     "_losses": 1+i,
@@ -620,9 +620,8 @@ class UserInfo(App.db.Model):
 class UserData(App.db.Model):
     """
     Representation of user in game data stored in the database under the UserData table
-    _user_data_id : the primary key of the table, auto increment by sqlalchemy
-    _username : non-nullable and unique identifier of a user, act as the foreign key referencing UserInfo table
-    _email : nullable email address of user
+    _username : non-nullable and unique identifier of a user, act as the primary key and foreign key referencing UserInfo table
+    _email : unique email address of user
     _wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
@@ -631,18 +630,23 @@ class UserData(App.db.Model):
     _total_playing_time : record the total number of time the user is playing the game
     _play_date : record the date and time user log on and plays the game
     """
-    _user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
-    _username = App.db.Column(App.db.String(30),App.db.ForeignKey("user_info._username"), nullable=False) #foreign key referencing UserInfo table
-    _email = App.db.Column(App.db.String(60))
+    #_user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
+    _username = App.db.Column(App.db.String(30),App.db.ForeignKey("user_info._username"), primary_key=True) #foreign key referencing UserInfo table
+    _email = App.db.Column(App.db.String(60), unique=True)
     #this "user_info" from the above line is mentioning the table name of UserInfo
     #this underscore and the lower case is automated by the system
-    _wpm = App.db.Column(App.db.SmallInteger)
     _accuracy = App.db.Column(App.db.Numeric)
     _wins = App.db.Column(App.db.Integer, default=0)
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
     _play_date = App.db.Column(App.db.DateTime)
+
+    #newly added
+    _history_highest_race_wpm = App.db.Column(App.db.SmallInteger, default=0)
+    _user_in_game_picture = App.db.Column(App.db.String(100)) #should be different from login profile photo
+    _last_login_time = App.db.Column(App.db.DateTime) #need configuration later to log user's lastest login time
+    _num_race_played = App.db.Column(App.db.Integer, default=0)
 
     #validation of whether the username exists in table "user_info" when adding to user_data table
     #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
@@ -662,16 +666,6 @@ class UserData(App.db.Model):
             return None
         return _username
 
-    def repr(self):
-        """
-        Returns a string representation of the user data
-        :return :
-        """
-        return f"<UserData(username={self._username}, email={self._email}, wpm={self._wpm}, " \
-               f"accuracy={self._accuracy}, wins={self._wins}, " \
-               f"losses={self._losses}, freq_mistyped_words={self._freq_mistyped_words}, " \
-               f"total_playing_time={self._total_playing_time}, play_date={self._play_date})>"
-
 
 class UserLetter(App.db.Model):
     """
@@ -679,13 +673,13 @@ class UserLetter(App.db.Model):
     the number of times a player mistyped a certain letter
     _user_letter_id : the primary key of the table, auto generatetd by flask_sqlalchemy
     _username : non-nullable identifier and foreign key of UserInfo table
-    _email : nullable email address of user
+    _email : unique email address of user
     _a - _z : 26 columns representing the 26 letters in the alphabets 
     """
 
-    _user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
-    _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), nullable=False) #onupdate="CASCADE"
-    _email = App.db.Column(App.db.String(60))
+    #_user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True) #onupdate="CASCADE"
+    _email = App.db.Column(App.db.String(60), unique=True)
     _a = App.db.Column(App.db.Integer, default=0)
     _b = App.db.Column(App.db.Integer, default=0)
     _c = App.db.Column(App.db.Integer, default=0)
