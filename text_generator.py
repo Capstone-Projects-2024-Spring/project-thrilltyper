@@ -136,10 +136,12 @@ class Text_Generator:
                 txt_lst=file.readlines()
                 n = len(txt_lst)
                 amount = int(amount)
-                for i in range(amount):
+                for i in range(amount-1):
                     rand_ind = randint(0,n-1)
                     otpt+=txt_lst.pop(rand_ind).replace('\n',' ')
                     n-=1
+                rand_ind = randint(0,n-1)
+                otpt+=txt_lst.pop(rand_ind).replace('\n','')
                 return otpt
         except Exception as e:
             print(e)
