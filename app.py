@@ -6,7 +6,7 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for, s
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
 from sqlalchemy import Column, or_ #used for reference to tables' column name
 from player import player
@@ -353,9 +353,19 @@ class Database:
                     **{f"_{letter}": random.randint(0,100) for letter in string.ascii_lowercase}
                 }
 
+                user_race_data = {
+                    "_username": f"user{i}",
+                    "_email": f"user{i}@gmail.com",
+                    "_average_wpm": random.randint(40,100),
+                    "_selected_mode": random.choice(["Practice", "Robot Opponent", "MultiPlayer"]),
+                    "_time_limit": random.choice([None, 30, 60, 90]),
+                    "_date_played": current_datetime - timedelta(days=i)
+                }
+
                 Database.insert(UserInfo, **user_info_data)
                 Database.insert(UserData, **user_data_data)
                 Database.insert(UserLetter, **user_letter_data)
+                Database.insert(UserRace, **user_race_data)
             print(f"{num_rows} sample users added successfully")
         except Exception as e:
             print(f"Error while populating sample rows: {e}")
@@ -619,16 +629,19 @@ class UserInfo(App.db.Model):
 
 class UserData(App.db.Model):
     """
-    Representation of user in game data stored in the database under the UserData table
+    Representation of user(for user dashboard) in game data stored in the database under the UserData table
     _username : non-nullable and unique identifier of a user, act as the primary key and foreign key referencing UserInfo table
     _email : unique email address of user
-    _wpm : words per minute
+    _history_highest_race_wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
     _losses : number of multiplayer matches lost
     _freq_mistyped_words : string of words/phrases frequently mistyped separated by the "|" character
     _total_playing_time : record the total number of time the user is playing the game
     _play_date : record the date and time user log on and plays the game
+    _user_in_game_picture : the in game picture representing an user
+    _last_login_time : records the last login time of an user
+    _num_race_played : records the total number of races played by user
     """
     #_user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
     _username = App.db.Column(App.db.String(30),App.db.ForeignKey("user_info._username"), primary_key=True) #foreign key referencing UserInfo table
@@ -671,8 +684,7 @@ class UserLetter(App.db.Model):
     """
     Representing the database table of user"s in game data 
     the number of times a player mistyped a certain letter
-    _user_letter_id : the primary key of the table, auto generatetd by flask_sqlalchemy
-    _username : non-nullable identifier and foreign key of UserInfo table
+    _username : non-nullable identifier, acts as the primary key and foreign key(UserInfo) UserLetter table
     _email : unique email address of user
     _a - _z : 26 columns representing the 26 letters in the alphabets 
     """
@@ -719,6 +731,44 @@ class UserLetter(App.db.Model):
             return None
         return _username
     
+
+class UserRace(App.db.Model):
+    """
+    Representing the instance of a race initiated by user
+    Relative in game data will be recorded
+    _username : acts as the primary and foreign key of the table, rooted from UserInfo
+    _email : unique and nullable attribute of user's email address
+    _average_wpm : the average of words per min in an instance of a race
+    _selected_mode : the selected mode of a typing race/practice
+    _time_limit : optional recording of time limit of a certain game mode
+    _date_played : the date/time the race/practice is initiated
+    """
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True)
+    #email is in every table for query purposes
+    _email = App.db.Column(App.db.String(60), unique=True)
+    #different from highest wpm, this is a record of per game/race
+    _average_wpm = App.db.Column(App.db.Integer, default=0)
+    #representing the mode selected by user at that game/race instance
+    _selected_mode = App.db.Column(App.db.String(20))
+    #optional input when user selected a mode with time limit
+    _time_limit = App.db.Column(App.db.Float)
+    #records the date user played that race
+    _date_played = App.db.Column(App.db.DateTime)
+
+    #regular check of user info username when entering data in UserRace
+    @validates("_username")
+    def validate_username(self, key, _username):
+        try:
+            user_info_uname = UserInfo.query.filter_by(_username=_username).first()
+            if user_info_uname is None:
+                raise ValueError(f"User '{_username}' does not exist")
+        except ValueError as e:
+            print(f"Error: {e}")
+            return None
+        return _username
+
+
+
 if __name__=="__main__":
     app = App()
 
