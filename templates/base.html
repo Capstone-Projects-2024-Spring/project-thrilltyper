@@ -35,7 +35,7 @@
     <!-- <script type="text/babel" src="{{url_for('static', filename='js/content/Home.js')}}"></script> -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/Menu.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Dashboard.js')}}"></script>
-    <script type="text/babel" src="{{url_for('static', filename='js/reusable/PracticeMode.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/SinglePlayer.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/RobotOpponent.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
 
@@ -71,9 +71,9 @@
                     <Profile userSession={userSession} />
                 </header>
                 <div id="content">
-                    {/* <Route path="/" exact component="" /> */}
+                    {/* <Route path="/" exact component={Home} /> */}
                     <Route path="/menu" component={Menu} />
-                    <Route path="/practice" component={ThrillTyperGame} />
+                    <Route path="/singlePlayer" component={ThrillTyperGame} />
                     <Route path="/robotOpponent" component={RobotOpponent} />
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
                 </div>
