@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/typeInterface.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/robotOpponent.css')}}">
 
+    <!-- added by Hu -->
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/HomePage.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/StarAnimation.css')}}">
     {% block head %} {% endblock %}
 </head>
 
@@ -38,6 +41,9 @@
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/SinglePlayer.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/RobotOpponent.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
+
+    <!-- added by Hu -->
+    <script type="text/babel" src="{{url_for('static', filename='js/content/HomePage.js')}}"></script>
 
     <!-- Pure JS code -->
     <script>
@@ -71,7 +77,7 @@
                     <Profile userSession={userSession} />
                 </header>
                 <div id="content">
-                    {/* <Route path="/" exact component={Home} /> */}
+                    <Route path="/" exact component={HomePage} />
                     <Route path="/menu" component={Menu} />
                     <Route path="/singlePlayer" component={ThrillTyperGame} />
                     <Route path="/robotOpponent" component={RobotOpponent} />
