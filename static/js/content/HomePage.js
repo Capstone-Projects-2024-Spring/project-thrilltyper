@@ -2,7 +2,7 @@ function HomePage(){
 
 
     return(
-        <div id="content">
+        <div id="homePageContent">
             <img id="moon" src="../static/pics/moon.png"/>
             
             {/* background star animation */ }
