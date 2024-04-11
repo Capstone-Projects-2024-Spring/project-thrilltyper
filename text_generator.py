@@ -130,8 +130,10 @@ class Text_Generator:
         """
         file = None
         try:
-            print(f"{difficulty}_{form}.txt")
-            with open(f"{difficulty}_{form}.txt",'r') as file:
+            if difficulty:
+                difficulty+="_"
+            print(f"{difficulty}{form}.txt")
+            with open(f"{difficulty}{form}.txt",'r') as file:
                 otpt = ""
                 txt_lst=file.readlines()
                 n = len(txt_lst)
