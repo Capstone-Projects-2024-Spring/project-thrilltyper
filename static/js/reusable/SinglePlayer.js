@@ -9,17 +9,17 @@ function ThrillTyperGame() {
     let timerInterval;
     let userInputCorrectText = "";
 
-    async function fetchRandomWordList(){
+    async function fetchRandomWordList() {
         let newText = "";
-        try{
+        try {
             const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
-        
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            
+
             newText = await response.text();
-        }catch(error){
+        } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
         return newText;
@@ -98,7 +98,7 @@ function ThrillTyperGame() {
         text = await fetchRandomWordList();
 
         words = text.split(" ");
-        
+
         displayText();
         enableInput();
 
@@ -159,13 +159,11 @@ function ThrillTyperGame() {
 
     return (
         <div id="game-container">
-            <div>
-                <h1>Thrill Typer Game</h1>
-                <div id="text-display">{text}</div>
-                <input type="text" id="input-box" onInput={checkInput} disabled />
-                <div id="result"></div>
-                <button onClick={startTimer}>Start</button>
-            </div>
+            <h1>Thrill Typer Game</h1>
+            <div id="text-display">{text}</div>
+            <input type="text" id="input-box" onInput={checkInput} disabled />
+            <div id="result"></div>
+            <button onClick={startTimer}>Start</button>
         </div>
     );
 }

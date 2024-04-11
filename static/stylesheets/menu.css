@@ -40,6 +40,7 @@
 #menu-ctn #menu .menu-item {
     padding: 10px;
     text-align: center;
+    width: 30%;
 }
 
 #menu-ctn #menu .menu-item button {
@@ -52,11 +53,11 @@
     border: 2px solid #005DBB;
 }
 
-#menu-ctn #practiceMode, 
+#menu-ctn #onlineMode, 
 #menu-ctn #robotMode {
-    flex: 1 0 100%;
+    flex: 1;
 }
 
-#menu-ctn #onlineMode {
-    flex: 2;
+#menu-ctn #singlePlayerMode {
+    flex: 2 0 100%;
 }

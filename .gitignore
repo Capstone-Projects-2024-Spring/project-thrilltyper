@@ -19,6 +19,9 @@ __pycache__/
 # Virtual Environment
 venv/
 
+# Database File
+*.db
+
 # Logs
 *.log
 npm-debug.log*
