@@ -269,9 +269,10 @@ class App:
             return jsonify({'error': 'User not found'}), 404
         else:
             return jsonify({
-                "userStateID": userData._user_data_id,
                 "username": userData._username,
-                "wpm" : userData._wpm,
+                "highestWPM" : userData._history_highest_race_wpm,
+                "wins": userData._wins,
+                "losses": userData._losses,
                 "accuracy" : userData._accuracy,
                 "frequentMisTypedWord" : userData._freq_mistyped_words,
                 "totalTime" : userData._total_playing_time,
@@ -817,7 +818,7 @@ if __name__=="__main__":
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        #app.db.drop_all()
+        app.db.drop_all()
 
         app.db.create_all()
 
@@ -826,10 +827,10 @@ if __name__=="__main__":
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         #after testing, you can repeat the number, but preferrably not to do that
-        #Database.populate_sample_date(100)
+        Database.populate_sample_date(100)
 
         #this method returns a list represention of top-n largest mistyped letters
-        top_n_letters = Database.get_top_n_letters("user35", 6)
-        print(top_n_letters)
+        # top_n_letters = Database.get_top_n_letters("user35", 6)
+        # print(top_n_letters)
 
     app.run(host="localhost", debug=True)
