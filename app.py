@@ -126,7 +126,7 @@ class App:
             if "id_token" in token:
                 # If the "id_token" is present, indicating a successful login
                 # Extract and store necessary user information in the session
-                uname = token["userinfo"]["given_name"]
+                uname = token["userinfo"]["email"]
                 picture = token["userinfo"]["picture"]
 
                 # Instantiate a player object to store in user session
@@ -135,7 +135,7 @@ class App:
                 session["user"] = playerObj.__json__()
 
                 # Insert user info into the database if doesn"t exists yet
-                if Database.query(token["userinfo"]["given_name"], "UserInfo") is None:
+                if Database.query(uname, "UserInfo") is None:
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
             else:
                 # Handle the case where access is denied (user cancelled the login)
@@ -245,7 +245,11 @@ class App:
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
         Sends back text for the requestor to use
         """
-        return Text_Generator.generate_text(request.args.get("difficulty"),request.args.get("form"),request.args.get("amount"))
+        difficulty = request.args.get("difficulty")
+        print(difficulty)
+        if not difficulty:
+            difficulty=""
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
    
     @_app.route("/game/<int:mode>")
     def game(mode:int):
