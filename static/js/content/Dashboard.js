@@ -57,7 +57,13 @@ function Dashboard({ userSession }) {
                             Accuracy: {Number(userData.accuracy).toFixed(2)}%
                         </p>
                         <p className="center flexEven">
-                            Speed: {userData.wpm} WPM
+                            Highest Speed: {userData.highestWPM} WPM
+                        </p>
+                        <p className="center flexEven">
+                            Wins: {userData.wins} games
+                        </p>
+                        <p className="center flexEven">
+                            Losses: {userData.losses} games
                         </p>
                     </section>
                 </div>
