@@ -12,7 +12,7 @@ function Profile({userSession}) {
                     :
                     <div>
                         { /* <li><a href="/logout"><button className="logOut">Logout</button></a></li> */}
-                        <li><a href="/logout" className="logOut" id="logOutButton"></a>Logout</li> 
+                        <li><a href="/logout" className="href-button" id="logOutButton">Logout</a></li> 
                     </div>
                 }
             </ul>
