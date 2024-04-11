@@ -1,7 +1,6 @@
-function ThrillTyperGame() {
-    let text = "Click start button to start!";
-    let words = text.split(" ");
-
+function RobotOpponent() {
+    const text = "The quick brown fox jumps over the lazy dog.";
+    const words = text.split(" ");
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
@@ -9,21 +8,9 @@ function ThrillTyperGame() {
     let timerInterval;
     let userInputCorrectText = "";
 
-    async function fetchRandomWordList(){
-        let newText = "";
-        try{
-            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
-        
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            
-            newText = await response.text();
-        }catch(error){
-            console.error('There was a problem with the fetch operation:', error);
-        }
-        return newText;
-    }
+
+    let correctCharsTyped = 0; // Track correct characters typed
+    let totalCharsTyped = 0; // Track total characters typed
 
     //update text color as user types text
     //green text if user typed correctly
@@ -34,9 +21,8 @@ function ThrillTyperGame() {
     */
     //if you don't get what is going on here, open a type racer game and type some wrong text
     function updateText() {
-        var str = text;
+        var str = text
         var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
-
         var greenText = "";          //correct text
         var redText = "";           //incorrect text
         var uncoloredText = "";     //untyped text
@@ -87,7 +73,28 @@ function ThrillTyperGame() {
     }
 
 
-    async function startTimer() {
+
+
+    function robotType() {
+        // Simulate robot typing with random errors
+        const robotSpeed = 10; // wpm adjustment
+        let robotTypedText = '';
+        let currentIndex = 0;
+        const robotInterval = setInterval(() => {
+            if (currentIndex < text.length) {
+                robotTypedText += text[currentIndex]; // Simulate typing the next character
+                currentIndex++;
+                document.getElementById("robot-text-display").innerHTML = robotTypedText;
+            } else {
+                clearInterval(robotInterval); // Stop typing when the text is completed
+                document.getElementById("input-box").disabled = true;
+                robotInput();
+            }
+        }, 1000 / robotSpeed);
+    }
+
+
+    function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
         userInputCorrectText = "";
@@ -95,15 +102,12 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        text = await fetchRandomWordList();
-
-        words = text.split(" ");
-        
         displayText();
         enableInput();
 
         clearInterval(timerInterval);
         timerInterval = setInterval(updateTimer, 10);
+        robotType();
     }
 
     function updateTimer() {
@@ -114,6 +118,21 @@ function ThrillTyperGame() {
 
     function displayText() {
         document.getElementById("text-display").innerHTML = text;
+    }
+
+    function displayhtml() {
+        // jimmy1
+        // Calculate words per minute and accuracy
+
+        const elapsedTime = (new Date().getTime() - startTime) / 1000;
+        const wordsPerMinute = Math.round((currentWordIndex / elapsedTime) * 60);
+        const accuracy = (correctCharsTyped / totalCharsTyped) * 100;
+
+
+        // Display WPM and accuracy
+        const statsDisplay = `Speed: ${wordsPerMinute} WPM | Accuracy: ${accuracy.toFixed(2)}%`;
+        document.getElementById("stats").innerHTML = statsDisplay;
+
     }
 
 
@@ -128,6 +147,8 @@ function ThrillTyperGame() {
 
         //updates text color
         updateText();
+        // Call displayhtml function to update WPM and accuracy
+        displayhtml();
 
         //idk what this is 
         //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
@@ -139,33 +160,94 @@ function ThrillTyperGame() {
 
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
             currentCharIndex++;
+            correctCharsTyped++; // Increment correct characters typed
         }
+        totalCharsTyped++; // Increment total characters
+
 
         //submit input if last letter is typed
         if (currentCharIndex >= text.length) {
             submitInput();
+
         }
+        updateTypingProgress(currentCharIndex, text.length); // Update progress
+
     }
+    function updateProgress(percentage) {
+        const progressText = document.getElementById("progressText");
+        const progressCircle = document.getElementById("progressCircle");
+
+        const circumference = 2 * Math.PI * 52; // Circle circumference
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset =
+            circumference - (percentage / 100) * circumference;
+
+        progressText.textContent = `${Math.round(percentage)}%`;
+    }
+
+    // This function is expected to be called from another file
+    function updateTypingProgress(currentLetters, totalLetters) {
+        const percentage = (currentLetters / totalLetters) * 100;
+        updateProgress(percentage);
+    }
+
+    // Example external call
+    // Assume this is how the other file updates the progress
+    // updateTypingProgress(50, 100); // You can test this by manually calling it from the console or another script
 
     function submitInput() {
         clearInterval(timerInterval);
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
         const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
-        document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM.`;
+        const accuracy = (correctCharsTyped / totalCharsTyped) * 100; // Calculate accuracy
+        document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
     }
 
+
+    function robotInput() {
+        clearInterval(timerInterval); // Stop the timer
+        const endTime = new Date().getTime();
+        const elapsedTime = (endTime - startTime) / 1000;
+        const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
+        document.getElementById("result").innerHTML = `Sadly, Robot finished the game first in ${elapsedTime.toFixed(2)} seconds. Robot speed: ${wordsPerMinute} WPM.`;
+        document.getElementById("input-box").value = "";
+        document.getElementById("input-box").disabled = true;
+    }
+
+    React.useEffect(() => {
+        const inputBox = document.getElementById("input-box");
+        const startBtn = document.getElementById("startBtn");
+
+        // Attach event listener for input event to input box
+        inputBox.addEventListener("input", checkInput);
+
+        // Attach event listener for click event to start button
+        startBtn.addEventListener("click", startTimer);
+
+        // Cleanup function to remove event listeners when component unmounts
+        return () => {
+            inputBox.removeEventListener("input", checkInput);
+            startBtn.removeEventListener("click", startTimer);
+        };
+    }, []);
+
+
     return (
         <div id="game-container">
-            <div>
-                <h1>Thrill Typer Game</h1>
-                <div id="text-display">{text}</div>
-                <input type="text" id="input-box" onInput={checkInput} disabled />
-                <div id="result"></div>
-                <button onClick={startTimer}>Start</button>
-            </div>
+            <h1>Robot</h1>
+            <div id="text-display"></div>
+            <div id="robot-text-display"></div>
+            <input type="text" id="input-box" disabled />
+            <div id="result"></div>
+            <div id="stats"></div>
+            <button id="startBtn">Start</button>
+            <svg id="progressCircle" width="100" height="100">
+                <circle cx="50" cy="50" r="52" fill="none" stroke="#ccc" stroke-width="4"></circle>
+            </svg>
+            <div id="progressText"></div>
         </div>
     );
 }

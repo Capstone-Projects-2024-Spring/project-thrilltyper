@@ -16,7 +16,10 @@
 
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/main.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/menu.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/dashboard.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/typeInterface.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/robotOpponent.css')}}">
+
     {% block head %} {% endblock %}
 </head>
 
@@ -28,15 +31,18 @@
 
     <!-- Imports of necessary js components -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/Profile.js')}}"></script>
-    <script type="text/babel" src="{{url_for('static', filename='js/content/Home.js')}}"></script>
+    <!-- No longer use Home.js -->
+    <!-- <script type="text/babel" src="{{url_for('static', filename='js/content/Home.js')}}"></script> -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/Menu.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/content/Dashboard.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/PracticeMode.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/RobotOpponent.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
 
     <!-- Pure JS code -->
     <script>
         // Access Jinja context variables directly within the script tag, explicitly convert it to json
-        const userSession = '{{ userSession | tojson }}';
+        const userSession = JSON.parse('{{ userSession | tojson }}');
     </script>
 
     <!-- JSX code with REACT -->
@@ -45,7 +51,7 @@
         const Link = ReactRouterDOM.Link;
         const Route = ReactRouterDOM.Route;
 
-        const App = ({ userSession, MenuComp }) => (
+        const App = () => (
             <ReactRouterDOM.HashRouter>
                 <header id="main">
                     <div id="brand">
@@ -59,18 +65,21 @@
                         <Link to="/">Home</Link>
                         <Link to="/menu">Play</Link>
                         <Link to="/">Leaderboards</Link>
+                        <Link to="/dashboard">Dashboard</Link>
                         <Link to="/">About</Link>
                     </nav>
                     <Profile userSession={userSession} />
                 </header>
                 <div id="content">
                     {/* <Route path="/" exact component="" /> */}
-                    <Route path="/menu" component={MenuComp} />
-                    <Route path="/practice" component={ThrillTyperGame}></Route>
+                    <Route path="/menu" component={Menu} />
+                    <Route path="/practice" component={ThrillTyperGame} />
+                    <Route path="/robotOpponent" component={RobotOpponent} />
+                    <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
                 </div>
             </ReactRouterDOM.HashRouter>
         );
-        ReactDOM.render(<App userSession={userSession} MenuComp={Menu} />, document.getElementById("root"));
+        ReactDOM.render(<App />, document.getElementById("root"));
     </script>
 </body>
 

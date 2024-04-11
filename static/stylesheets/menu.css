@@ -4,6 +4,7 @@
 
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 
@@ -13,13 +14,16 @@
     color: #005DBB;
 }
 
+#menu-ctn h1, 
+#menu-ctn #menu {
+    max-width: 700px;
+}
+
 #menu-ctn h1 {
-    flex: 0 0 auto;
     width: calc(100% - 20px);
     text-align: center;
 
     padding: 1rem;
-    margin: 0 10px;
     border-bottom: 2px solid black;
 }
 
@@ -34,7 +38,6 @@
 }
 
 #menu-ctn #menu .menu-item {
-    flex: 0 0 calc(50% - 2rem);
     padding: 10px;
     text-align: center;
 }
@@ -47,4 +50,13 @@
     color: inherit;
     background-color: white;
     border: 2px solid #005DBB;
+}
+
+#menu-ctn #practiceMode, 
+#menu-ctn #robotMode {
+    flex: 1 0 100%;
+}
+
+#menu-ctn #onlineMode {
+    flex: 2;
 }
