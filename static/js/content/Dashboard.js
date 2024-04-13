@@ -31,7 +31,7 @@ function Dashboard({ userSession }) {
             <div id="userSetting">
                 {userSession ?
                     <div id="userProfile">
-                        <img className="avatar" src={userSession.avatar} alt="profile photo" />
+                        <img className="avatar" src={userSession.avatar} alt="profile photo" referrerPolicy="no-referrer" />
                         <h1>{userSession.userinfo.given_name}</h1>
                         <a href="/logout"><button className="logOut">Logout</button></a>
                     </div>
