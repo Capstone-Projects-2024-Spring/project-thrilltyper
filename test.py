@@ -284,10 +284,6 @@ class Test_Database():
 
 #--------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
 class Test_Game():
-    '''
-    Class for testing the game_session class
-    '''
-
     def test_initialization(self):
         """
         Test: A new session is initialized with players. It contains relevant information of a game
@@ -339,10 +335,6 @@ class Test_Game():
 #--------------------------------------------------------------------------------Player Tests-----------------------------------------------------------------------------
 
 class Test_Player():
-    '''
-    Class for testing the player class
-    '''
-
     def test_initialization(self):
         """
         Test: A new player metric structure is created which holds key metrics of the player through the duration of the match
