@@ -1,4 +1,5 @@
 from random import randint
+LEN_OF_LONGEST_WORD = 22
 class Text_Generator:
     """
     Responsible for generating text for a game to use and also separating words into different difficulties (the latter is done outside of run time)
@@ -10,7 +11,6 @@ class Text_Generator:
     right_row2_start = right_side.find('|')
     right_row3_start = right_side.find('|',right_row2_start+1)
     pinkie_chars = "qaz"
-    ring_fing_chars = "wsxopl"
 
     def get_txt_list(self,file) -> list[str]:
         """
@@ -27,22 +27,19 @@ class Text_Generator:
         : return score
         """
         score = 0
+        if len(word)<=3:
+            return 0
         i = 0
         side_switches = 0
+        direc_verts = 0
         while i<len(word):
             temp = 0
             has_next_char = i+1<len(word)
             #checking edge chars
             if word[i] in self.pinkie_chars:
                 temp=0.5
-                if has_next_char and word[i+1] in self.pinkie_chars:
-                    temp*=2.0
-                    i+=1
                 score+=temp
-            elif word[i] in self.ring_fing_chars:
-                temp=.25
-                if has_next_char and word[i+1] in self.ring_fing_chars:
-                    temp*=2.0
+                if has_next_char and word[i+1]==word[i]:
                     i+=1
                 score+=temp
             #checking direct verticals and consecutive side switches
@@ -59,12 +56,15 @@ class Text_Generator:
                         score+=(side_switches-5)*0.25
                     side_switches=0
                     if self.is_direct_vertical(curr_word_left_ind,next_word_left_ind, True):
-                        score+=0.25
+                        direc_verts+=1
                     elif self.is_direct_vertical(curr_word_right_ind,next_word_right_ind, False):
-                        score+=0.25
+                        direc_verts+=1
+                    else:
+                        if direc_verts>2:
+                            score+=(direc_verts-2)*0.25
             #ensures extra increment is not done after the last while loop
             i+=1
-        return score
+        return score/(2*(LEN_OF_LONGEST_WORD+1-len(word)))*10
     
     def is_direct_vertical(self,curr_char_keyboard_pos, nxt_char_keyboard_pos, is_left):
         """
@@ -104,26 +104,31 @@ class Text_Generator:
         med_count=0
         hard = ""
         hard_count=0
+        num_words = 0
+        total = 0
         for word in word_lst:
             score = self.score_word_typing_difficulty(word)
-            if score<1.25:
+            num_words+=1
+            total+=score
+            if score<=0.2:
                 easy+=word+'\n'
                 easy_count+=1
-            elif score<1.75:
+            elif score<0.32:
                 medium+=word+'\n'
                 med_count+=1
             else:
                 hard+=word+'\n'
                 hard_count+=1
+        print(f"Average: {total/num_words}")
         print(easy_count)
         print(med_count)
         print(hard_count)
         with open("easy_words.txt","w") as easy_words:
-            easy_words.write(easy)
+            easy_words.write(easy.strip('\n'))
         with open("medium_words.txt","w") as medium_words:
-            medium_words.write(medium)
+            medium_words.write(medium.strip('\n'))
         with open("hard_words.txt","w") as hard_words:
-            hard_words.write(hard)
+            hard_words.write(hard.strip('\n'))
 
     def generate_text(difficulty:str,form:str,amount:int):
         """
@@ -149,7 +154,3 @@ class Text_Generator:
         except Exception as e:
             print(e)
             return "Invalid arguments or missing arguments."
-
-if __name__=="__main__":
-    tg=Text_Generator()
-    tg.sort_words_by_difficulty(tg.get_txt_list("words.txt"))
