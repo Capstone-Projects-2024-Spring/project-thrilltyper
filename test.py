@@ -28,12 +28,12 @@ def test_registration(client):
 def test_invalid_login(client):
     """
     Test: When users enter invalid credentials and click log in, a message saying that either username or password was invalid should appear
-    Result: True if the invalid credentials cause a response that says there was an Authentication error
+    Result: True if the invalid credentials cause a redirect to the login page
     """
     username = "user1"
     password = "pswd3"
     response = client.post("/authentication",data={"username":username,"password":password})
-    assert "Authentication Error" in response.data.decode()
+    assert response.location=="login"
 
 def test_valid_login(client):
     """
@@ -381,9 +381,10 @@ class Test_Player():
 #--------------------------------------------------------------------------Text_Generator Tests-----------------------------------------------------------------------------
 
 class Test_Text_Generator():
-    def test_get_txt_lst():
+    tg = Text_Generator()
+    def test_get_txt_lst(self):
         """
         Test: Ensure that a file can be read from successfully
         Result: True if a list is returned
         """
-        assert Text_Generator.get_txt_list("words.txt") is list
+        assert type(self.tg.get_txt_list("words.txt"))==list
