@@ -12,7 +12,7 @@ class Text_Generator:
     pinkie_chars = "qaz"
     ring_fing_chars = "wsxopl"
 
-    def getTxtList(self,file) -> list[str]:
+    def get_txt_list(self,file) -> list[str]:
         """
         Reads from wordList.txt to create an array of the words in it
         :return wordList : list of words contained in wordList.txt
