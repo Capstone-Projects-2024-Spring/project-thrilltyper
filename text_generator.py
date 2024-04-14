@@ -33,15 +33,12 @@ class Text_Generator:
         side_switches = 0
         direc_verts = 0
         while i<len(word):
-            temp = 0
             has_next_char = i+1<len(word)
             #checking edge chars
             if word[i] in self.pinkie_chars:
-                temp=0.5
-                score+=temp
+                score+=0.25
                 if has_next_char and word[i+1]==word[i]:
                     i+=1
-                score+=temp
             #checking direct verticals and consecutive side switches
             has_next_char=i+1<len(word)
             if has_next_char:
@@ -64,7 +61,7 @@ class Text_Generator:
                             score+=(direc_verts-2)*0.25
             #ensures extra increment is not done after the last while loop
             i+=1
-        return score/(2*(LEN_OF_LONGEST_WORD+1-len(word)))*10
+        return score/(LEN_OF_LONGEST_WORD+1-len(word))*100
     
     def is_direct_vertical(self,curr_char_keyboard_pos, nxt_char_keyboard_pos, is_left):
         """
@@ -110,10 +107,10 @@ class Text_Generator:
             score = self.score_word_typing_difficulty(word)
             num_words+=1
             total+=score
-            if score<=0.2:
+            if score<=1.3:
                 easy+=word+'\n'
                 easy_count+=1
-            elif score<0.32:
+            elif score<1.6:
                 medium+=word+'\n'
                 med_count+=1
             else:
@@ -154,3 +151,7 @@ class Text_Generator:
         except Exception as e:
             print(e)
             return "Invalid arguments or missing arguments."
+
+if __name__=="__main__":
+    tg=Text_Generator()
+    tg.sort_words_by_difficulty(tg.get_txt_list("words.txt"))

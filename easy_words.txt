@@ -113,7 +113,6 @@ better
 betting
 betty
 between
-beverly
 beyond
 bible
 bicycle
@@ -131,7 +130,6 @@ bill
 billing
 billion
 bills
-billy
 bin
 bind
 binding
@@ -161,8 +159,6 @@ blocked
 blocking
 blocks
 blog
-blogger
-bloggers
 blogging
 blogs
 blond
@@ -240,7 +236,6 @@ briefing
 briefly
 briefs
 bright
-brighton
 bring
 bringing
 brings
@@ -254,7 +249,6 @@ broken
 broker
 brokers
 brook
-brooklyn
 brooks
 bros
 brother
@@ -285,7 +279,6 @@ build
 builder
 builders
 building
-buildings
 builds
 built
 bulk
@@ -357,7 +350,6 @@ centers
 centre
 centres
 cents
-centuries
 century
 ceo
 ceremony
@@ -412,7 +404,6 @@ chrome
 chronic
 chronicle
 chronicles
-chrysler
 chubby
 chuck
 church
@@ -559,7 +550,6 @@ completing
 completion
 complex
 complexity
-comply
 component
 components
 composed
@@ -568,7 +558,6 @@ composite
 composition
 compound
 compounds
-comprehensive
 compressed
 compression
 compromise
@@ -609,7 +598,6 @@ confident
 config
 configure
 configured
-configuring
 confirm
 confirmed
 conflict
@@ -641,7 +629,6 @@ considers
 consist
 consistency
 consistent
-consistently
 consisting
 consists
 console
@@ -732,7 +719,6 @@ correct
 corrected
 correction
 corrections
-correctly
 correspondence
 corresponding
 corruption
@@ -857,7 +843,6 @@ dee
 deemed
 deep
 deeper
-deeply
 deer
 def
 defects
@@ -902,7 +887,6 @@ dependence
 dependent
 depending
 depends
-deployment
 deposit
 deposits
 depot
@@ -935,8 +919,6 @@ desktop
 desktops
 despite
 destiny
-destroy
-destroyed
 destruction
 detect
 detected
@@ -996,7 +978,6 @@ directed
 direction
 directions
 directive
-directly
 director
 directories
 directors
@@ -1156,7 +1137,6 @@ ecommerce
 economic
 economics
 economies
-economy
 ed
 eddie
 eden
@@ -1197,7 +1177,6 @@ electron
 electronic
 electronics
 element
-elements
 eleven
 eligibility
 eligible
@@ -1218,13 +1197,6 @@ emissions
 emotions
 emperor
 empire
-employ
-employed
-employee
-employees
-employer
-employers
-employment
 empty
 enclosed
 enclosure
@@ -1270,8 +1242,6 @@ enterprises
 enters
 entire
 entirely
-entities
-entitled
 entity
 entrepreneur
 entrepreneurs
@@ -1311,7 +1281,6 @@ events
 ever
 every
 everybody
-everyone
 everything
 everywhere
 evidence
@@ -1363,7 +1332,6 @@ expected
 expects
 expense
 expenses
-expensive
 experience
 experienced
 experiences
@@ -1376,7 +1344,6 @@ experts
 expired
 expires
 explicit
-explicitly
 explore
 explorer
 exploring
@@ -1400,7 +1367,6 @@ extensive
 extent
 exterior
 extreme
-extremely
 eye
 eyed
 eyes
@@ -1417,7 +1383,6 @@ feeding
 feeds
 feel
 feeling
-feelings
 feels
 fees
 feet
@@ -1515,7 +1480,6 @@ flood
 floor
 flooring
 floors
-floppy
 florence
 florist
 florists
@@ -1600,7 +1564,6 @@ frederick
 free
 freebsd
 freedom
-freely
 freight
 french
 fresh
@@ -1634,7 +1597,6 @@ funky
 funny
 fur
 furnished
-furnishings
 furniture
 further
 furthermore
@@ -1723,7 +1685,6 @@ greece
 greek
 green
 greene
-greenhouse
 greensboro
 greeting
 greg
@@ -1864,7 +1825,6 @@ hook
 hop
 hope
 hoped
-hopefully
 hopes
 hoping
 hopkins
@@ -1926,9 +1886,6 @@ ian
 ice
 icon
 icons
-identified
-identifier
-identifies
 identify
 identifying
 identity
@@ -1947,7 +1904,6 @@ immune
 immunology
 implement
 implemented
-implementing
 implied
 implies
 import
@@ -1989,7 +1945,6 @@ incurred
 indeed
 independence
 independent
-independently
 index
 indexed
 indexes
@@ -2002,7 +1957,6 @@ induced
 induction
 industries
 industry
-inexpensive
 infected
 infection
 infections
@@ -2150,7 +2104,6 @@ jewelry
 jewish
 jill
 jim
-jimmy
 jo
 job
 jobs
@@ -2212,7 +2165,6 @@ kenneth
 kenny
 keno
 kent
-kentucky
 kept
 kernel
 kerry
@@ -2258,7 +2210,6 @@ knives
 knock
 know
 knowing
-knowledge
 known
 knows
 kong
@@ -2320,7 +2271,6 @@ lie
 liechtenstein
 lies
 life
-lifestyle
 lifetime
 lift
 light
@@ -2331,7 +2281,6 @@ lights
 lightweight
 like
 liked
-likelihood
 likely
 likes
 likewise
@@ -2360,7 +2309,6 @@ listed
 listen
 listening
 listing
-listings
 listprice
 lists
 lit
@@ -2403,7 +2351,6 @@ look
 looked
 looking
 looks
-lookup
 loop
 loops
 loose
@@ -2422,7 +2369,6 @@ loud
 louis
 louise
 louisville
-lounge
 love
 loved
 lovely
@@ -2468,7 +2414,6 @@ medium
 medline
 meet
 meeting
-meetings
 meets
 meetup
 melbourne
@@ -2498,7 +2443,6 @@ merit
 merry
 mesh
 mess
-messenger
 met
 meter
 meters
@@ -2516,7 +2460,6 @@ mice
 michel
 michelle
 micro
-microphone
 microsoft
 mid
 middle
@@ -2795,7 +2738,6 @@ observe
 observed
 observer
 obvious
-obviously
 occupied
 occur
 occurred
@@ -2812,7 +2754,6 @@ offensive
 offer
 offered
 offering
-offerings
 offers
 office
 officer
@@ -2848,7 +2789,6 @@ oops
 open
 opened
 opening
-openings
 opens
 opinion
 opinions
@@ -2979,7 +2919,6 @@ philip
 philippines
 philips
 phillips
-philosophy
 phoenix
 phone
 phones
@@ -3027,7 +2966,6 @@ pitch
 pittsburgh
 pixel
 pixels
-pledge
 plenty
 plot
 plots
@@ -3094,13 +3032,11 @@ possession
 possibilities
 possibility
 possible
-possibly
 post
 posted
 poster
 posters
 posting
-postings
 postposted
 posts
 pot
@@ -3122,7 +3058,6 @@ powerseller
 preceding
 precious
 precise
-precisely
 precision
 predict
 predicted
@@ -3145,7 +3080,6 @@ presence
 present
 presented
 presenting
-presently
 presents
 preserve
 president
@@ -3162,7 +3096,6 @@ prevention
 preview
 previews
 previous
-previously
 price
 priced
 prices
@@ -3211,7 +3144,6 @@ produced
 producer
 producers
 produces
-producing
 product
 production
 productions
@@ -3272,9 +3204,6 @@ protective
 protein
 proteins
 protest
-protocol
-protocols
-prototype
 proud
 proudly
 prove
@@ -3286,17 +3215,13 @@ providence
 provider
 providers
 provides
-providing
 province
 provinces
-provision
-provisions
 proxy
 psychology
 pub
 public
 publicity
-publicly
 publish
 published
 publisher
@@ -3347,7 +3272,6 @@ receivers
 receives
 receiving
 recent
-recently
 reception
 receptor
 receptors
@@ -3366,7 +3290,6 @@ recorded
 recorder
 recorders
 recording
-recordings
 records
 recover
 recovered
@@ -3456,10 +3379,6 @@ representing
 represents
 reprint
 reprints
-reproduce
-reproduced
-reproduction
-reproductive
 republic
 rescue
 reseller
@@ -3520,7 +3439,6 @@ returns
 reunion
 reuters
 rev
-revenge
 revenue
 revenues
 reverse
@@ -3657,8 +3575,6 @@ schools
 science
 sciences
 scientific
-scientist
-scientists
 scoop
 scope
 score
@@ -3671,7 +3587,6 @@ scout
 screen
 screening
 screens
-screenshot
 screw
 script
 scripting
@@ -3690,8 +3605,6 @@ sector
 sectors
 secure
 secured
-securely
-securities
 security
 see
 seed
@@ -3731,7 +3644,6 @@ sends
 senior
 seniors
 sense
-sensitive
 sensitivity
 sensor
 sensors
@@ -3741,7 +3653,6 @@ sentences
 september
 series
 serious
-seriously
 serum
 serve
 served
@@ -3756,7 +3667,6 @@ sessions
 set
 sets
 setting
-settings
 settle
 settled
 settlement
@@ -3839,7 +3749,6 @@ silver
 simon
 simple
 simplified
-simply
 simpson
 simpsons
 sims
@@ -3879,7 +3788,6 @@ sleeps
 sleeve
 slide
 slides
-slideshow
 slight
 slightly
 slim
@@ -4018,7 +3926,6 @@ sticky
 still
 stock
 stockholm
-stockings
 stocks
 stolen
 stone
@@ -4043,19 +3950,15 @@ strengths
 stress
 stretch
 strict
-strictly
 strike
 strikes
 striking
 string
-strings
 strip
 stripes
 strips
 stroke
 strong
-stronger
-strongly
 struck
 struct
 structure
@@ -4082,7 +3985,6 @@ stylish
 stylus
 sub
 subcommittee
-subdivision
 subject
 subjects
 sublime
@@ -4106,7 +4008,6 @@ successful
 such
 sucking
 sudden
-suddenly
 sue
 suffer
 suffered
@@ -4162,9 +4063,6 @@ surgeon
 surgeons
 surgery
 surplus
-surprise
-surprised
-surprising
 surrey
 surround
 surrounded
@@ -4177,8 +4075,6 @@ survivors
 suse
 suspect
 suspected
-suspended
-suspension
 sussex
 sweden
 swedish
@@ -4218,7 +4114,6 @@ tech
 techno
 technologies
 technology
-techrepublic
 ted
 teddy
 tee
@@ -4247,7 +4142,6 @@ term
 terminology
 terms
 terrible
-territories
 territory
 terror
 terrorism
@@ -4278,7 +4172,6 @@ themselves
 then
 theology
 theorem
-theories
 theory
 there
 thereby
@@ -4431,7 +4324,6 @@ trio
 trip
 triple
 trips
-triumph
 troops
 trouble
 trout
@@ -4488,7 +4380,6 @@ uncle
 undefined
 under
 underground
-underlying
 understood
 undo
 unexpected
@@ -4509,7 +4400,6 @@ unix
 unknown
 unless
 unlike
-unlikely
 unlimited
 unlock
 unsigned
@@ -4599,7 +4489,6 @@ visit
 visited
 visiting
 visitor
-visitors
 visits
 voice
 voices
@@ -4623,19 +4512,16 @@ way
 we
 web
 weblog
-weblogs
 webshots
 website
 websites
 webster
 wed
 wedding
-weddings
 weed
 week
 weekend
 weekends
-weekly
 weeks
 weight
 weighted
@@ -4744,7 +4630,6 @@ worked
 worker
 workers
 workflow
-workforce
 working
 workout
 works

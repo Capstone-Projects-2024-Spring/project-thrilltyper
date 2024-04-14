@@ -297,7 +297,9 @@ benz
 bermuda
 bernard
 beta
+beverly
 bias
+billy
 binary
 black
 blacks
@@ -310,13 +312,13 @@ blame
 blank
 blanket
 blast
+blogger
 board
 boards
 boat
 boating
 boats
 bolivia
-bookings
 boolean
 bosnia
 bouquet
@@ -351,7 +353,6 @@ bryan
 bryant
 buffalo
 bureau
-butterfly
 buzz
 cabin
 cabinet
@@ -440,7 +441,6 @@ causing
 caution
 cave
 cedar
-celebrities
 central
 ceramic
 chad
@@ -517,14 +517,12 @@ coleman
 collar
 combat
 command
-commonly
 compact
 company
 compare
-completely
+comply
 contact
 contain
-convergence
 coral
 costa
 cottage
@@ -590,8 +588,8 @@ decade
 decades
 decimal
 declare
+deeply
 default
-definitely
 delay
 delayed
 delays
@@ -610,7 +608,6 @@ diamond
 diane
 diary
 dietary
-differently
 digital
 diploma
 disable
@@ -669,7 +666,6 @@ ecuador
 edgar
 edward
 edwards
-efficiently
 elegant
 emacs
 email
@@ -677,6 +673,7 @@ emails
 embassy
 emerald
 emma
+employ
 enable
 enabled
 enables
@@ -702,11 +699,9 @@ exam
 examine
 example
 exams
-exclusively
 exhaust
 expand
 expedia
-expenditure
 explain
 extra
 extract
@@ -784,6 +779,7 @@ flash
 flat
 flavor
 float
+floppy
 floral
 florida
 foam
@@ -803,6 +799,7 @@ francis
 frank
 fraser
 fraud
+freely
 freeze
 friday
 frozen
@@ -875,7 +872,6 @@ gratuit
 grave
 gravity
 gray
-greetings
 guam
 guard
 guards
@@ -998,8 +994,6 @@ install
 instant
 instead
 intake
-intelligence
-intelligent
 invalid
 iowa
 iran
@@ -1031,6 +1025,7 @@ jason
 jean
 jeans
 jessica
+jimmy
 joan
 jordan
 joshua
@@ -1046,7 +1041,6 @@ katie
 kenya
 kinase
 kinda
-knowledgestorm
 kodak
 korea
 korean
@@ -1155,6 +1149,7 @@ locator
 logan
 logical
 lopez
+lounge
 lucas
 lucia
 luggage
@@ -1414,7 +1409,6 @@ pearl
 peas
 penalty
 pendant
-perfectly
 perhaps
 persian
 phantom
@@ -1451,6 +1445,7 @@ playing
 plays
 please
 pleased
+pledge
 podcast
 poland
 polar
@@ -1473,7 +1468,6 @@ privacy
 private
 prize
 prizes
-proceedings
 program
 puzzle
 puzzles
@@ -1595,6 +1589,7 @@ retail
 retain
 reveal
 reveals
+revenge
 reward
 rewards
 rica
@@ -1664,7 +1659,6 @@ scary
 schema
 scholar
 scotia
-screenshots
 scuba
 seafood
 seal
@@ -1713,6 +1707,7 @@ sigma
 signal
 signals
 similar
+simply
 sitemap
 size
 sized
@@ -1793,10 +1788,10 @@ strand
 strap
 stream
 streams
+strings
 stuart
 subaru
 sudan
-sufficiently
 sugar
 summary
 sunday
@@ -2045,7 +2040,9 @@ weather
 webcam
 webcams
 webcast
+weblogs
 webpage
+weekly
 welfare
 whale
 what
