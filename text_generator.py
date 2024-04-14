@@ -42,7 +42,7 @@ class Text_Generator:
             elif word[i] in self.ring_fing_chars:
                 temp=.25
                 if has_next_char and word[i+1] in self.ring_fing_chars:
-                    temp*=3.0
+                    temp*=2.0
                     i+=1
                 score+=temp
             #checking direct verticals and consecutive side switches
@@ -92,6 +92,7 @@ class Text_Generator:
             return True if abs(curr_char_keyboard_pos-nxt_char_keyboard_pos)<=2 else False
         else:
             return False
+
     def sort_words_by_difficulty(self,word_lst:list[str]):
         """
         Uses the scoring function to score each of the words in the given word list and then split them off to different files based on their difficulty
@@ -148,3 +149,7 @@ class Text_Generator:
         except Exception as e:
             print(e)
             return "Invalid arguments or missing arguments."
+
+if __name__=="__main__":
+    tg=Text_Generator()
+    tg.sort_words_by_difficulty(tg.get_txt_list("words.txt"))
