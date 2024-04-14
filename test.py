@@ -2,6 +2,7 @@
 import pytest
 from app import App
 from app import Database, UserInfo, UserData, UserLetter
+from text_generator import Text_Generator
 from datetime import datetime, timezone
 import random
 import string
@@ -377,3 +378,12 @@ class Test_Player():
         """
          pass
 
+#--------------------------------------------------------------------------Text_Generator Tests-----------------------------------------------------------------------------
+
+class Test_Text_Generator():
+    def test_get_txt_lst():
+        """
+        Test: Ensure that a file can be read from successfully
+        Result: True if a list is returned
+        """
+        assert Text_Generator.get_txt_list("words.txt") is list
