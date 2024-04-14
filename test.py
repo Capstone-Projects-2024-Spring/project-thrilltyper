@@ -374,9 +374,24 @@ class Test_Player():
 
 class Test_Text_Generator():
     tg = Text_Generator()
+
     def test_get_txt_lst(self):
         """
         Test: Ensure that a file can be read from successfully
         Result: True if a list is returned
         """
         assert type(self.tg.get_txt_list("words.txt"))==list
+    
+    def test_score_word_typing_difficutly(self):
+        """
+        Test: Ensure that the typing difficulty of words is scored correctly
+        Result: True if the words are scored correctly
+        """
+        assert self.tg.score_word_typing_difficulty("abc")==0
+        assert self.tg.score_word_typing_difficulty("rick")==0
+        apple_score = self.tg.score_word_typing_difficulty("apple")
+        assert apple_score>1.38 and apple_score<1.39
+        cecec_score = self.tg.score_word_typing_difficulty("cecec")
+        assert cecec_score>1.38 and cecec_score<1.39
+        lalalala_score = self.tg.score_word_typing_difficulty("lalalala")
+        assert lalalala_score==10
