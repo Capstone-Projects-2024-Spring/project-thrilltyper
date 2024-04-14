@@ -56,11 +56,11 @@ class Text_Generator:
                         direc_verts+=1
                     elif self.is_direct_vertical(curr_word_right_ind,next_word_right_ind, False):
                         direc_verts+=1
-                    else:
-                        if direc_verts>2:
-                            score+=(direc_verts-2)*0.25
-            #ensures extra increment is not done after the last while loop
             i+=1
+        if direc_verts>2:
+            score+=(direc_verts-3)*0.25
+        if side_switches>5:
+            score+=(side_switches-5)*0.25
         return score/(LEN_OF_LONGEST_WORD+1-len(word))*100
     
     def is_direct_vertical(self,curr_char_keyboard_pos, nxt_char_keyboard_pos, is_left):
@@ -107,10 +107,10 @@ class Text_Generator:
             score = self.score_word_typing_difficulty(word)
             num_words+=1
             total+=score
-            if score<=1.3:
+            if score<=1.5:
                 easy+=word+'\n'
                 easy_count+=1
-            elif score<1.6:
+            elif score<3.2:
                 medium+=word+'\n'
                 med_count+=1
             else:
