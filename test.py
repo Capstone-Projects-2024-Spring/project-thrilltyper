@@ -395,3 +395,13 @@ class Test_Text_Generator():
         assert cecec_score>1.38 and cecec_score<1.39
         lalalala_score = self.tg.score_word_typing_difficulty("lalalala")
         assert lalalala_score==10
+
+    def test_is_direct_vertical(self):
+        """
+        Test: Ensure that direct verticals on the keyboard can be detected
+        Result: True if the key indexes (based on an attribute in text_generator) correspond to keys that are direct verticals from each other
+        """
+        assert self.tg.is_direct_vertical(2,14,True)
+        assert not self.tg.is_direct_vertical(4,-1,False)
+        assert self.tg.is_direct_vertical(1,7,False)
+        assert not self.tg.is_direct_vertical(2,10,False)
