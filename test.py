@@ -405,3 +405,11 @@ class Test_Text_Generator():
         assert not self.tg.is_direct_vertical(4,-1,False)
         assert self.tg.is_direct_vertical(1,7,False)
         assert not self.tg.is_direct_vertical(2,10,False)
+    
+    def test_generate_text(self):
+        """
+        Test: Ensure that text is generate successfully given valid input
+        Result: True when: if given valid input, the invalid argument message is not returned, or if invalid input is given, then the invalid argument message is returned
+        """
+        assert "Invalid arguments or missing arguments." not in Text_Generator.generate_text("hard","words",20)
+        assert "Invalid arguments or missing arguments." in Text_Generator.generate_text("what","no way buddy",3)
