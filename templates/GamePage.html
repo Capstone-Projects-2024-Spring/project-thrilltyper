@@ -42,9 +42,24 @@
     <div id="game-container">
         <h1>Thrill Typer Game</h1>
         <div id="text-display"></div>
-        <input type="text" id="input-box" oninput="checkInput()" disabled>
-        <div id="result"></div>
+        
+        
         <button onclick="startTimer()">Start</button>
+        <div id="gameNav">
+            <button>Start</button>
+            <button>Pause</button>
+            <button>Select Mode</button>
+            <button>Home</button>
+        </div>
+
+        <div id="gameWindow">
+            <div id="time-display"></div>
+            <div id="WPM-display"></div>
+            <div id="accuracy-display"></div>
+            <input type="text" id="input-box" oninput="checkInput()" disabled>
+        </div>
+
+        <div id="result"></div>
     </div>
     
     <script>
@@ -53,9 +68,8 @@
 
         /*
             known bugs
-            #1: for unknown reason, if you click start button in the middle of typing, you can not submit the game and finish
-                (the result is not showing) (fixed)
-            #2
+            #1: Since the currentCharIndex only increments, if you type something correct then delete it at the end, 
+                you are still able to submit and complete the game
         */
         const text = "The quick brown fox jumps over the lazy dog.";
         const words = text.split(" ");
@@ -146,7 +160,7 @@
         function updateTimer() {
             const currentTime = new Date().getTime();
             const elapsedTime = (currentTime - startTime) / 1000;
-            document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(2)} seconds`;
+            document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(0)} seconds`;
         }
 
         function displayText() {
