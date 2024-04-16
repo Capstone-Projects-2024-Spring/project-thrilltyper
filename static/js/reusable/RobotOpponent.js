@@ -107,7 +107,23 @@ function RobotOpponent() {
 
         clearInterval(timerInterval);
         timerInterval = setInterval(updateTimer, 10);
+    }
+
+    function startGame(){
+        var difficulty = getDifficulty()
+        console.log(difficulty)
+        startTimer()
         robotType();
+    }
+
+    function getDifficulty(){
+        var radioBtns = document.getElementsByName('difficulty');
+        for (var i = 0; i < radioBtns.length; i++) {
+            if (radioBtns[i].checked) {
+                return radioBtns[i].value;
+            }
+        }
+        return null;
     }
 
     function updateTimer() {
@@ -225,12 +241,12 @@ function RobotOpponent() {
         inputBox.addEventListener("input", checkInput);
 
         // Attach event listener for click event to start button
-        startBtn.addEventListener("click", startTimer);
+        startBtn.addEventListener("click", startGame);
 
         // Cleanup function to remove event listeners when component unmounts
         return () => {
             inputBox.removeEventListener("input", checkInput);
-            startBtn.removeEventListener("click", startTimer);
+            startBtn.removeEventListener("click", startGame);
         };
     }, []);
 
