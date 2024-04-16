@@ -238,6 +238,26 @@ class App:
         session.pop("user", None)
         return redirect("/")
     
+    @_app.route("/logout", methods=["GET", "POST"])
+    def logout():
+        """
+        Log out user from the session
+        :postcondition: session is None
+        """
+        # Pop out the user session
+        session.pop("user", None)
+        return redirect("/")
+    
+    @_app.route("/getData", methods=["POST"])
+    def parseGame():
+        """
+        Parse game data to user
+        """
+        data = request.json
+        p = player(data["username"])
+        print(p.__json__)
+        return redirect("/")
+    
     @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
         """
