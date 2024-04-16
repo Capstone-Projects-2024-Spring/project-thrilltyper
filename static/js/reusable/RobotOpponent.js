@@ -244,7 +244,7 @@ function RobotOpponent() {
             <div id="result"></div>
             <div id="stats"></div>
             <button id="startBtn">Start</button>
-            <input type="radio" id="easyBtn" value="Easy" name="difficulty"></input>
+            <input type="radio" id="easyBtn" value="Easy" name="difficulty" defaultChecked></input>
             <label for="easyBtn">Easy</label>
             <input type="radio" id="medBtn" value="Medium" name="difficulty"></input>
             <label for="medBtn">Medium</label>
