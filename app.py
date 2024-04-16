@@ -254,7 +254,7 @@ class App:
         Parse game data to user
         """
         data = request.json
-        p = player(data["username"])
+        p = player(data["username"], "akajajsj")
         print(p.__json__)
         return redirect("/")
     
