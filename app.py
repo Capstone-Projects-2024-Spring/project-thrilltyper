@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
@@ -55,6 +56,9 @@ class App:
         },
         server_metadata_url=f"{appConf.get('OAUTH2_META_URL')}",
     )
+
+    socketIO = SocketIO(_app) 
+
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
@@ -228,16 +232,6 @@ class App:
         return redirect("/")
     
        
-    @_app.route("/logout", methods=["GET", "POST"])
-    def logout():
-        """
-        Log out user from the session
-        :postcondition: session is None
-        """
-        # Pop out the user session
-        session.pop("user", None)
-        return redirect("/")
-    
     @_app.route("/logout", methods=["GET", "POST"])
     def logout():
         """
@@ -854,4 +848,4 @@ if __name__=="__main__":
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
 
-    app.run(host="localhost", debug=True)
+    app.socketIO.run(app._app, host="localhost", debug=True)
