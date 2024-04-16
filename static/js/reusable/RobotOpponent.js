@@ -244,6 +244,12 @@ function RobotOpponent() {
             <div id="result"></div>
             <div id="stats"></div>
             <button id="startBtn">Start</button>
+            <input type="radio" id="easyBtn" value="Easy"></input>
+            <label for="easyBtn">Easy</label>
+            <input type="radio" id="medBtn" value="Medium"></input>
+            <label for="medBtn">Medium</label>
+            <input type="radio" id="hardBtn" value="Hard"></input>
+            <label for="hardBtn">Hard</label>
             <svg id="progressCircle" width="100" height="100">
                 <circle cx="50" cy="50" r="52" fill="none" stroke="#ccc" stroke-width="4"></circle>
             </svg>
