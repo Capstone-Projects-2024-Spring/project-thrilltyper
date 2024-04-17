@@ -1,5 +1,5 @@
 function RobotOpponent() {
-    const text = "The quick brown fox jumps over the lazy dog.";
+    let text = "Click start button to start!";
     const words = text.split(" ");
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
@@ -20,6 +20,23 @@ function RobotOpponent() {
         correct text | incorrect text | untyped text
     */
     //if you don't get what is going on here, open a type racer game and type some wrong text
+
+    async function fetchRandomWordList() {
+        let newText = "";
+        try {
+            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            newText = await response.text();
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        return newText;
+    }
+
     function updateText() {
         var str = text
         var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
@@ -102,6 +119,8 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
+        text = await fetchRandomWordList();
+
         displayText();
         enableInput();
 
