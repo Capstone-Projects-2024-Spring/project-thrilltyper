@@ -9,6 +9,23 @@ function ThrillTyperGame() {
     let timerInterval;
     let userInputCorrectText = "";
 
+    const intervalRef = React.useRef(null);
+
+
+    function startTimerInterval(){
+        intervalRef.current = setInterval(updateTimer, 10);
+    }
+
+    function stopTimerInterval(){
+        clearInterval(intervalRef.current);
+    }
+
+    React.useEffect(() => {
+        return () => {
+          clearInterval(intervalRef.current);
+        };
+    }, []);
+
     async function fetchRandomWordList() {
         let newText = "";
         try {
@@ -102,8 +119,11 @@ function ThrillTyperGame() {
         displayText();
         enableInput();
 
-        clearInterval(timerInterval);
-        timerInterval = setInterval(updateTimer, 10);
+        //clearInterval(timerInterval);
+        //timerInterval = setInterval(updateTimer, 10);
+
+        stopTimerInterval();
+        startTimerInterval();
     }
 
     function updateTimer() {
