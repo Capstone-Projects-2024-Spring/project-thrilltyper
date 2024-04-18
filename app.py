@@ -287,8 +287,19 @@ class App:
         :type n: int
         :returns: json format leaderboard info 
         """
+        try:
+            #retrieve highest wpm from UserData
+            top_scores = UserData.query.order_by(UserData._history_highest_race_wpm.desc()).limit(n).all()
 
-        pass
+            #extracting username and highest wpm from query result
+            leaderboard_info = [{
+                'username': scores._username,
+                'highest_wpm': scores._history_highest_race_wpm
+            } for scores in top_scores]
+            return jsonify(leaderboard_info)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
 
 
 class Database:
