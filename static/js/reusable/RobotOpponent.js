@@ -94,13 +94,13 @@ function RobotOpponent() {
         var robotSpeedAdjust;
         switch(difficulty){
             case "Easy":
-                robotSpeedAdjust = Math.random() * (2.666 - 1) + 1;
+                robotSpeedAdjust = Math.random() * (15.0/4 - 1.25) + 1.25;
                 break;
             case "Medium":
-                robotSpeedAdjust = Math.random() * (5.666 - 2.667) + 2.667;
+                robotSpeedAdjust = Math.random() * (85.0/12 - 23.0/6) + 2.667;
                 break;
             case "Hard":
-                robotSpeedAdjust = Math.random() * (10 - 5.667) + 5.667;
+                robotSpeedAdjust = Math.random() * (10 - 43.0/6) + 5.667;
                 break;
         }
         return 1000/robotSpeedAdjust;
