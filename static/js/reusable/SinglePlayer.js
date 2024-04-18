@@ -6,7 +6,7 @@ function ThrillTyperGame() {
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
     let startTime;
-    let timerInterval;
+    //let timerInterval;
     let userInputCorrectText = "";
 
     const intervalRef = React.useRef(null);
@@ -168,13 +168,35 @@ function ThrillTyperGame() {
     }
 
     function submitInput() {
-        clearInterval(timerInterval);
+        //clearInterval(timerInterval);
+        stopTimerInterval();
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
         const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM.`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
+    }
+
+    function stopTimer(){
+        stopTimerInterval();
+        document.getElementById("input-box").disabled = false;
+        document.getElementById("input-box").value = "";
+        userInputCorrectText = "";
+        currentCharIndex = 0;
+        document.getElementById("result").innerHTML = "";
+        currentWordIndex = 0;   //initializes value for play again
+        updateText();
+        document.getElementById("text-display").innerHTML = "Click start button to start!";
+
+    }
+
+    function fillText(){
+        userInputCorrectText = text.substring(0, text.length-1);
+        currentCharIndex = text.length-1;
+        updateText();
+        //console.log("text: " + text);
+        //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
     return (
@@ -184,6 +206,8 @@ function ThrillTyperGame() {
             <input type="text" id="input-box" onInput={checkInput} disabled />
             <div id="result"></div>
             <button onClick={startTimer}>Start</button>
+            <button onClick={stopTimer}>Reset</button>
+            <button onClick={fillText}>Fill Text</button>
         </div>
     );
 }
