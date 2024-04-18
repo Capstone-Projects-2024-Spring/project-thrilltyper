@@ -61,26 +61,29 @@ def test_google_login(client):
     """
     assert "google-logged" in client.post("/google-signin").location
 
-def test_google_callback():
+def test_google_callback(monkeypatch,client):
     """
-    Test: That returned redirect requests are handled successfully, and ultimately a response that indicates redirection to the menu page is returned
-    Result: True if the returned response indicates a redirection to the menu page
+    Test: That returned redirect requests are handled successfully, the passed in information is passed successfully and ultimately a response that indicates redirection to the home page is returned
+    Result: True if the returned response indicates a redirection to the home page
     """
-    pass
-
-def test_menu_selection():
-    """
-    Test: That the user is redirected to the page with the selected game mode
-    Result: True if the number corresponding to the selected game mode appears in the returned redirect response
-    """
-    pass
-
-def test_game_results():
-    """
-    Test: That text for the game results appears on the screen
-    Result: True if a string with game results is returned
-    """
-    pass
+    mock_token = {
+        "id_token": "mock_id_token",
+        "userinfo": {
+            "email": "test@example.com",
+            "picture": "https://example.com/picture.jpg"
+        },
+        "access_token": "mock_access_token"
+    }
+    def mock_authorize_access_token():
+        return mock_token
+    monkeypatch.setattr(App.oauth.ttyper, "authorize_access_token", mock_authorize_access_token)
+    response = client.get("/google-logged")
+    assert response.status_code==302
+    assert response.location=='/'
+    with client.session_transaction() as session:
+        print(session["user"].keys())
+        assert session["user"]["userinfo"]["given_name"] == "test@example.com"
+        assert session["user"]["avatar"] == "https://example.com/picture.jpg"
 
 #--------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 class Test_User_Data():
