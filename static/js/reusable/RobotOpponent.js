@@ -75,9 +75,21 @@ function RobotOpponent() {
 
 
 
-    function robotType() {
+    function robotType(difficulty) {
         // Simulate robot typing with random errors
-        const robotSpeed = 10; // wpm adjustment
+        var robotSpeed; // wpm adjustment
+        console.log(difficulty)
+        switch(difficulty){
+            case "Easy":
+                robotSpeed = Math.random() * (2.666 - 1) + 1;
+                break;
+            case "Medium":
+                robotSpeed = Math.random() * (5.666 - 2.667) + 2.667;
+                break;
+            case "Hard":
+                robotSpeed = Math.random() * (10 - 5.667) + 5.667;
+                break;
+        }
         let robotTypedText = '';
         let currentIndex = 0;
         const robotInterval = setInterval(() => {
@@ -111,9 +123,8 @@ function RobotOpponent() {
 
     function startGame(){
         var difficulty = getDifficulty()
-        console.log(difficulty)
         startTimer()
-        robotType();
+        robotType(difficulty);
     }
 
     function getDifficulty(){
