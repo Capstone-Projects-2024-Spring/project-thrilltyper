@@ -90,6 +90,9 @@ function ThrillTyperGame() {
     async function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
+                              // Reset accuracy variables
+        correctCharsTyped = 1;
+        totalCharsTyped = 1;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
         document.getElementById("result").innerHTML = "";
