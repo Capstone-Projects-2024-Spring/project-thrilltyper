@@ -1,6 +1,6 @@
 function RobotOpponent() {
-    const text = "The quick brown fox jumps over the lazy dog.";
-    const words = text.split(" ");
+    let text = "Choose difficulty and click to start.";
+    let words = text.split(" ");
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
@@ -72,24 +72,8 @@ function RobotOpponent() {
         document.getElementById("text-display").innerHTML = updatedText;
     }
 
-
-
-
-    function robotType(difficulty) {
+    function robotType(millisecPerChar) {
         // Simulate robot typing with random errors
-        var robotSpeed; // wpm adjustment
-        console.log(difficulty)
-        switch(difficulty){
-            case "Easy":
-                robotSpeed = Math.random() * (2.666 - 1) + 1;
-                break;
-            case "Medium":
-                robotSpeed = Math.random() * (5.666 - 2.667) + 2.667;
-                break;
-            case "Hard":
-                robotSpeed = Math.random() * (10 - 5.667) + 5.667;
-                break;
-        }
         let robotTypedText = '';
         let currentIndex = 0;
         const robotInterval = setInterval(() => {
@@ -102,9 +86,43 @@ function RobotOpponent() {
                 document.getElementById("input-box").disabled = true;
                 robotInput();
             }
-        }, 1000 / robotSpeed);
+        }, millisecPerChar);
     }
 
+    function getRobotMillisecPerChar(difficulty){
+        //Adjusts robot speed based on difficulty given
+        var robotSpeedAdjust;
+        switch(difficulty){
+            case "Easy":
+                robotSpeedAdjust = Math.random() * (2.666 - 1) + 1;
+                break;
+            case "Medium":
+                robotSpeedAdjust = Math.random() * (5.666 - 2.667) + 2.667;
+                break;
+            case "Hard":
+                robotSpeedAdjust = Math.random() * (10 - 5.667) + 5.667;
+                break;
+        }
+        return 1000/robotSpeedAdjust;
+    }
+
+    async function fetchRandomWordList(difficulty,millisecPerChar) {
+        let newText = "";
+        try {
+            console.log(Math.floor((60/(millisecPerChar*5/1000))))
+            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+Math.floor((60/(millisecPerChar*5/1000))));
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            newText = await response.text();
+            text=newText
+            document.getElementById("text-display").innerHTML = text;
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
 
     function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
@@ -122,9 +140,11 @@ function RobotOpponent() {
     }
 
     function startGame(){
-        var difficulty = getDifficulty()
-        startTimer()
-        robotType(difficulty);
+        var difficulty = getDifficulty();
+        var robotMillisecPerChar = getRobotMillisecPerChar(difficulty);
+        fetchRandomWordList(difficulty,robotMillisecPerChar);
+        robotType(robotMillisecPerChar);
+        startTimer();
     }
 
     function getDifficulty(){
@@ -265,7 +285,7 @@ function RobotOpponent() {
     return (
         <div id="game-container">
             <h1>Robot</h1>
-            <div id="text-display"></div>
+            <div id="text-display">{text}</div>
             <div id="robot-text-display"></div>
             <input type="text" id="input-box" disabled />
             <div id="result"></div>
