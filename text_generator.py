@@ -20,8 +20,7 @@ class Text_Generator:
         txtListFile = open(file,"r")
         return txtListFile.read().split('\n')
     
-    def get_average_word_len(self):
-        lst = self.get_txt_list("words.txt")
+    def get_average_word_len(lst):
         lenWordsLst = list(map(len,lst))
         return sum(lenWordsLst)/len(lenWordsLst)
 
