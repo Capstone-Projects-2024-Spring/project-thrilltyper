@@ -246,20 +246,21 @@ class App:
         Sends back text for the requestor to use
         """
         difficulty = request.args.get("difficulty")
-        print(difficulty)
         if not difficulty:
             difficulty=""
         return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
-   
-    @_app.route("/game/<int:mode>")
-    def game(mode:int):
+
+    @_app.route("/get_average_txt_length/",methods=["GET"])
+    def get_average_txt_length():
         """
-        Handles the requests made to the game based on the mode selected by the user on the menu page
-        Precondition: mode shall be an int from the range 0 to the number of game modes minus 1
-        :param mode : number representing the game mode selected by the user
-        :return : string indicating the end of the game and the user"s wpm and percent of words typed correct
+        Handles requests to get the average length of a word/sentence from a list
+        :param difficulty
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'words'
         """
-        return ""
+        difficulty = request.args.get("difficulty")
+        if not difficulty:
+            difficulty=""
+        return str(Text_Generator.get_average_word_len(Text_Generator.get_txt_list(difficulty+"_"+request.args.get("form")+".txt")))
 
     def get_test_client(self):
         return self._app.test_client()
@@ -817,7 +818,6 @@ class UserRace(App.db.Model):
 
 if __name__=="__main__":
     app = App()
-
 
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():

@@ -12,7 +12,7 @@ class Text_Generator:
     RIGHT_ROW3_START = RIGHT_SIDE.find('|',RIGHT_ROW2_START+1)
     PINKIE_CHARS = "qaz"
 
-    def get_txt_list(self,file) -> list[str]:
+    def get_txt_list(file) -> list[str]:
         """
         Reads from wordList.txt to create an array of the words in it
         :return wordList : list of words contained in wordList.txt
