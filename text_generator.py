@@ -19,6 +19,11 @@ class Text_Generator:
         """
         txtListFile = open(file,"r")
         return txtListFile.read().split('\n')
+    
+    def get_average_word_len(self):
+        lst = self.get_txt_list("words.txt")
+        lenWordsLst = list(map(len,lst))
+        return sum(lenWordsLst)/len(lenWordsLst)
 
     def score_word_typing_difficulty(self,word)->int:
         """
