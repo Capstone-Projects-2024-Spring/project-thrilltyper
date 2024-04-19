@@ -1,19 +1,23 @@
-#test.py
+# test.py
 import pytest
 from app import App
-from app import Database, UserInfo, UserData, UserLetter
+from app import Database, UserInfo, UserData, UserLetter, UserRace
 from datetime import datetime, timezone
 import random
 import string
 
-#Client that sends requests to endpoints of the application
+# Client that sends requests to endpoints of the application
+
+
 @pytest.fixture
 def client():
     app = App()
     with app.get_test_client() as client:
         yield client
 
-#--------------------------------------------------------------------------------App Tests-----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------App Tests-----------------------------------------------------------------------------
+
+
 def test_registration(client):
     """
     Test: That the user can register a username and password
@@ -21,44 +25,53 @@ def test_registration(client):
     """
     username = "uname"
     password = "pswrd"
-    client.post("/register",data={"username":username,"password":password})
-    assert Database.query(username,"UserInfo")
+    client.post("/register", data={"username": username, "password": password})
+    assert Database.query(username, "UserInfo")
+
 
 def test_invalid_login(client):
     """
     Test: When users enter invalid credentials and click log in, a message saying that either username or password was invalid should appear
-    Result: True if the invalid credentials cause a response that says there was an Authentication error
+    Result: True if the invalid credentials cause a response with an authentication error message
     """
     username = "user1"
     password = "pswd3"
-    response = client.post("/authentication",data={"username":username,"password":password})
-    assert "Authentication Error" in response.data.decode()
+    response = client.post(
+        "/authentication", data={"username": username, "password": password})
+    assert response.status_code == 302  # Check for a redirect status code
+    # Check if the redirect is to the login page
+    assert "login" in response.headers["Location"]
+
 
 def test_valid_login(client):
     """
-    Test: When users enter valid credentials that they registered with and click log in, they should be redirected to the menu 
+    Test: When users enter valid credentials that they registered with and click log in, they should be redirected to the menu
     Result: True if the redirect location is "/"
     """
     username = "uname"
     password = "pswrd"
-    client.post("/register",data={"username":username,"password":password})
-    response = client.post("/authentication",data={"username":username,"password":password})
+    client.post("/register", data={"username": username, "password": password})
+    response = client.post(
+        "/authentication", data={"username": username, "password": password})
     print(response.status_code)
     assert "/" is response.location
+
 
 def test_continue_as_guest(client):
     """
     Test: When users click the play tab, the user should be redirected to the game menu page
     Result: True if request for the game menu page is successful
     """
-    assert client.post("/#/menu").status_code==200
+    assert client.post("/#/menu").status_code == 200
+
 
 def test_google_login(client):
     """
-    Test: When users tries to log in through Google and is successful, the user should be redirected to the google callback page 
+    Test: When users tries to log in through Google and is successful, the user should be redirected to the google callback page
     Result: True if the returned response location indicates a redirection to the google callback page
     """
     assert "google-logged" in client.post("/google-signin").location
+
 
 def test_google_callback():
     """
@@ -67,12 +80,54 @@ def test_google_callback():
     """
     pass
 
+
+def test_logout(client):
+    """
+    Test: That the user is logged out and redirected to the homepage
+    Result: True if the session is cleared and the redirect location is "/"
+    """
+    # Simulate a login
+    with client.session_transaction() as session:
+        # Set up a mock user session
+        # Assuming some user ID to simulate a logged-in user
+        session['user_id'] = 123
+
+    # Perform the logout operation
+    response = client.get("/logout", follow_redirects=True)
+
+    # Check if the redirect location is the homepage
+    assert response.status_code == 200
+    assert response.request.path == "/"
+
+
+def test_generate_text_sentences(client):
+    """Test that the text generation endpoint is operational."""
+    # Make a GET request to the endpoint with expected parameters
+    response = client.get(
+        "/generate_text/?difficulty=easy&form=sentences&amount=6")
+
+    # Assert that the HTTP status code is 200 (OK), indicating success
+    assert response.status_code == 200, "Expected status code 200, but got {}".format(
+        response.status_code)
+
+
+def test_generate_text_word_list(client):
+    """Test generating text with word_list form."""
+    response = client.get(
+        "/generate_text/?difficulty=hard&form=words&amount=10")
+    assert response.status_code == 200
+    content = response.data.decode('utf-8')
+    word_list = content.split(' ')
+    assert len(word_list) == 10
+
+
 def test_menu_selection():
     """
     Test: That the user is redirected to the page with the selected game mode
     Result: True if the number corresponding to the selected game mode appears in the returned redirect response
     """
     pass
+
 
 def test_game_results():
     """
@@ -81,29 +136,31 @@ def test_game_results():
     """
     pass
 
-#--------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
+
+
 class Test_User_Data():
 
     @pytest.fixture
     def sample_user_info(self):
-        #a string of date and time with a random 4 character as the randomly generated username to prevent fail/error when running pytest
-        unique_suffix = datetime.now().strftime("%Y%m%d%H%M%S") + ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
-        return{
+        # a string of date and time with a random 4 character as the randomly generated username to prevent fail/error when running pytest
+        unique_suffix = datetime.now().strftime("%Y%m%d%H%M%S") + \
+            ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        return {
             '_username': f'test_user_{unique_suffix}',
             '_password': 'test_password',
             '_email': f'test_user_{unique_suffix}@example.com',
             '_profile_photo': 'https://example.com/test_user.jpg',
             '_google_id': f'test_google_{unique_suffix}'
         }
-    
+
     @pytest.fixture
-    #cleanup the previous user data before next test, this can prevent duplicate data in db
+    # cleanup the previous user data before next test, this can prevent duplicate data in db
     def cleanup(request, sample_user_info):
         app = App()
         with app._app.app_context():
             yield
             Database.delete(sample_user_info['_username'])
-    
 
     def test_data_table(self, sample_user_info, cleanup):
         """
@@ -113,8 +170,8 @@ class Test_User_Data():
         app = App()
         with app._app.app_context():
             Database.insert(UserInfo, **sample_user_info)
-            
-            #randomly generated user data info
+
+            # randomly generated user data info
             random_user_data = {
                 '_username': sample_user_info['_username'],
                 '_email': sample_user_info['_email'],
@@ -128,8 +185,9 @@ class Test_User_Data():
             }
 
             Database.insert(UserData, **random_user_data)
-            #retrieve the user data with the username
-            user_data = Database.query(sample_user_info['_username'], 'UserData')
+            # retrieve the user data with the username
+            user_data = Database.query(
+                sample_user_info['_username'], 'UserData')
             # Assert individual attributes of user_data object
             assert user_data._username == sample_user_info['_username']
             assert user_data._email == sample_user_info['_email']
@@ -137,24 +195,25 @@ class Test_User_Data():
             assert float(user_data._accuracy) == random_user_data['_accuracy']
             assert user_data._wins == random_user_data['_wins']
             assert user_data._losses == random_user_data['_losses']
-        
-        
+
+
 class Test_Database():
 
     @pytest.fixture
     def sample_user_info(self):
-        #a string of date and time with a random 4 character as the randomly generated username to prevent fail/error when running pytest
-        unique_suffix = datetime.now().strftime("%Y%m%d%H%M%S") + ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
-        return{
+        # a string of date and time with a random 4 character as the randomly generated username to prevent fail/error when running pytest
+        unique_suffix = datetime.now().strftime("%Y%m%d%H%M%S") + \
+            ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        return {
             '_username': f'test_user_{unique_suffix}',
             '_password': 'test_password',
             '_email': f'test_user_{unique_suffix}@example.com',
             '_profile_photo': 'https://example.com/test_user.jpg',
             '_google_id': f'test_google_{unique_suffix}'
         }
-    
+
     @pytest.fixture
-    #cleanup the previous user data before next test, this can prevent duplicate data in db
+    # cleanup the previous user data before next test, this can prevent duplicate data in db
     def cleanup(request, sample_user_info):
         app = App()
         with app._app.app_context():
@@ -164,45 +223,48 @@ class Test_Database():
     def test_insert(self, sample_user_info, cleanup):
         """
         Test: That a new user record is correctly inserted into the database
-        Input: User fields 
+        Input: User fields
         Result: True if the user record is inserted into the database
         """
         app = App()
         with app._app.app_context():
             inserted_user_info = Database.insert(UserInfo, **sample_user_info)
 
-            retrieved_user_info = Database.query(sample_user_info['_username'], 'UserInfo')
+            retrieved_user_info = Database.query(
+                sample_user_info['_username'], 'UserInfo')
 
             assert inserted_user_info is not None
             assert retrieved_user_info is not None
             assert inserted_user_info == retrieved_user_info
 
-
     def test_update(self, sample_user_info, cleanup):
         """
         Test: That a user record is correctly updated in the database
-        Input: A user’s name with or without other fields 
-        Result: True if the user record is updated in the database
+        Input: A user’s name with or without other fields
+        Result: True if the user record is updated in thedatabase
         """
         app = App()
         with app._app.app_context():
-            #insert a sample user record
+            # insert a sample user record
             Database.insert(UserInfo, **sample_user_info)
 
-            #update the user record
+            # update the user record
             updated_record = {
-                #randomly generates unique input for every column to prevent fail/error when encountering unique constraint
-                '_username': sample_user_info['_username'], #this must be the same as the sample_user_info
+                # randomly generates unique input for every column to prevent fail/error when encountering unique constraint
+                # this must be the same as the sample_user_info
+                '_username': sample_user_info['_username'],
                 '_password': ''.join(random.choices(string.ascii_letters + string.digits, k=10)),
                 '_email': f'updated_email_{random.randint(100,999)}@example.com',
                 '_profile_photo': f'https://example.com/updated_profile_photo_{random.randint(100,999)}.jpg',
                 '_google_id': f'updated_google_id_{random.randint(100,999)}'
             }
 
-            Database.update(sample_user_info['_username'], 'UserInfo', **updated_record)
+            Database.update(
+                sample_user_info['_username'], 'UserInfo', **updated_record)
 
-            #query the updated record obj, it is not a list so retrieved_record[xxx] is not referecing anything
-            retrieved_record = Database.query(sample_user_info['_username'], 'UserInfo')
+            # query the updated record obj, it is not a list so retrieved_record[xxx] is not referecing anything
+            retrieved_record = Database.query(
+                sample_user_info['_username'], 'UserInfo')
 
             assert retrieved_record._password == updated_record['_password']
             assert retrieved_record._email == updated_record['_email']
@@ -219,7 +281,8 @@ class Test_Database():
         with app._app.app_context():
             Database.insert(UserInfo, **sample_user_info)
 
-            retrieved_record = Database.query(sample_user_info['_username'], 'UserInfo')
+            retrieved_record = Database.query(
+                sample_user_info['_username'], 'UserInfo')
 
             assert retrieved_record is not None
             assert retrieved_record._username == sample_user_info['_username']
@@ -235,17 +298,19 @@ class Test_Database():
         app = App()
         with app._app.app_context():
             Database.insert(UserInfo, **sample_user_info)
-            #query the data and check if insertion is successful before deleting
-            retrieved_record_before = Database.query(sample_user_info['_username'], 'UserInfo')
+            # query the data and check if insertion is successful before deleting
+            retrieved_record_before = Database.query(
+                sample_user_info['_username'], 'UserInfo')
             assert retrieved_record_before is not None
 
             delete_record = Database.delete(sample_user_info['_username'])
-            #query data after deletion to ensure successful delete
-            retrieved_record_after = Database.query(sample_user_info['_username'], 'UserInfo')
+            # query data after deletion to ensure successful delete
+            retrieved_record_after = Database.query(
+                sample_user_info['_username'], 'UserInfo')
             assert retrieved_record_after is None
-            #check the return value of Database.delete, it is suppose to return true if delete succeed
+            # check the return value of Database.delete, it is suppose to return true if delete succeed
             assert delete_record is True
-    
+
     def test_get_top_n_letters(self, sample_user_info):
         """
         Test: That the method correctly retrieves the top-N letters stored in the database for a specific user
@@ -254,10 +319,10 @@ class Test_Database():
         """
         app = App()
         with app._app.app_context():
-            #first there should be a parent table/row for the UserLetter, UserLetter is a child of UserInfo table
+            # first there should be a parent table/row for the UserLetter, UserLetter is a child of UserInfo table
             Database.insert(UserInfo, **sample_user_info)
 
-            #initiate a row of UserLetter
+            # initiate a row of UserLetter
             user_letter_data = {
                 '_username': sample_user_info['_username'],
                 '_a': 5,
@@ -267,21 +332,25 @@ class Test_Database():
                 '_y': 8,
                 '_z': 50
             }
-            #insertion to UserLetter table
+            # insertion to UserLetter table
             Database.insert(UserLetter, **user_letter_data)
 
-            #call the test method
-            top_n_letters = Database.get_top_n_letters(sample_user_info['_username'], 5)
+            # call the test method
+            top_n_letters = Database.get_top_n_letters(
+                sample_user_info['_username'], 5)
 
-            #make sure the correct number of letters is returned
+            # make sure the correct number of letters is returned
             assert len(top_n_letters) == 5
 
-            #the top_n_letters is a list since this method returns a list
-            expected_letters = ['z', 'x', 'b', 'y', 'a'] #c is not returned or included in the list since this is the top 5
+            # the top_n_letters is a list since this method returns a list
+            # c is not returned or included in the list since this is the top 5
+            expected_letters = ['z', 'x', 'b', 'y', 'a']
             assert top_n_letters == expected_letters
 
 
-#--------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
+
+
 class Test_Game():
     '''
     Class for testing the game_session class
@@ -321,7 +390,7 @@ class Test_Game():
         Result: True if all cleanup actions are successfully executed
         """
         pass
-    
+
     def test_add_player(self):
         """
         Test: Ensure that a player is added to the game session successfully
@@ -335,7 +404,8 @@ class Test_Game():
         Result: True if the player is removed and cannot be retrieved from the game session
         """
         pass
-#--------------------------------------------------------------------------------Player Tests-----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------Player Tests-----------------------------------------------------------------------------
+
 
 class Test_Player():
     '''
@@ -371,9 +441,8 @@ class Test_Player():
         pass
 
     def test_update_score(self):
-         """
-        Test: Ensure that the updated score matches up with the current score
-        Result: True if current score and updated score match
         """
-         pass
-
+       Test: Ensure that the updated score matches up with the current score
+       Result: True if current score and updated score match
+       """
+        pass

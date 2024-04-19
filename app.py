@@ -242,7 +242,7 @@ class App:
         """
         Handles request from the games to generate text
         :param difficulty
-        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'words'
         Sends back text for the requestor to use
         """
         return Text_Generator.generate_text(request.args.get("difficulty"),request.args.get("form"),request.args.get("amount"))

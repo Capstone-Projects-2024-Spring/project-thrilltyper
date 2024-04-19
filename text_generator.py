@@ -36,7 +36,7 @@ class Text_Generator:
             if word[i] in self.pinkie_chars:
                 temp=0.5
                 if has_next_char and word[i+1] in self.pinkie_chars:
-                    temp*=2.0
+                    temp*=2.0 
                     i+=1
                 score+=temp
             elif word[i] in self.ring_fing_chars:
