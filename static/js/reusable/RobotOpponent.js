@@ -98,14 +98,16 @@ function RobotOpponent() {
         let robotTypedText = '';
         let currentIndex = 0;
         const robotInterval = setInterval(() => {
-            if (currentIndex < text.length) {
+            if (currentIndex < text.length && currentCharIndex<text.length) {
                 robotTypedText += text[currentIndex]; // Simulate typing the next character
                 currentIndex++;
                 document.getElementById("robot-text-display").innerHTML = robotTypedText;
-            } else {
+            } else if(currentIndex>=text.length) {
                 clearInterval(robotInterval); // Stop typing when the text is completed
                 document.getElementById("input-box").disabled = true;
                 robotInput();
+            }else if(currentCharIndex>=text.length-1){
+                clearInterval(robotInterval);
             }
         }, msPerChar);
     }
