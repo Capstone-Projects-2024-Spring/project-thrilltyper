@@ -20,7 +20,7 @@ class Text_Generator:
         txtListFile = open(file,"r")
         return txtListFile.read().split('\n')
     
-    def get_average_word_len(lst):
+    def get_avg_txt_len(lst):
         lenWordsLst = list(map(len,lst))
         return sum(lenWordsLst)/len(lenWordsLst)
 
@@ -139,7 +139,6 @@ class Text_Generator:
         try:
             if difficulty:
                 difficulty+="_"
-            print(f"{difficulty}{form}.txt")
             with open(f"{difficulty}{form}.txt",'r') as file:
                 otpt = ""
                 txt_lst=file.readlines()

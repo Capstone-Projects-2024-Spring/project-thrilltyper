@@ -250,8 +250,8 @@ class App:
             difficulty=""
         return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
 
-    @_app.route("/get_average_txt_length/",methods=["GET"])
-    def get_average_txt_length():
+    @_app.route("/get_avg_txt_len/",methods=["GET"])
+    def get_avg_txt_len():
         """
         Handles requests to get the average length of a word/sentence from a list
         :param difficulty
@@ -260,7 +260,9 @@ class App:
         difficulty = request.args.get("difficulty")
         if not difficulty:
             difficulty=""
-        return str(Text_Generator.get_average_word_len(Text_Generator.get_txt_list(difficulty+"_"+request.args.get("form")+".txt")))
+        else:
+            difficulty+="_"
+        return str(Text_Generator.get_avg_txt_len(Text_Generator.get_txt_list(difficulty+request.args.get("form")+".txt")))
 
     def get_test_client(self):
         return self._app.test_client()
