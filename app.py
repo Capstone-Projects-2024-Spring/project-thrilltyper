@@ -126,7 +126,7 @@ class App:
             if "id_token" in token:
                 # If the "id_token" is present, indicating a successful login
                 # Extract and store necessary user information in the session
-                uname = token["userinfo"]["given_name"]
+                uname = token["userinfo"]["email"]
                 picture = token["userinfo"]["picture"]
 
                 # Instantiate a player object to store in user session
@@ -135,7 +135,7 @@ class App:
                 session["user"] = playerObj.__json__()
 
                 # Insert user info into the database if doesn"t exists yet
-                if Database.query(token["userinfo"]["given_name"], "UserInfo") is None:
+                if Database.query(uname, "UserInfo") is None:
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
             else:
                 # Handle the case where access is denied (user cancelled the login)
@@ -245,17 +245,24 @@ class App:
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
         Sends back text for the requestor to use
         """
-        return Text_Generator.generate_text(request.args.get("difficulty"),request.args.get("form"),request.args.get("amount"))
-   
-    @_app.route("/game/<int:mode>")
-    def game(mode:int):
+        difficulty = request.args.get("difficulty")
+        if not difficulty:
+            difficulty=""
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
+
+    @_app.route("/get_avg_txt_len/",methods=["GET"])
+    def get_avg_txt_len():
         """
-        Handles the requests made to the game based on the mode selected by the user on the menu page
-        Precondition: mode shall be an int from the range 0 to the number of game modes minus 1
-        :param mode : number representing the game mode selected by the user
-        :return : string indicating the end of the game and the user"s wpm and percent of words typed correct
+        Handles requests to get the average length of a word/sentence from a list
+        :param difficulty
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'words'
         """
-        return ""
+        difficulty = request.args.get("difficulty")
+        if not difficulty:
+            difficulty=""
+        else:
+            difficulty+="_"
+        return str(Text_Generator.get_avg_txt_len(Text_Generator.get_txt_list(difficulty+request.args.get("form")+".txt")))
 
     def get_test_client(self):
         return self._app.test_client()
@@ -836,7 +843,6 @@ class UserRace(App.db.Model):
 
 if __name__=="__main__":
     app = App()
-
 
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():

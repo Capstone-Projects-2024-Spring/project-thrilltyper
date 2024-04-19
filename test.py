@@ -2,6 +2,7 @@
 import pytest
 from app import App
 from app import Database, UserInfo, UserData, UserLetter
+from text_generator import Text_Generator
 from datetime import datetime, timezone
 import random
 import string
@@ -27,12 +28,12 @@ def test_registration(client):
 def test_invalid_login(client):
     """
     Test: When users enter invalid credentials and click log in, a message saying that either username or password was invalid should appear
-    Result: True if the invalid credentials cause a response that says there was an Authentication error
+    Result: True if the invalid credentials cause a redirect to the login page
     """
     username = "user1"
     password = "pswd3"
     response = client.post("/authentication",data={"username":username,"password":password})
-    assert "Authentication Error" in response.data.decode()
+    assert response.location=="login"
 
 def test_valid_login(client):
     """
@@ -60,26 +61,29 @@ def test_google_login(client):
     """
     assert "google-logged" in client.post("/google-signin").location
 
-def test_google_callback():
+def test_google_callback(monkeypatch,client):
     """
-    Test: That returned redirect requests are handled successfully, and ultimately a response that indicates redirection to the menu page is returned
-    Result: True if the returned response indicates a redirection to the menu page
+    Test: That returned redirect requests are handled successfully, the passed in information is passed successfully and ultimately a response that indicates redirection to the home page is returned
+    Result: True if the returned response indicates a redirection to the home page
     """
-    pass
-
-def test_menu_selection():
-    """
-    Test: That the user is redirected to the page with the selected game mode
-    Result: True if the number corresponding to the selected game mode appears in the returned redirect response
-    """
-    pass
-
-def test_game_results():
-    """
-    Test: That text for the game results appears on the screen
-    Result: True if a string with game results is returned
-    """
-    pass
+    mock_token = {
+        "id_token": "mock_id_token",
+        "userinfo": {
+            "email": "test@example.com",
+            "picture": "https://example.com/picture.jpg"
+        },
+        "access_token": "mock_access_token"
+    }
+    def mock_authorize_access_token():
+        return mock_token
+    monkeypatch.setattr(App.oauth.ttyper, "authorize_access_token", mock_authorize_access_token)
+    response = client.get("/google-logged")
+    assert response.status_code==302
+    assert response.location=='/'
+    with client.session_transaction() as session:
+        print(session["user"].keys())
+        assert session["user"]["userinfo"]["given_name"] == "test@example.com"
+        assert session["user"]["avatar"] == "https://example.com/picture.jpg"
 
 #--------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 class Test_User_Data():
@@ -283,10 +287,6 @@ class Test_Database():
 
 #--------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
 class Test_Game():
-    '''
-    Class for testing the game_session class
-    '''
-
     def test_initialization(self):
         """
         Test: A new session is initialized with players. It contains relevant information of a game
@@ -338,10 +338,6 @@ class Test_Game():
 #--------------------------------------------------------------------------------Player Tests-----------------------------------------------------------------------------
 
 class Test_Player():
-    '''
-    Class for testing the player class
-    '''
-
     def test_initialization(self):
         """
         Test: A new player metric structure is created which holds key metrics of the player through the duration of the match
@@ -377,3 +373,53 @@ class Test_Player():
         """
          pass
 
+#--------------------------------------------------------------------------Text_Generator Tests-----------------------------------------------------------------------------
+
+class Test_Text_Generator():
+    tg = Text_Generator()
+
+    def test_get_txt_lst(self):
+        """
+        Test: Ensure that a file can be read from successfully
+        Result: True if a list is returned
+        """
+        assert type(self.tg.get_txt_list("words.txt"))==list
+    
+    def test_get_average_word_len(self):
+        """
+        Test: Ensure that the average length of words in a list is calculated correctly
+        Result: True if the average length is calculated correctly
+        """
+        assert Text_Generator.get_average_word_len(["apple","banana","pear"])==5
+    
+    def test_score_word_typing_difficutly(self):
+        """
+        Test: Ensure that the typing difficulty of words is scored correctly
+        Result: True if the words are scored correctly
+        """
+        assert self.tg.score_word_typing_difficulty("abc")==0
+        assert self.tg.score_word_typing_difficulty("rick")==0
+        apple_score = self.tg.score_word_typing_difficulty("apple")
+        assert apple_score>1.38 and apple_score<1.39
+        cecec_score = self.tg.score_word_typing_difficulty("cecec")
+        assert cecec_score>1.38 and cecec_score<1.39
+        lalalala_score = self.tg.score_word_typing_difficulty("lalalala")
+        assert lalalala_score==10
+
+    def test_is_direct_vertical(self):
+        """
+        Test: Ensure that direct verticals on the keyboard can be detected
+        Result: True if the key indexes (based on an attribute in text_generator) correspond to keys that are direct verticals from each other
+        """
+        assert self.tg.is_direct_vertical(2,14,True)
+        assert not self.tg.is_direct_vertical(4,-1,False)
+        assert self.tg.is_direct_vertical(1,7,False)
+        assert not self.tg.is_direct_vertical(2,10,False)
+    
+    def test_generate_text(self):
+        """
+        Test: Ensure that text is generate successfully given valid input
+        Result: True when: if given valid input, the invalid argument message is not returned, or if invalid input is given, then the invalid argument message is returned
+        """
+        assert "Invalid arguments or missing arguments." not in Text_Generator.generate_text("hard","words",20)
+        assert "Invalid arguments or missing arguments." in Text_Generator.generate_text("what","no way buddy",3)
