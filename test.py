@@ -94,6 +94,45 @@ def test_game_results():
     """
     pass
 
+
+def test_logout(client):
+    """
+    Test: That the user is logged out and redirected to the homepage
+    Result: True if the session is cleared and the redirect location is "/"
+    """
+    # Simulate a login
+    with client.session_transaction() as session:
+        # Set up a mock user session
+        # Assuming some user ID to simulate a logged-in user
+        session['user_id'] = 123
+
+    # Perform the logout operation
+    response = client.get("/logout", follow_redirects=True)
+
+    # Check if the redirect location is the homepage
+    assert response.status_code == 200
+    assert response.request.path == "/"
+
+
+def test_generate_text_sentences(client):
+    """Test that the text generation endpoint is operational."""
+    # Make a GET request to the endpoint with expected parameters
+    response = client.get(
+        "/generate_text/?difficulty=easy&form=sentences&amount=6")
+
+    # Assert that the HTTP status code is 200 (OK), indicating success
+    assert response.status_code == 200, "Expected status code 200, but got {}".format(
+        response.status_code)
+
+
+def test_generate_text_word_list(client):
+    """Test generating text with word_list form."""
+    response = client.get(
+        "/generate_text/?difficulty=hard&form=words&amount=10")
+    assert response.status_code == 200
+    content = response.data.decode('utf-8')
+    word_list = content.split(' ')
+    assert len(word_list) == 10
 # --------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 
 
@@ -304,46 +343,6 @@ class Test_Database():
             # c is not returned or included in the list since this is the top 5
             expected_letters = ['z', 'x', 'b', 'y', 'a']
             assert top_n_letters == expected_letters
-
-
-    def test_logout(client):
-        """
-        Test: That the user is logged out and redirected to the homepage
-        Result: True if the session is cleared and the redirect location is "/"
-        """
-        # Simulate a login
-        with client.session_transaction() as session:
-            # Set up a mock user session
-            # Assuming some user ID to simulate a logged-in user
-            session['user_id'] = 123
-
-        # Perform the logout operation
-        response = client.get("/logout", follow_redirects=True)
-
-        # Check if the redirect location is the homepage
-        assert response.status_code == 200
-        assert response.request.path == "/"
-
-
-    def test_generate_text_sentences(client):
-        """Test that the text generation endpoint is operational."""
-        # Make a GET request to the endpoint with expected parameters
-        response = client.get(
-            "/generate_text/?difficulty=easy&form=sentences&amount=6")
-
-        # Assert that the HTTP status code is 200 (OK), indicating success
-        assert response.status_code == 200, "Expected status code 200, but got {}".format(
-            response.status_code)
-
-
-    def test_generate_text_word_list(client):
-        """Test generating text with word_list form."""
-        response = client.get(
-            "/generate_text/?difficulty=hard&form=words&amount=10")
-        assert response.status_code == 200
-        content = response.data.decode('utf-8')
-        word_list = content.split(' ')
-        assert len(word_list) == 10
 # --------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
 
 
