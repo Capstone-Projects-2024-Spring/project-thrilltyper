@@ -383,14 +383,14 @@ class Test_Text_Generator():
         Test: Ensure that a file can be read from successfully
         Result: True if a list is returned
         """
-        assert type(self.tg.get_txt_list("words.txt"))==list
+        assert type(Text_Generator.get_txt_list("words.txt"))==list
     
-    def test_get_average_word_len(self):
+    def test_get_avg_txt_len(self):
         """
         Test: Ensure that the average length of words in a list is calculated correctly
         Result: True if the average length is calculated correctly
         """
-        assert Text_Generator.get_average_word_len(["apple","banana","pear"])==5
+        assert Text_Generator.get_avg_txt_len(["apple","banana","pear"])==5
     
     def test_score_word_typing_difficutly(self):
         """
