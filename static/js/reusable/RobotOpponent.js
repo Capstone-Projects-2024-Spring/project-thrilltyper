@@ -123,10 +123,20 @@ function RobotOpponent() {
 
     async function fetchRandomWordList(difficulty,msPerChar) {
         let newText = "";
+        let avgWordLen;
         try {
-            console.log(Math.floor((60/(millisecPerChar*5/1000))))
-            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+Math.floor((60/(millisecPerChar*5/1000))));
-
+            switch(difficulty){
+                case "Easy":
+                    avgWordLen=avgEasyWordTxtLen;
+                    break;
+                case "Medium":
+                    avgWordLen=avgMedWordTxtLen;
+                    break;
+                case "Hard":
+                    avgWordLen=avgHardWordTxtLen;
+                    break;
+            }
+            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+Math.floor((60/(msPerChar*avgWordLen/1000))));
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
