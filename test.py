@@ -122,7 +122,7 @@ class Test_User_Data():
             random_user_data = {
                 '_username': sample_user_info['_username'],
                 '_email': sample_user_info['_email'],
-                '_wpm': random.randint(50, 100),
+                '_history_highest_race_wpm': random.randint(50, 100),
                 '_accuracy': round(random.uniform(80, 100), 2),
                 '_wins': random.randint(0, 100),
                 '_losses': random.randint(0, 100),
@@ -137,7 +137,7 @@ class Test_User_Data():
             # Assert individual attributes of user_data object
             assert user_data._username == sample_user_info['_username']
             assert user_data._email == sample_user_info['_email']
-            assert user_data._wpm == random_user_data['_wpm']
+            assert user_data._history_highest_race_wpm == random_user_data['_history_highest_race_wpm']
             assert float(user_data._accuracy) == random_user_data['_accuracy']
             assert user_data._wins == random_user_data['_wins']
             assert user_data._losses == random_user_data['_losses']
