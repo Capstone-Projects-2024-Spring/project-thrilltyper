@@ -197,7 +197,7 @@ function RobotOpponent() {
         // Calculate words per minute and accuracy
 
         const elapsedTime = (new Date().getTime() - startTime) / 1000;
-        const wordsPerMinute = Math.round(currentCharIndex / 5 / (elapsedTime * 60));
+        const wordsPerMinute = Math.round((currentCharIndex / 5 / elapsedTime) * 60);
         const accuracy = (correctCharsTyped / totalCharsTyped) * 100;
 
 
