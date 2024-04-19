@@ -1,6 +1,12 @@
 function RobotOpponent() {
     let text = "Choose difficulty and click to start.";
     let words = text.split(" ");
+    let avgEasyWordTxtLen;
+    getAvgTxtLen("easy","words").then(avgLen=>{avgEasyWordTxtLen=avgLen});
+    let avgMedWordTxtLen;
+    getAvgTxtLen("medium","words").then(avgLen=>{avgMedWordTxtLen=avgLen});
+    let avgHardWordTxtLen;
+    getAvgTxtLen("hard","words").then(avgLen=>{avgHardWordTxtLen=avgLen});
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
@@ -11,6 +17,21 @@ function RobotOpponent() {
 
     let correctCharsTyped = 0; // Track correct characters typed
     let totalCharsTyped = 0; // Track total characters typed
+
+    async function getAvgTxtLen(difficulty,form){
+        let avgTxtLen;
+        try {
+            const response = await fetch('/get_avg_txt_len/?difficulty='+difficulty+'&form='+form);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const avgTxtLenResponseStr = await response.text();
+            avgTxtLen = parseFloat(avgTxtLenResponseStr)
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        return avgTxtLen;
+    }
 
     //update text color as user types text
     //green text if user typed correctly
@@ -72,7 +93,7 @@ function RobotOpponent() {
         document.getElementById("text-display").innerHTML = updatedText;
     }
 
-    function robotType(millisecPerChar) {
+    function robotType(msPerChar) {
         // Simulate robot typing with random errors
         let robotTypedText = '';
         let currentIndex = 0;
@@ -86,27 +107,21 @@ function RobotOpponent() {
                 document.getElementById("input-box").disabled = true;
                 robotInput();
             }
-        }, millisecPerChar);
+        }, msPerChar);
     }
 
-    function getRobotMillisecPerChar(difficulty){
-        //Adjusts robot speed based on difficulty given
-        var robotSpeedAdjust;
+    function getRobotMsPerChar(difficulty){
         switch(difficulty){
             case "Easy":
-                robotSpeedAdjust = Math.random() * (15.0/4 - 1.25) + 1.25;
-                break;
+                return 1000/(Math.random() * (15.0/4 - 1.25) + 1.25);
             case "Medium":
-                robotSpeedAdjust = Math.random() * (85.0/12 - 23.0/6) + 2.667;
-                break;
+                return 1000/(Math.random() * (85.0/12 - 23.0/6) + 23.0/6);
             case "Hard":
-                robotSpeedAdjust = Math.random() * (10 - 43.0/6) + 5.667;
-                break;
+                return 1000/(Math.random() * (10 - 43.0/6) + 43.0/6);
         }
-        return 1000/robotSpeedAdjust;
     }
 
-    async function fetchRandomWordList(difficulty,millisecPerChar) {
+    async function fetchRandomWordList(difficulty,msPerChar) {
         let newText = "";
         try {
             console.log(Math.floor((60/(millisecPerChar*5/1000))))
@@ -141,9 +156,9 @@ function RobotOpponent() {
 
     function startGame(){
         var difficulty = getDifficulty();
-        var robotMillisecPerChar = getRobotMillisecPerChar(difficulty);
-        fetchRandomWordList(difficulty,robotMillisecPerChar);
-        robotType(robotMillisecPerChar);
+        var robotMsPerChar = getRobotMsPerChar(difficulty)
+        fetchRandomWordList(difficulty,robotMsPerChar);
+        robotType(robotMsPerChar);
         startTimer();
     }
 
