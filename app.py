@@ -140,7 +140,7 @@ class App:
             if "id_token" in token:
                 # If the "id_token" is present, indicating a successful login
                 # Extract and store necessary user information in the session
-                uname = token["userinfo"]["given_name"]
+                uname = token["userinfo"]["email"]
                 picture = token["userinfo"]["picture"]
 
                 # Instantiate a player object to store in user session
@@ -149,7 +149,7 @@ class App:
                 session["user"] = playerObj.__json__()
 
                 # Insert user info into the database if doesn"t exists yet
-                if Database.query(token["userinfo"]["given_name"], "UserInfo") is None:
+                if Database.query(token["userinfo"]["email"], "UserInfo") is None:
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
             else:
                 # Handle the case where access is denied (user cancelled the login)
