@@ -303,6 +303,7 @@ class App:
                 'username': scores._username,
                 'highest_wpm': scores._history_highest_race_wpm
             } for scores in top_scores]
+
             return jsonify(leaderboard_info)
         except Exception as e:
             return jsonify({'error': str(e)}), 500

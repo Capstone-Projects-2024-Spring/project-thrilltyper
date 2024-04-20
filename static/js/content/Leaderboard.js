@@ -1,22 +1,20 @@
 
-function Leaderboard(){
-    const Leaderboard = () => {
-    try{
-        const [leaderboardData, setLeaderboardData] = React.useState("");
-    
-        React.useEffect(() => {
-            const response = fetch('/leaderboard/top_n_highest_wpm/10')
-                .then(response => response.json())
-                .then(data => {
-                    setLeaderboardData(data);
-                })
-                .catch(error => {
-                    console.error('Error fetching leaderboard data:', error);
-                });
-        }, []);
-    }catch(error){
-        console.error('There was a problem with the fetch operation:', error);
-    }
+function Leaderboard() {
+    const [leaderboardData, setLeaderboardData] = React.useState([]);
+
+    React.useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('/leaderboard/top_n_highest_wpm/30');
+                const data = await response.json();
+                setLeaderboardData(data);
+            } catch (error) {
+                console.error('Error fetching leaderboard data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     return (
         <div>
@@ -29,5 +27,5 @@ function Leaderboard(){
             </div>
         </div>
     );
-  }
 }
+
