@@ -1,0 +1,33 @@
+/* Style for the leaderboard container */
+#leaderboard {
+    font-family: Arial, sans-serif;
+    border-collapse: collapse;
+    width: 80%;
+    margin: 20px auto;
+    background-color: #f9f9f9;
+  }
+  
+  /* Style for leaderboard table header */
+  #leaderboard th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  /* Style for alternating row colors */
+  #leaderboard tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Style for leaderboard table data */
+  #leaderboard td {
+    padding: 8px;
+  }
+  
+  /* Style for the top leaderboard entry */
+  #leaderboard tr:first-child {
+    font-weight: bold;
+  }
+  
