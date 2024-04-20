@@ -8,11 +8,16 @@
     <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
 
-    <!-- This next CDN lets you use JSX (looks like HTML tags in JS) -->
+    <!-- This next CDN lets you use JSX and Socket IO (looks like HTML tags in JS) -->
     <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 
     <!-- This lets you use React Routing -->
     <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/main.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/menu.css')}}">
@@ -34,13 +39,14 @@
 
     <!-- Imports of necessary js components -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/Profile.js')}}"></script>
-    <!-- No longer use Home.js -->
     <!-- <script type="text/babel" src="{{url_for('static', filename='js/content/Home.js')}}"></script> -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/Menu.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Dashboard.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/SinglePlayer.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/RobotOpponent.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/ChatRoom.js')}}"></script>
+
 
     <!-- added by Hu -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/HomePage.js')}}"></script>
@@ -77,7 +83,7 @@
                     <Profile userSession={userSession} />
                 </header>
                 <div id="content">
-                    <Route path="/" exact component={HomePage} />
+                    <Route path="/" exact component={ChatRoom} />
                     <Route path="/menu" component={Menu} />
                     <Route path="/singlePlayer" component={ThrillTyperGame} />
                     <Route path="/robotOpponent" component={RobotOpponent} />

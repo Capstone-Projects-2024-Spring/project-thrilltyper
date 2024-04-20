@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, disconnect, emit
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
@@ -57,7 +57,7 @@ class App:
         server_metadata_url=f"{appConf.get('OAUTH2_META_URL')}",
     )
 
-    socketIO = SocketIO(_app) 
+    socketio = SocketIO(_app) 
 
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
@@ -81,6 +81,16 @@ class App:
             information.
         """
         self._app.run(host,port,debug,load_dotenv)
+
+    def messageReceived():
+        print('message was received!!!')
+
+    @socketio.on('my event')
+    def handle_my_custom_event(json):
+        global socketio
+        print('received my event: ' + str(json))
+        emit('my response', json, callback=App.messageReceived)
+
 
     @_app.route("/login", methods=["GET", "POST"])
     def login():
@@ -242,15 +252,6 @@ class App:
         session.pop("user", None)
         return redirect("/")
     
-    @_app.route("/getData", methods=["POST"])
-    def parseGame():
-        """
-        Parse game data to user
-        """
-        data = request.json
-        p = player(data["username"], "akajajsj")
-        print(p.__json__)
-        return redirect("/")
     
     @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
@@ -848,4 +849,4 @@ if __name__=="__main__":
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
 
-    app.socketIO.run(app._app, host="localhost", debug=True)
+    app.socketio.run(app._app, host="localhost", debug=True)
