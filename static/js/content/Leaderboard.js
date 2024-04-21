@@ -26,6 +26,7 @@ function Leaderboard() {
                             <th>User Profile Photo</th>
                             <th>User Name</th>
                             <th>User WPM</th>
+                            <th>Accuracy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,6 +43,9 @@ function Leaderboard() {
                                 </td>
                                 <td>
                                     {player.highest_wpm} WPM (Rank: {index + 1})
+                                </td>
+                                <td>
+                                    {player.accuracy.toFixed(2)}%
                                 </td>
                             </tr>
                         ))}

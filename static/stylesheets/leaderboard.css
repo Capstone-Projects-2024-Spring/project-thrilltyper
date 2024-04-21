@@ -104,3 +104,20 @@ h2 {
   color: #cd7f32; /* Change the color for rank 3 */
 }
 
+/* Style for the accuracy column header */
+#leaderboard th:nth-child(4) {
+  padding: 12px; /* Adjust padding */
+  text-align: center; /* Center text */
+  background-color: #4CAF50; /* Background color */
+  color: white; /* Text color */
+  border: 2px solid #ccc; /* Border */
+}
+
+/* Style for the accuracy column data */
+#leaderboard td:nth-child(4) {
+  padding: 10px; /* Adjust padding */
+  border-radius: 10px; /* Rounded corners */
+  text-align: center; /* Center text */
+  border: 2px solid #ccc; /* Border */
+}
+
