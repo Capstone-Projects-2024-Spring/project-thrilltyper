@@ -13,13 +13,46 @@
   background-position: center; /* Center the background */
 }
 
-/* Style for leaderboard table header */
 #leaderboard th {
-  padding: 12px;
-  text-align: left;
+  padding: 12px 20px; /* Adjust padding to reduce space around the text and icon */
+  text-align: center;
   background-color: #4CAF50;
   color: white;
-  border: 2px solid #ccc; /* Add border to the table header cells */
+  border: 2px solid #ccc;
+  position: relative; /* Ensure the th element is positioned relatively */
+}
+
+
+/* Style for the icon in the table header */
+#leaderboard th.icon1::before,
+#leaderboard th.icon2::before,
+#leaderboard th.icon3::before,
+#leaderboard th.icon4::before {
+  content: ''; /* Add content */
+  position: absolute; /* Position the icon absolutely */
+  left: 10px; /* Adjust the left position to align the icon */
+  top: 50%; /* Align the icon vertically */
+  transform: translateY(-50%); /* Center the icon vertically */
+  width: 20px; /* Set the width of the icon */
+  height: 20px; /* Set the height of the icon */
+  background-size: cover; /* Cover the entire area of the icon */
+}
+
+/* Add specific background images for each icon */
+#leaderboard th.icon1::before {
+  background-image: url('/static/pics/User_Profile_Photo.gif'); /* Specify the path to your first icon */
+}
+
+#leaderboard th.icon2::before {
+  background-image: url('/static/pics/username_cool.gif'); /* Specify the path to your second icon */
+}
+
+#leaderboard th.icon3::before {
+  background-image: url('/static/pics/stopwatch_wpm.gif'); /* Specify the path to your third icon */
+}
+
+#leaderboard th.icon4::before {
+  background-image: url('/static/pics/accuracy.gif'); /* Specify the path to your fourth icon */
 }
 
 /* Add border-right to the last column header to create a divider */
@@ -120,4 +153,3 @@ h2 {
   text-align: center; /* Center text */
   border: 2px solid #ccc; /* Border */
 }
-

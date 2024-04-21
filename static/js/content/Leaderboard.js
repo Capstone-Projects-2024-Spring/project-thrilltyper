@@ -23,10 +23,10 @@ function Leaderboard() {
                 <table>
                     <thead>
                         <tr>
-                            <th>User Profile Photo</th>
-                            <th>User Name</th>
-                            <th>User WPM</th>
-                            <th>Accuracy</th>
+                            <th className="icon1">User Profile Photo</th>
+                            <th className="icon2">User Name</th>
+                            <th className="icon3">User WPM</th>
+                            <th className="icon4">Accuracy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,7 +45,7 @@ function Leaderboard() {
                                     {player.highest_wpm} WPM (Rank: {index + 1})
                                 </td>
                                 <td>
-                                    {player.accuracy.toFixed(2)}%
+                                    {typeof player.accuracy === 'number' ? player.accuracy.toFixed(2) + '%' : ''}
                                 </td>
                             </tr>
                         ))}
