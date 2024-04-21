@@ -286,27 +286,23 @@ class App:
                 "frequentMisTypedWord" : userData._freq_mistyped_words
             })
         
+    from flask import jsonify
+
     @_app.route('/leaderboard/top_n_highest_wpm/<int:n>', methods=['GET'])
     def get_top_n_highest_wpm_leaderboard(n):
-        """
-        Retrieve UserData table highest_wpm and converting to json format and send to frontend
-        :param n: an input of the top n number for leaderboard
-        :type n: int
-        :returns: json format leaderboard info 
-        """
         try:
-            #retrieve highest wpm from UserData
             top_scores = UserData.query.order_by(UserData._history_highest_race_wpm.desc()).limit(n).all()
 
-            #extracting username and highest wpm from query result
             leaderboard_info = [{
-                'username': scores._username,
-                'highest_wpm': scores._history_highest_race_wpm
-            } for scores in top_scores]
+                'profile_photo': player.user_info_ref_data._profile_photo, # Assuming UserData has a reference to UserInfo
+                'username': player._username,
+                'highest_wpm': player._history_highest_race_wpm
+            } for player in top_scores]
 
             return jsonify(leaderboard_info)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+
 
 
 
@@ -362,7 +358,7 @@ class Database:
                     "_username": f"user{i}",
                     "_password": f"password{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_profile_photo":  f'./static/pics/anonymous.png',
+                    "_profile_photo":  f'./static/pics/terraria_player.png',
                     "_google_id": sample_google_id
                 }
 
@@ -857,7 +853,7 @@ if __name__=="__main__":
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         #after testing, you can repeat the number, but preferrably not to do that
-        #Database.populate_sample_date(10000)
+        #Database.populate_sample_date(100)
 
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)

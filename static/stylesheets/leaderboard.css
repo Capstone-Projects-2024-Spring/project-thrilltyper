@@ -1,7 +1,7 @@
 /* Style for the leaderboard container */
 #leaderboard {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  border: 2px solid #3498db; /* Blue border */
+  border: none; /* Remove default border */
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
   width: 80%;
@@ -21,14 +21,23 @@
   color: white;
 }
 
+/* Style for the leaderboard table */
+#leaderboard table {
+  width: 100%; /* Make table fill container width */
+  border-collapse: collapse; /* Collapse borders to center */
+}
+
 /* Style for alternating row colors */
-#leaderboard tr:nth-child(even) {
-  background-color: #f2f2f2;
+#leaderboard tr {
+  margin-bottom: 10px; /* Add space between each row */
 }
 
 /* Style for leaderboard table data */
 #leaderboard td {
   padding: 10px;
+  border-radius: 10px; /* Rounded corners for each cell */
+  border: 2px solid #ccc; /* Gray border */
+  text-align: center; /* Center text */
 }
 
 /* Style for the top leaderboard entry */
@@ -51,18 +60,27 @@ h2 {
 }
 
 /* Center and enlarge username and WPM */
-#leaderboard p {
-  text-align: center;
+#leaderboard .player {
+  display: flex; /* Use flexbox to align items */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
   font-size: 20px; /* Adjust font size as needed */
   margin-bottom: 10px; /* Add space between each username and WPM */
 }
 
+/* Style for profile photo */
+#leaderboard .player img {
+  width: 30px; /* Adjust the width of the profile photo */
+  height: 30px; /* Adjust the height of the profile photo */
+  border-radius: 50%; /* Round profile photo */
+  margin-right: 10px; /* Add space between profile photo and username */
+}
+
 /* Make username bold */
-#leaderboard p.username {
+#leaderboard .player .username {
   font-weight: bold;
 }
 
-/* Enlarge top 10 usernames */
-#leaderboard tr:nth-child(-n+10) p.username {
-  font-size: 24px; /* Enlarge font size for top 10 usernames */
+.rank-icon {
+  margin-left: 5px; /* Adjust the spacing between the username and the icon */
 }
