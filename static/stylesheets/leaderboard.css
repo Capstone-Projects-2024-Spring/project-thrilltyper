@@ -19,6 +19,12 @@
   text-align: left;
   background-color: #4CAF50;
   color: white;
+  border: 2px solid #ccc; /* Add border to the table header cells */
+}
+
+/* Add border-right to the last column header to create a divider */
+#leaderboard th:last-child {
+  border-right: none; /* Remove border from the right side */
 }
 
 /* Style for the leaderboard table */
@@ -38,12 +44,6 @@
   border-radius: 10px; /* Rounded corners for each cell */
   border: 2px solid #ccc; /* Gray border */
   text-align: center; /* Center text */
-}
-
-/* Style for the top leaderboard entry */
-#leaderboard tr:first-child {
-  font-weight: bold;
-  color: #e74c3c; /* Red color for top entry */
 }
 
 /* Style for the title "Leaderboard" */
@@ -81,6 +81,26 @@ h2 {
   font-weight: bold;
 }
 
+/* Style for the rank icon */
 .rank-icon {
-  margin-left: 5px; /* Adjust the spacing between the username and the icon */
+  margin-left: 10px; /* Adjust the spacing between the username and the icon */
 }
+
+/* Style for the rank 1 player */
+#leaderboard tr:first-child.rank-one {
+  font-weight: bold;
+  color: gold; /* Set text color to gold yellow */
+}
+
+/* Style for the second place */
+#leaderboard tr.rank-two {
+  font-weight: bold;
+  color: silver; /* Change the color for rank 2 */
+}
+
+/* Style for the third place */
+#leaderboard tr.rank-three {
+  font-weight: bold;
+  color: #cd7f32; /* Change the color for rank 3 */
+}
+
