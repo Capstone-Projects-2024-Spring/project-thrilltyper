@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, disconnect, emit
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
@@ -56,6 +57,9 @@ class App:
         server_metadata_url=f"{appConf.get('OAUTH2_META_URL')}",
     )
 
+    socketio = SocketIO(_app) 
+
+
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
         Calls Flask"s run function with the specified parameters to run the backend for the web application.\n
@@ -77,6 +81,16 @@ class App:
             information.
         """
         self._app.run(host,port,debug,load_dotenv)
+
+    def messageReceived():
+        print('message was received!!!')
+
+    @socketio.on('event')
+    def handle_my_custom_event(json):
+        global socketio
+        print('received my event: ' + str(json))
+        App.socketio.emit('global chat', json, callback=App.messageReceived)
+
 
     @_app.route("/login", methods=["GET", "POST"])
     def login():
@@ -209,6 +223,7 @@ class App:
         """
         # Gets input
         username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
         # Validates contraints
         if Database.query(username, "UserInfo"):
@@ -216,7 +231,7 @@ class App:
             return redirect("/signup")
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
-        Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
+        Database.insert(UserInfo, _username=username, _email=email, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
         # Store session
         playerObj =  player(username, avatar)
     
@@ -236,6 +251,7 @@ class App:
         # Pop out the user session
         session.pop("user", None)
         return redirect("/")
+    
     
     @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
@@ -865,4 +881,4 @@ if __name__=="__main__":
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
 
-    app.run(host="localhost", debug=True)
+    app.socketio.run(app._app, host="localhost", debug=True)

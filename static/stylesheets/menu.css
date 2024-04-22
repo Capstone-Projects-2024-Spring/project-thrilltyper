@@ -53,7 +53,7 @@
     border: 2px solid #005DBB;
 }
 
-#menu-ctn #onlineMode, 
+#menu-ctn #multiplayerMode, 
 #menu-ctn #robotMode {
     flex: 1;
 }
