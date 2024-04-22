@@ -58,12 +58,12 @@ class App:
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
-        Calls Flask"s run function with the specified parameters to run the backend for the web application.\n
+        Calls Flask's run function with the specified parameters to run the backend for the web application.\n
         Preconditions: host is a valid IP address and port is a valid and open port\n
         Flask"s descriptions of the parameters:
-        :param host: the hostname to listen on. Set this to ``"0.0.0.0"`` to
+        :param host: the hostname to listen on. Set this to ``'0.0.0.0'`` to
             have the server available externally as well. Defaults to
-            ``"127.0.0.1"`` or the host in the ``SERVER_NAME`` config variable
+            ``'127.0.0.1'`` or the host in the ``SERVER_NAME`` config variable
             if present.
         :param port: the port of the webserver. Defaults to ``5000`` or the
             port defined in the ``SERVER_NAME`` config variable if present.
@@ -82,21 +82,19 @@ class App:
     def login():
         """
         Handles the requests made to the login page where users can log in
-        :return : a Response object that redirects the user to the login page
+        :return : a str html page that redirects the user to the login page
         """
         error = session.pop("error", None)
         if request.method == "POST":
             # Authenticate the user Close Session when done
             pass
-        
-
         return render_template("login.html", error=error)
     
     @_app.route("/",methods=["POST","GET"])
     def home():
         """
         Handles the requests made to the home page.
-        :return : a Response object that redirects the user to the home page
+        :return : a str html page that redirects the user to the home page
         """
         return render_template("base.html", userSession=session.get("user"))
 
@@ -105,7 +103,7 @@ class App:
         """
         Handles the requests made to the website where users can log in to google
         :postcondition: a google user login successfully
-        :return : a Response object that redirects the user to the callback method on success
+        :return : a str html page that redirects the user to the callback method on success
         """
         return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
 
@@ -114,9 +112,9 @@ class App:
         """
         Handles the returned redirect requests from google signin
         :postcondition: a new user will be registered with a message saying "Successfully registered" and the database will update with the new user
-        info, the user will be redirected to /menu
+        info, the user will be redirected to home page
         :postcondition: create the user session
-        :return : a Response object that redirects the user to the menu page
+        :return : a str rendering that redirects the user to the home page
         """
         try:
             # Obtain the access token from Google OAuth
@@ -149,6 +147,10 @@ class App:
         
     @_app.route("/authentication", methods=["POST"])
     def authenticate():
+        """
+        Endpoint called to authenticate users attempting to login. Session is created on successful login.
+        :pre-condition: The request form will have a username and password field
+        """
         try:
             # Retrieves data from the requests
             # The keys must exist
@@ -180,32 +182,17 @@ class App:
     def signup():
         """
         A route path for signup page layout
-        :return: Response page for signup layout 
+        :return: str html page for signup layout 
         """
         error = session.pop("error", None)
         return render_template("signup.html", error=error)
-    
-    @_app.route("/login-guest", methods=["GET", "POST"])
-    def loginGuest():
-        """
-        A route path for guest login
-        :return: Response page for the main view of the website
-        """ 
-        # Generates a randon id
-        guest_id = uuid.uuid4()
-        # Instantiates a player object
-        playerObj = player(username=guest_id, avatar=url_for("static", filename="pics/anonymous.png"))
-        # Establishes session
-        session["user"] = playerObj.__json__()
-
-        # Redirects to a desired page
-        return redirect("/")
 
     @_app.route("/register", methods=["POST"])
     def register():
         """
-        Created and logged a new user account
+        Creates and logs a new user account
         :precondition: form contained valid input
+        :postcondition: new user info will be inserted into the database on success
         """
         # Gets input
         username = request.form["username"]
@@ -240,10 +227,9 @@ class App:
     @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
         """
-        Handles request from the games to generate text
+        Sends back text for the requestor to use
         :param difficulty
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        Sends back text for the requestor to use
         """
         difficulty = request.args.get("difficulty")
         if not difficulty:
@@ -285,6 +271,29 @@ class App:
                 "totalTime" : userData._total_playing_time,
                 "frequentMisTypedWord" : userData._freq_mistyped_words
             })
+        
+    @_app.route('/leaderboard/top_n_highest_wpm/<int:n>', methods=['GET'])
+    def get_top_n_highest_wpm_leaderboard(n):
+        """
+        Retrieve UserData table highest_wpm and converting to json format and send to frontend
+        :param n: an input of the top n number for leaderboard
+        :type n: int
+        :returns: json format leaderboard info 
+        """
+        try:
+            #retrieve highest wpm from UserData
+            top_scores = UserData.query.order_by(UserData._history_highest_race_wpm.desc()).limit(n).all()
+
+            #extracting username and highest wpm from query result
+            leaderboard_info = [{
+                'username': scores._username,
+                'highest_wpm': scores._history_highest_race_wpm
+            } for scores in top_scores]
+            return jsonify(leaderboard_info)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+
 
 class Database:
     """
@@ -824,7 +833,7 @@ if __name__=="__main__":
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        app.db.drop_all()
+        #app.db.drop_all()
 
         app.db.create_all()
 
@@ -833,7 +842,7 @@ if __name__=="__main__":
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         #after testing, you can repeat the number, but preferrably not to do that
-        Database.populate_sample_date(100)
+        #Database.populate_sample_date(10000)
 
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
