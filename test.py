@@ -1,4 +1,5 @@
 # test.py
+import time
 import pytest
 from app import App
 from app import Database, UserInfo, UserData, UserLetter
@@ -6,6 +7,7 @@ from text_generator import Text_Generator
 from datetime import datetime, timezone
 import random
 import string
+from flask_socketio import SocketIO, SocketIOTestClient
 
 # Client that sends requests to endpoints of the application
 
@@ -138,6 +140,37 @@ def test_generate_text_word_list(client):
     content = response.data.decode('utf-8')
     word_list = content.split(' ')
     assert len(word_list) == 10
+
+def test_socketio_connection(client):
+    """Test SocketIO connection."""
+    sok = App.socketio
+    # Connect the SocketIO client
+    socketio_test_client = sok.test_client(App._app)
+
+    try:
+        # Test if the client is connected
+        assert socketio_test_client.is_connected(), "SocketIO client failed to connect"
+        
+        # Emit an event
+        socketio_test_client.emit('event', {'data': 'test'})
+        
+        # Wait for events to be processed
+        time.sleep(1)
+
+        # Get the received messages
+        received_messages = socketio_test_client.get_received()
+        print(received_messages)
+        
+        # Assertions
+        assert received_messages, "No messages received"
+        assert received_messages[0]['name'] == 'global chat'
+        assert received_messages[0]['args'][0]['data'] == 'test'
+    finally:
+        # Disconnect the client
+        socketio_test_client.disconnect() 
+
+
+
 # --------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 
 
