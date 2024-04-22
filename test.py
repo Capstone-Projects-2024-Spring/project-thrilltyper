@@ -457,7 +457,7 @@ class Test_Text_Generator():
         Test: Ensure that the average length of words in a list is calculated correctly
         Result: True if the average length is calculated correctly
         """
-        assert Text_Generator.get_average_word_len(
+        assert Text_Generator.get_avg_txt_len(
             ["apple", "banana", "pear"]) == 5
 
     def test_score_word_typing_difficutly(self):
