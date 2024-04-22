@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/typeInterface.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/robotOpponent.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/multiplayer.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/leaderboard.css') }}">
+
 
     <!-- added by Hu -->
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/HomePage.css')}}">
@@ -50,6 +52,8 @@
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Multiplayer.js')}}"></script>
 
 
+
+    <script type="text/babel" src="{{url_for('static', filename='js/content/Leaderboard.js')}}"></script>
 
     <!-- added by Hu -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/HomePage.js')}}"></script>
@@ -80,7 +84,7 @@
                     <nav>
                         <Link to="/">Home</Link>
                         <Link to="/menu">Play</Link>
-                        <Link to="/">Leaderboards</Link>
+                        <Link to="/leaderboard">Leaderboards</Link>
                         <Link to="/dashboard">Dashboard</Link>
                         <Link to="/">About</Link>
                     </nav>
@@ -93,6 +97,7 @@
                     <Route path="/robotOpponent" component={RobotOpponent} />
                     <Route path="/multiplayer" component={(props) => <Multiplayer {...props} userSession={userSession} />} />
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
+                    <Route path="/leaderboard" component={Leaderboard} />
                 </div>
             </ReactRouterDOM.HashRouter>
         );
