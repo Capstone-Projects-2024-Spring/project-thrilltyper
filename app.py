@@ -149,7 +149,7 @@ class App:
                 session["user"] = playerObj.__json__()
 
                 # Insert user info into the database if doesn"t exists yet
-                if Database.query(token["userinfo"]["email"], "UserInfo") is None:
+                if Database.query(uname, "UserInfo") is None:
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
             else:
                 # Handle the case where access is denied (user cancelled the login)
@@ -261,17 +261,24 @@ class App:
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
         Sends back text for the requestor to use
         """
-        return Text_Generator.generate_text(request.args.get("difficulty"),request.args.get("form"),request.args.get("amount"))
-   
-    @_app.route("/game/<int:mode>")
-    def game(mode:int):
+        difficulty = request.args.get("difficulty")
+        if not difficulty:
+            difficulty=""
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
+
+    @_app.route("/get_avg_txt_len/",methods=["GET"])
+    def get_avg_txt_len():
         """
-        Handles the requests made to the game based on the mode selected by the user on the menu page
-        Precondition: mode shall be an int from the range 0 to the number of game modes minus 1
-        :param mode : number representing the game mode selected by the user
-        :return : string indicating the end of the game and the user"s wpm and percent of words typed correct
+        Handles requests to get the average length of a word/sentence from a list
+        :param difficulty
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'words'
         """
-        return ""
+        difficulty = request.args.get("difficulty")
+        if not difficulty:
+            difficulty=""
+        else:
+            difficulty+="_"
+        return str(Text_Generator.get_avg_txt_len(Text_Generator.get_txt_list(difficulty+request.args.get("form")+".txt")))
 
     def get_test_client(self):
         return self._app.test_client()
@@ -294,6 +301,29 @@ class App:
                 "totalTime" : userData._total_playing_time,
                 "frequentMisTypedWord" : userData._freq_mistyped_words
             })
+        
+    @_app.route('/leaderboard/top_n_highest_wpm/<int:n>', methods=['GET'])
+    def get_top_n_highest_wpm_leaderboard(n):
+        """
+        Retrieve UserData table highest_wpm and converting to json format and send to frontend
+        :param n: an input of the top n number for leaderboard
+        :type n: int
+        :returns: json format leaderboard info 
+        """
+        try:
+            #retrieve highest wpm from UserData
+            top_scores = UserData.query.order_by(UserData._history_highest_race_wpm.desc()).limit(n).all()
+
+            #extracting username and highest wpm from query result
+            leaderboard_info = [{
+                'username': scores._username,
+                'highest_wpm': scores._history_highest_race_wpm
+            } for scores in top_scores]
+            return jsonify(leaderboard_info)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+
 
 class Database:
     """
@@ -830,11 +860,10 @@ class UserRace(App.db.Model):
 if __name__=="__main__":
     app = App()
 
-
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        app.db.drop_all()
+        #app.db.drop_all()
 
         app.db.create_all()
 
@@ -843,7 +872,7 @@ if __name__=="__main__":
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         #after testing, you can repeat the number, but preferrably not to do that
-        Database.populate_sample_date(100)
+        #Database.populate_sample_date(10000)
 
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
