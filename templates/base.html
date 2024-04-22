@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/dashboard.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/typeInterface.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/robotOpponent.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/multiplayer.css')}}">
 
     <!-- added by Hu -->
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/HomePage.css')}}">
@@ -46,6 +47,8 @@
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/RobotOpponent.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/ChatRoom.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/Multiplayer.js')}}"></script>
+
 
 
     <!-- added by Hu -->
@@ -59,6 +62,7 @@
 
     <!-- JSX code with REACT -->
     <script type="text/babel">
+        console.log(userSession)
         // REACT component for Home page, available across all child htmls
         const Link = ReactRouterDOM.Link;
         const Route = ReactRouterDOM.Route;
@@ -83,10 +87,11 @@
                     <Profile userSession={userSession} />
                 </header>
                 <div id="content">
-                    <Route path="/" exact component={ChatRoom} />
+                    <Route path="/" exact component={HomePage} />
                     <Route path="/menu" component={Menu} />
                     <Route path="/singlePlayer" component={ThrillTyperGame} />
                     <Route path="/robotOpponent" component={RobotOpponent} />
+                    <Route path="/multiplayer" component={(props) => <Multiplayer {...props} userSession={userSession} />} />
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
                 </div>
             </ReactRouterDOM.HashRouter>
