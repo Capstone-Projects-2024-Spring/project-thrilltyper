@@ -85,11 +85,11 @@ class App:
     def messageReceived():
         print('message was received!!!')
 
-    @socketio.on('my event')
+    @socketio.on('event')
     def handle_my_custom_event(json):
         global socketio
         print('received my event: ' + str(json))
-        emit('my response', json, callback=App.messageReceived)
+        App.socketio.emit('global chat', json, callback=App.messageReceived)
 
 
     @_app.route("/login", methods=["GET", "POST"])
