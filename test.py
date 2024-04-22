@@ -25,9 +25,10 @@ def test_registration(client):
     Result: True if the username and password have been successfully stored in the database
     """
     username = "uname"
+    email = "123@gmail.com"
     password = "pswrd"
-    client.post("/register", data={"username": username, "password": password})
-    assert Database.query(username, "UserInfo")
+    client.post("/register", data={"username": username, "email": email, "password": password})
+    assert Database.query(username, "UserInfo") is not None
 
 
 def test_invalid_login(client):
@@ -53,7 +54,7 @@ def test_valid_login(client):
     response = client.post(
         "/authentication", data={"username": username, "password": password})
     print(response.status_code)
-    assert "/" is response.location
+    assert "/" == response.location
 
 
 def test_continue_as_guest(client):
