@@ -292,8 +292,13 @@ class App:
             return jsonify(leaderboard_info)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-
-
+    
+    @_app.route("/update_db/",methods=["POST"])
+    def update_db():
+        """
+        Endpoint called to update user stats post-game
+        """
+        return ""
 
 class Database:
     """
