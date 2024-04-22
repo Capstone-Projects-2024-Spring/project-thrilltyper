@@ -1,0 +1,54 @@
+/* Multiplayer page styles */
+#multiplayer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 50%;
+    width: 100%;
+
+    padding: 1rem 2rem;
+}
+
+/* Chat styles */
+#multiplayer #chat {
+    display: flex;
+    flex-direction: column;
+    padding: 0.2rem;
+}
+
+#multiplayer #chat #message {
+    height: 80%;
+    width: 100%;
+
+    border: 4px double black;
+    border-radius: 1rem;
+
+    padding: 0.2rem 0.5rem;
+}
+
+#multiplayer #chat form {
+    height: 20%;
+    padding-top: 1rem;
+}
+
+#multiplayer #chat form input:nth-child(2) {
+    width: 80%;
+}
+
+#multiplayer #chat form input:last-child {
+    width: 20%;
+}
+
+
+/* Typing Interface Style for Multiplayer */
+#multiplayer #game-container{
+    padding: 0;
+}
+
+
+/* Styles for chat and other subelements of multiplayer page */
+#multiplayer .sideComponent {
+    height: 100%;
+    flex: 0 0 20%;
+}
