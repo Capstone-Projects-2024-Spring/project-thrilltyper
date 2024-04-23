@@ -40,7 +40,7 @@ function Dashboard({ userSession }) {
 
                 }
             </div>
-            {userData &&
+            {userData ?
                 <div id="userData" >
                     {/* Winnings & Losses */}
                     <section className="dashItem userOverview">
@@ -66,6 +66,10 @@ function Dashboard({ userSession }) {
                             Losses: {userData.losses} games
                         </p>
                     </section>
+                </div>
+                :
+                <div id="dataError">
+                    <b>No data</b>
                 </div>
             }
         </div>
