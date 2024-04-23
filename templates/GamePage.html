@@ -8,34 +8,65 @@
 </head>
 
 <body>
-    <div id="game-container">
+    <!-- <div id="game-container">
         <h1>Thrill Typer Game</h1>
         <div id="text-display"></div>
         
-        
-        <div id="timer">
-            
-        </div>
         <div id="gameNav">
             <button onclick="startTimer()">Start</button>
             <button>Pause</button>
             <button>Select Mode</button>
             <button>Home</button>
             <button>Settings</button>
-        </div>
-
-        <div id="chat-box"></div>
-
-        <div id="gameWindow">
-            <div id="time-display"></div>
-            <div id="WPM-display"></div>
-            <div id="accuracy-display"></div>
             <input type="text" id="input-box" oninput="checkInput()" disabled>
         </div>
 
         <div id="result"></div>
-    </div>
+    </div> -->
     
+    <div id="content">
+        <div class="window-container" id="chat-window">
+            <div class="window-header">
+                <span class="header-title">Chat Window</span>
+            </div>
+            <div class="chat-interface">
+                Billy: Hi
+            </div>
+            <div class="chat-input">
+                Enter Message Here
+            </div>
+        </div>
+
+        <div class="window-container" id="text-window">
+            <div class="window-header">
+                <span class="header-title">Text Window</span>
+            </div>
+        
+            <!-- Stats container -->
+            <div class="stats-container">
+                <div class="progress-display">Typed: 344/1766</div>
+                <div class="wpm-display">WPM: 60</div>
+                <div class="accuracy-display">Accuracy: 94%</div>
+            </div>
+        
+            <!-- Text display container -->
+            <div class="text-display-container">
+                <div class="text-display">
+                    I walk ten thousand miles, ten thousand miles to see you. And every gasp of breath I grabbed it just to find you. I climbed up every hill to get to you. I wandered ancient lands to hold just you.
+                </div>
+                <input type="text" class="input-box" oninput="checkInput()" disabled>
+            </div>
+        </div>
+
+        <div class="window-container" id="player-window">
+            <div class="window-header">
+                <span class="header-title">Player Window</span>
+            </div>
+        </div>
+
+
+
+    </div>
     <script>
     "use strict";
 
