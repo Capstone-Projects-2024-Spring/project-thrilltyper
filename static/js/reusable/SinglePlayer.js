@@ -1,12 +1,46 @@
 function ThrillTyperGame() {
-    const text = "The quick brown fox jumps over the lazy dog.";
-    const words = text.split(" ");
+    let text = "Click start button to start!";
+    let words = text.split(" ");
+
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
     let startTime;
-    let timerInterval;
+    //let timerInterval;
     let userInputCorrectText = "";
+
+    const intervalRef = React.useRef(null);
+
+
+    function startTimerInterval(){
+        intervalRef.current = setInterval(updateTimer, 10);
+    }
+
+    function stopTimerInterval(){
+        clearInterval(intervalRef.current);
+    }
+
+    React.useEffect(() => {
+        return () => {
+          clearInterval(intervalRef.current);
+        };
+    }, []);
+
+    async function fetchRandomWordList() {
+        let newText = "";
+        try {
+            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            newText = await response.text();
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        return newText;
+    }
 
     //update text color as user types text
     //green text if user typed correctly
@@ -17,7 +51,7 @@ function ThrillTyperGame() {
     */
     //if you don't get what is going on here, open a type racer game and type some wrong text
     function updateText() {
-        var str = text
+        var str = text;
         var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
 
         var greenText = "";          //correct text
@@ -70,7 +104,7 @@ function ThrillTyperGame() {
     }
 
 
-    function startTimer() {
+    async function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
         userInputCorrectText = "";
@@ -78,11 +112,18 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
+        text = await fetchRandomWordList();
+
+        words = text.split(" ");
+
         displayText();
         enableInput();
 
-        clearInterval(timerInterval);
-        timerInterval = setInterval(updateTimer, 10);
+        //clearInterval(timerInterval);
+        //timerInterval = setInterval(updateTimer, 10);
+
+        stopTimerInterval();
+        startTimerInterval();
     }
 
     function updateTimer() {
@@ -127,7 +168,8 @@ function ThrillTyperGame() {
     }
 
     function submitInput() {
-        clearInterval(timerInterval);
+        //clearInterval(timerInterval);
+        stopTimerInterval();
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
         const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
@@ -136,15 +178,36 @@ function ThrillTyperGame() {
         document.getElementById("input-box").disabled = true;
     }
 
+    function stopTimer(){
+        stopTimerInterval();
+        document.getElementById("input-box").disabled = false;
+        document.getElementById("input-box").value = "";
+        userInputCorrectText = "";
+        currentCharIndex = 0;
+        document.getElementById("result").innerHTML = "";
+        currentWordIndex = 0;   //initializes value for play again
+        updateText();
+        document.getElementById("text-display").innerHTML = "Click start button to start!";
+
+    }
+
+    function fillText(){
+        userInputCorrectText = text.substring(0, text.length-1);
+        currentCharIndex = text.length-1;
+        updateText();
+        //console.log("text: " + text);
+        //console.log("userInputCorrectText: " + userInputCorrectText);
+    }
+
     return (
         <div id="game-container">
-            <div>
-                <h1>Thrill Typer Game</h1>
-                <div id="text-display">{text}</div>
-                <input type="text" id="input-box" onInput={checkInput} disabled />
-                <div id="result"></div>
-                <button onClick={startTimer}>Start</button>
-            </div>
+            <h1>Thrill Typer Game</h1>
+            <div id="text-display">{text}</div>
+            <input type="text" id="input-box" onInput={checkInput} disabled />
+            <div id="result"></div>
+            <button onClick={startTimer}>Start</button>
+            <button onClick={stopTimer}>Reset</button>
+            <button onClick={fillText}>Fill Text</button>
         </div>
     );
 }

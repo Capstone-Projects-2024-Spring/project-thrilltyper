@@ -4,47 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thrill Typer Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-
-        #game-container {
-            max-width: 600px;
-            margin: 50px auto;
-        }
-
-        #text-display {
-            font-size: 18px;
-            margin-bottom: 20px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        #input-box {
-            padding: 10px;
-            font-size: 16px;
-            width: 80%; /* Adjust the width as needed */
-        }
-
-        #result {
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        .typed-word {
-            color: green;
-        }
-    </style>
+    <link href="../static/css/GamePage.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
     <div id="game-container">
         <h1>Thrill Typer Game</h1>
         <div id="text-display"></div>
-        <input type="text" id="input-box" oninput="checkInput()" disabled>
+        
+        
+        <div id="timer">
+            
+        </div>
+        <div id="gameNav">
+            <button onclick="startTimer()">Start</button>
+            <button>Pause</button>
+            <button>Select Mode</button>
+            <button>Home</button>
+            <button>Settings</button>
+        </div>
+
+        <div id="chat-box"></div>
+
+        <div id="gameWindow">
+            <div id="time-display"></div>
+            <div id="WPM-display"></div>
+            <div id="accuracy-display"></div>
+            <input type="text" id="input-box" oninput="checkInput()" disabled>
+        </div>
+
         <div id="result"></div>
-        <button onclick="startTimer()">Start</button>
     </div>
     
     <script>
@@ -53,9 +42,8 @@
 
         /*
             known bugs
-            #1: for unknown reason, if you click start button in the middle of typing, you can not submit the game and finish
-                (the result is not showing) (fixed)
-            #2
+            #1: Since the currentCharIndex only increments, if you type something correct then delete it at the end, 
+                you are still able to submit and complete the game
         */
         const text = "The quick brown fox jumps over the lazy dog.";
         const words = text.split(" ");
@@ -146,7 +134,7 @@
         function updateTimer() {
             const currentTime = new Date().getTime();
             const elapsedTime = (currentTime - startTime) / 1000;
-            document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(2)} seconds`;
+            document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(0)} seconds`;
         }
 
         function displayText() {

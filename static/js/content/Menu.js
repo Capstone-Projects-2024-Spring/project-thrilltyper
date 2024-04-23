@@ -1,14 +1,13 @@
-function Menu() {
+function Menu({}) {
     return (
         <div id="menu-ctn">
             <h1>
                 Choose Your Game Mode
             </h1>
             <div id="menu">
-                <Link to="/practice" className="menu-item"><button>Practice</button></Link>
-                <a className="menu-item"><button>Local</button></a>
-                <a className="menu-item"><button>Robot</button></a>
-                <a className="menu-item"><button>Online Match</button></a>
+                <Link id="singlePlayerMode" to="/singlePlayer" className="menu-item"><button>Single Player</button></Link>
+                <Link id="robotMode" to="/robotOpponent" className="menu-item"><button>Robot</button></Link>
+                <Link id="multiplayerMode" to="/multiplayer" className="menu-item"><button>Multiplayer</button></Link>
             </div>
         </div>
     );

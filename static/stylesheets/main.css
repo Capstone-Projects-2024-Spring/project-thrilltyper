@@ -21,7 +21,8 @@ button {
     border-radius: 50px;
 }
 
-/* Universal Button Styles for login, signup, and logout*/
+/* Universal Styles */
+/* no longer used
 .signUp {
     color: white;
     background-color: #005dbb;
@@ -34,6 +35,15 @@ button {
     border: 2px solid black;
 }
 
+*/
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
 #main, 
 #main #brand,
 #main #brand .brand-title,
@@ -45,7 +55,7 @@ button {
 #main {
     height: 10%;
     width: 100%;
-    background-color: #005dbb;
+    background-color: #084F8E;
 
     display: flex;
     flex-direction: row;
@@ -72,6 +82,7 @@ button {
     display: inline-block;
     padding: 0.25rem 0.5rem;
 }
+
 
 #main a {
     color: white;
@@ -101,3 +112,67 @@ button {
     width: 100%;
 }
 
+.href-button{
+    font-size: 16px !important;
+    border-radius: 10%/20%;     /* little curve around corner */
+    text-decoration: none;
+    padding: 5px 5px !important;
+    width: 90px;
+    height: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-family:sans-serif;
+
+    cursor: pointer;
+    transition-duration: 0.5s;
+
+    display: flex;              /* temp fix */
+    align-items: center;        /* vertical center */
+    justify-content: center;    /* horizontal center */
+}
+
+#signUpButton{
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    border-color:white;
+    margin-right: 15px;
+}
+
+#signUpButton:hover {
+    /* background-color: #09396a; */
+    color: white !important;
+    background-color: #2782de;
+    box-shadow: 0 0 40px rgba(11, 111, 194, 0.6);
+    border-color: #2782de;
+}
+
+#logInButton{
+    background-color: white;
+    color: #084F8E !important;
+    border: 2px solid white;
+    border-color:white;
+    margin-right: 15px;
+}
+
+#logInButton:hover{
+    color: white !important;
+    background-color: #10bb54;
+    box-shadow: 0 0 20px rgba(25, 231, 125, 0.699);
+    border-color: #10bb54;
+}
+
+#logOutButton{
+    background-color: white;
+    color: #084F8E !important;
+    border: 2px solid white;
+    border-color:white;
+    margin-right: 20px;
+}
+
+#logOutButton:hover{
+    color: white !important;
+    background-color: #10bb54;
+    box-shadow: 0 0 20px rgba(25, 231, 125, 0.699);
+    border-color: #10bb54;
+}
