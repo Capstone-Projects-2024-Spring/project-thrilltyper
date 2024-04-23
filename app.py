@@ -86,7 +86,7 @@ class App:
         print('message was received!!!')
 
     @socketio.on('event')
-    def handle_my_custom_event(json):
+    def handle_chat_global(json):
         global socketio
         print('received my event: ' + str(json))
         App.socketio.emit('global chat', json, callback=App.messageReceived)
