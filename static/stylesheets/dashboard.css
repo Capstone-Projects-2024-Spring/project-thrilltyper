@@ -74,3 +74,17 @@
 #dashboard .flexEven {
     flex: 1 0 50%;
 }
+
+#dashboard #dataError {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+
+    font-size: 2rem;
+
+    margin: 0 2rem;
+    border: 1rem solid #005DBB;;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
