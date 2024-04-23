@@ -42,7 +42,7 @@
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/SinglePlayer.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/RobotOpponent.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
-
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/ImportTextPlay.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Leaderboard.js')}}"></script>
 
     <!-- added by Hu -->
@@ -75,6 +75,7 @@
                         <Link to="/menu">Play</Link>
                         <Link to="/leaderboard">Leaderboards</Link>
                         <Link to="/dashboard">Dashboard</Link>
+                        <Link to="/importText">ImportText</Link>
                         <Link to="/">About</Link>
                     </nav>
                     <Profile userSession={userSession} />
@@ -86,6 +87,7 @@
                     <Route path="/robotOpponent" component={RobotOpponent} />
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
                     <Route path="/leaderboard" component={Leaderboard} />
+                    <Route path="/importText" component={ImportText} />
                 </div>
             </ReactRouterDOM.HashRouter>
         );
