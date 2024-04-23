@@ -151,6 +151,24 @@ function RobotOpponent() {
         }
     }
 
+    async function postUserMetrics(wpm, accuracy){
+        try{
+            const postData = {wpm:wpm,accuracy:accuracy}
+            const response = await fetch('/update_db',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)});
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+        }
+        catch(error){
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
     function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
@@ -170,8 +188,8 @@ function RobotOpponent() {
         var difficulty = getDifficulty();
         var robotMsPerChar = getRobotMsPerChar(difficulty)
         fetchRandomWordList(difficulty,robotMsPerChar);
-        robotType(robotMsPerChar);
         startTimer();
+        robotType(robotMsPerChar);
     }
 
     function getDifficulty(){
@@ -278,6 +296,7 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
+        postUserMetrics(wordsPerMinute,accuracy);
     }
 
 
@@ -289,6 +308,7 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Sadly, Robot finished the game first in ${elapsedTime.toFixed(2)} seconds. Robot speed: ${wordsPerMinute} WPM.`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
+        postUserMetrics(Math.round((currentCharIndex/5 / elapsedTime) * 60),(correctCharsTyped / totalCharsTyped) * 100);
     }
 
     React.useEffect(() => {
