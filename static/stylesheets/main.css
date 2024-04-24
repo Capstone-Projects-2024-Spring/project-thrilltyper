@@ -176,3 +176,8 @@ button {
     box-shadow: 0 0 20px rgba(25, 231, 125, 0.699);
     border-color: #10bb54;
 }
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+}
