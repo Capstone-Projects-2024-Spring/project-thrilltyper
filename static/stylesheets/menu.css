@@ -54,7 +54,8 @@
 }
 
 #menu-ctn #onlineMode, 
-#menu-ctn #robotMode {
+#menu-ctn #robotMode,
+#menu-ctn #importTextMode {
     flex: 1;
 }
 
