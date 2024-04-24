@@ -1,0 +1,46 @@
+/* Add styles for the container */
+.aboutContainer {
+    margin: 0 auto; /* Add margin to center horizontally */
+    max-width: 800px; /* Limit maximum width */
+    padding: 0 20px; /* Add padding for white space on left and right */
+    text-align: center; /* Center align text */
+  }
+  
+  /* Add margin and padding to sections for space */
+  #about,
+  #features,
+  #contributors {
+    margin-bottom: 20px; /* Add margin between sections */
+    padding: 20px; /* Add padding for space within sections */
+  }
+  
+  /* Add margin and padding to paragraphs for space */
+  .aboutContainer p {
+    margin-bottom: 10px; /* Add margin between paragraphs */
+  }
+  
+  /* Style for contributor container */
+  .profiles {
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow items to wrap to next line if necessary */
+    justify-content: center; /* Center items horizontally */
+  }
+  
+  /* Style for each contributor container */
+  .contributor {
+    margin: 10px; /* Add margin around each contributor */
+    text-align: center; /* Center align text */
+    flex-basis: calc(12.5% - 20px); /* Set flex basis to evenly distribute items */
+  }
+  
+  /* Style for contributor images */
+  .contributor img {
+    width: 100px; /* Adjust width of profile images */
+    height: 100px; /* Adjust height of profile images */
+  }
+  
+  /* Style for contributor names */
+  .contributor p {
+    margin-top: 5px; /* Add margin above the name */
+  }
+  
