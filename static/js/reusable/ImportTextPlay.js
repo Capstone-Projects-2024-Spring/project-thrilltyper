@@ -1,4 +1,4 @@
-function ThrillTyperGame() {
+function ImportText() {
     let text = "Click start button to start!";
     let words = text.split(" ");
 
@@ -26,21 +26,19 @@ function ThrillTyperGame() {
         };
     }, []);
 
-    async function fetchRandomWordList() {
+    async function fetchRandomWordUser() {
         let newText = "";
         try {
-            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            newText = prompt("Please enter your words:", "");
+            if (newText == null || newText == "") {
+                console.log("User cancelled the prompt.");
             }
-
-            newText = await response.text();
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
         return newText;
     }
+    
 
     //update text color as user types text
     //green text if user typed correctly
@@ -112,7 +110,7 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        text = await fetchRandomWordList();
+        text = await fetchRandomWordUser();
 
         words = text.split(" ");
 
@@ -187,7 +185,7 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
         currentWordIndex = 0;   //initializes value for play again
         updateText();
-        document.getElementById("text-display").innerHTML = "Click start button to start!";
+        document.getElementById("text-display").innerHTML = "Click start button to input new words.";
 
     }
 
@@ -201,7 +199,7 @@ function ThrillTyperGame() {
 
     return (
         <div id="game-container">
-            <h1>Thrill Typer Game</h1>
+            <h1>Thrill Typer Game Input Mode</h1>
             <div id="text-display">{text}</div>
             <input type="text" id="input-box" onInput={checkInput} disabled />
             <div id="result"></div>

@@ -29,3 +29,8 @@ body {
 .typed-word {
     color: green;
 }
+
+.button-container {
+    display: flex;
+    justify-content: center;
+}
