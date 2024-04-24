@@ -8,6 +8,7 @@ node_modules/
 
 # Python compiled files
 __pycache__/
+.pytest_cache/
 
 # Environment variables
 .env
@@ -20,7 +21,7 @@ __pycache__/
 venv/
 
 # Database File
-*.db
+instance/
 
 # Logs
 *.log

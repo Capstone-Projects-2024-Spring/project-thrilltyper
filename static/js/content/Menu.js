@@ -1,4 +1,4 @@
-function Menu() {
+function Menu({}) {
     return (
         <div id="menu-ctn">
             <h1>
