@@ -15,6 +15,15 @@ function Leaderboard() {
         fetchData();
     }, []);
 
+    // Style for the footer
+    const footerStyle = {
+        position: 'fixed',
+        bottom: '10px',
+        right: '10px',
+        color: '#666', // Change the color as needed
+        fontSize: '14px',
+    };
+
     return (
         <div>
             <h1>Leaderboard</h1>
@@ -52,6 +61,10 @@ function Leaderboard() {
                     </tbody>
                 </table>
             </div>
+            {/* Footer section */}
+            <footer style={footerStyle}>
+                <p>Icons by <a href="https://icons8.com/" target="_blank" rel="noopener noreferrer">Icons8</a></p>
+            </footer>
         </div>
     );
 }
