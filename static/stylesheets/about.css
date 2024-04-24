@@ -35,12 +35,22 @@
   
   /* Style for contributor images */
   .contributor img {
-    width: 100px; /* Adjust width of profile images */
-    height: 100px; /* Adjust height of profile images */
+    width: 65px; /* Adjust width of profile images */
+    height: 65px; /* Adjust height of profile images */
+    /*65*65 px seems reasonable for, preferrably keeping each contributor on the same line horizontally*/
   }
   
   /* Style for contributor names */
   .contributor p {
     margin-top: 5px; /* Add margin above the name */
   }
+
+  /*
+  Planning for better css
+  -a boarder for every contributor profile photo
+  -bold and more colorful visual for each contributor name
+  -visually appealing background image for the About page
+  -inner border or some sort of boundary to isolate or clarify each section of the page
+  -match the font and style of the text, enlarge the fonts
+  */
   

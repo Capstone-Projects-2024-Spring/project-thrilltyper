@@ -25,7 +25,7 @@ function About() {
                 <div className="profiles">
                     {/* Each contributor in a separate container */}
                     <div className="contributor">
-                        <img src="../static/pics/profile1.jpg" alt="Profile Photo" />
+                        <img src="../static/pics/testing_photo.gif" alt="Profile Photo" />
                         <p>John Doe</p>
                     </div>
 
