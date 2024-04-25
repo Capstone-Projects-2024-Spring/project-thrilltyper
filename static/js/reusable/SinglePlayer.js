@@ -205,6 +205,7 @@ function ThrillTyperGame() {
             <div id="text-display">{text}</div>
             <input type="text" id="input-box" onInput={checkInput} disabled />
             <div id="result"></div>
+            <MakePlayerStatus/>
             <div className="button-container">
                 <button onClick={startTimer}>Start</button>
                 <button onClick={stopTimer}>Reset</button>
