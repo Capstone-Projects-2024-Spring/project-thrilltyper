@@ -32,6 +32,7 @@ class App:
 
     # Explicitly load env
     load_dotenv()
+    _api_key = os.environ.get("API_KEY")
 
     # Configuration of flask app
     appConf = {
@@ -293,12 +294,16 @@ class App:
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
-    @_app.route("/update_db/",methods=["POST"])
+    @_app.route("/update_db",methods=["POST"])
     def update_db():
         """
         Endpoint called to update user stats post-game
         """
-        return ""
+        #TODO: need to secure data transfer and verify origin
+        if request.is_json:
+            
+            return "Successful"
+        return "Not successful"
 
 class Database:
     """
