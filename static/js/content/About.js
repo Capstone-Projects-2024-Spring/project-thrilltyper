@@ -26,42 +26,42 @@ function About() {
                     {/* Each contributor in a separate container */}
                     <div className="contributor">
                         <img src="../static/pics/testing_photo.gif" alt="Profile Photo" />
-                        <p>John Doe</p>
+                        <p>Ereizas</p>
                     </div>
 
                     <div className="contributor">
                         <img src="../static/pics/profile2.jpg" alt="Profile Photo" />
-                        <p>Jane Smith</p>
+                        <p>Icycoldveins</p>
                     </div>
 
                     <div className="contributor">
                         <img src="../static/pics/profile3.jpg" alt="Profile Photo" />
-                        <p>Michael Johnson</p>
+                        <p>Bochi</p>
                     </div>
 
                     <div className="contributor">
                         <img src="../static/pics/profile4.jpg" alt="Profile Photo" />
-                        <p>Sarah Adams</p>
+                        <p>Dem0nMaxwell</p>
                     </div>
 
                     <div className="contributor">
                         <img src="../static/pics/profile5.jpg" alt="Profile Photo" />
-                        <p>David Brown</p>
+                        <p>JasonC136</p>
                     </div>
 
                     <div className="contributor">
                         <img src="../static/pics/profile6.jpg" alt="Profile Photo" />
-                        <p>Emily Wilson</p>
+                        <p>Demonlaplace</p>
                     </div>
 
                     <div className="contributor">
                         <img src="../static/pics/profile7.jpg" alt="Profile Photo" />
-                        <p>Chris Lee</p>
+                        <p>Jimmy70111</p>
                     </div>
 
                     <div className="contributor">
                         <img src="../static/pics/profile8.jpg" alt="Profile Photo" />
-                        <p>Lisa Taylor</p>
+                        <p>Tuk04440</p>
                     </div>
                 </div>
             </section>
