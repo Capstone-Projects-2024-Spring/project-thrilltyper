@@ -863,6 +863,7 @@ class UserRace(App.db.Model):
 if __name__=="__main__":
     app = App()
 
+
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 

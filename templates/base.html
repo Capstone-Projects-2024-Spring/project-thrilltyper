@@ -54,6 +54,7 @@
 
 
 
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/ImportTextPlay.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Leaderboard.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/About.js')}}"></script>
 
@@ -83,7 +84,7 @@
                         <Link to="/"><h1 className="brand-title">Thrill Typer</h1></Link>
                     </div>
 
-                    <nav>
+                    <nav className="nav-links">
                         <Link to="/">Home</Link>
                         <Link to="/menu">Play</Link>
                         <Link to="/leaderboard">Leaderboards</Link>
@@ -101,6 +102,7 @@
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
                     <Route path="/leaderboard" component={Leaderboard} />
                     <Route path="/about" component={About}/>
+                    <Route path="/importText" component={ImportText} />
                 </div>
             </ReactRouterDOM.HashRouter>
         );
