@@ -52,6 +52,8 @@
     display: flex;
     flex-direction: column;
     width: calc(70% - 2rem);
+
+    font-size: 1.5rem;
 }
 
 #dashboard .dashItem {
@@ -97,8 +99,6 @@
 #dashboard .statistic table {
     width: 100%;
     border-collapse: collapse; /* Ensure cells share borders */
-
-    font-size: 1.5rem;
 }
 
 #dashboard .statistic table th, #dashboard .statistic table td {

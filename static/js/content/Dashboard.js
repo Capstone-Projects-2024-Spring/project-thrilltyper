@@ -64,7 +64,7 @@ function Dashboard({ userSession }) {
                             Total Playing Time: {userData.totalTime} minutes
                         </p>
                         <p className="center flexEven">
-                            Common Error: {userData.frequentMisTypedWord}
+                            Accuracy: {userData.accuracy}%
                         </p>
                     </section>
                     {/* Specific Data, i.e. WPM and Accuracy */}
