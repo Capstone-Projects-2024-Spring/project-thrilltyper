@@ -82,6 +82,7 @@ body {
 .accuracy-display {
     display: inline-block;
     padding: 5px 10px;
+    font-weight: bold;
 }
 
 .text-display-container {
@@ -153,11 +154,14 @@ body {
     display: grid;
     /* grid-template-columns: 150px 550px 50px; */
     /* grid-template-rows: 50px 50px; */
-    grid-template-columns: 20% 70% 8%;
+    grid-template-columns: 15% 70% 10%;
     grid-template-rows: 50% 50%;
     /* gap: 12px; */
+
+    /* grid-template-columns: 75px 180px 25px;  */
+    /* grid-template-rows: 25px 25px; */
     width: 98%;
-    gap: 1%;
+    gap: 2%;
     padding: 10px;
 }
 
@@ -167,16 +171,28 @@ body {
     align-self: center;
 }
 
-.grid-item1 img, .grid-item3 img{
+.grid-item1 img{
     width: 100%;
 }
 
-.grid-item2, .grid-item3{
+.grid-item3 img{
+    width: 65%;
+    margin-top: 30%;
+}
+
+.grid-item2{
     align-self: center;
+    position: relative; /* Establishes a positioning context for child elements */
+    width: 100%;
+}
+
+.grid-item3{
+    align-self: center;
+    justify-self: center;
 }
 
 .grid-item4{
-    font-size: 14px;
+    font-size: 13px;
     align-self: center;
     padding-left: 5px;
 }
@@ -186,6 +202,7 @@ body {
     width: 100%; 
     border-radius: 15px; 
     overflow: hidden;
+    margin-top: 3%;
 }
 
 .progressbar{

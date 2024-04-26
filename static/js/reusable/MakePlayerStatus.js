@@ -1,25 +1,25 @@
 function makePlayerStatus(){
     // return (
-    //     <div class="grid-container">
-    //         <div class="grid-item1">
-    //             <img src="../static/pics/defaultUserIcon.jpg"/>
-    //         </div>
+        // <div class="grid-container">
+        //     <div class="grid-item1">
+        //         <img src="../static/pics/defaultUserIcon.jpg"/>
+        //     </div>
 
-    //         <div class="grid-item2">
-    //             <div class="progressbar-container"> 
-    //                 <div class="progressbar" id="hello">
-    //                     <span class="progressbar-text" id="hello2">10%</span>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //         <div class="grid-item3">
-    //             <img src="../static/pics/checkmark.png"/>
-    //         </div>  
-    //         <div class="grid-item4">
-    //             WPM: 89
-    //         </div>
-    //         <div class="grid-item5"></div>  
-    //     </div>  
+        //     <div class="grid-item2">
+        //         <div class="progressbar-container"> 
+        //             <div class="progressbar" id="hello">
+        //                 <span class="progressbar-text" id="hello2">10%</span>
+        //             </div>
+        //         </div>
+        //     </div>
+        //     <div class="grid-item3">
+        //         <img src="../static/pics/checkmark.png"/>
+        //     </div>  
+        //     <div class="grid-item4">
+        //         WPM: 89
+        //     </div>
+        //     <div class="grid-item5"></div>  
+        // </div>  
     // );
 
       // Create the container
@@ -44,7 +44,7 @@ function makePlayerStatus(){
     var progressbarText = document.createElement('span');
     progressbarText.className = 'progressbar-text';
     progressbarText.id = 'hello2';
-    progressbarText.textContent = '10%';
+    progressbarText.textContent = '50%';
     progressbar.appendChild(progressbarText);
     progressbarContainer.appendChild(progressbar);
     gridItem2.appendChild(progressbarContainer);
