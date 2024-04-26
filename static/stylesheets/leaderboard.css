@@ -80,7 +80,7 @@
 }
 
 /* Style for the title "Leaderboard" */
-h1 {
+#leaderboardTitle {
   color: #3498db; /* Blue color */
   text-align: center;
   margin-bottom: 20px;
