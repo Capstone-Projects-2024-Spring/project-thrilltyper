@@ -88,3 +88,20 @@
     border-radius: 1rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+
+#dashboard .statistic {
+    padding: 1rem;
+    overflow: auto;
+}
+
+#dashboard .statistic table {
+    width: 100%;
+    border-collapse: collapse; /* Ensure cells share borders */
+
+    font-size: 1.5rem;
+}
+
+#dashboard .statistic table th, #dashboard .statistic table td {
+    text-align: center;
+    border: 1px solid #005DBB;
+}
