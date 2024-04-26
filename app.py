@@ -82,14 +82,12 @@ class App:
         """
         self._app.run(host,port,debug,load_dotenv)
 
-    def messageReceived():
-        print('message was received!!!')
 
     @socketio.on('event')
     def handle_chat_global(json):
         global socketio
         print('received my event: ' + str(json))
-        App.socketio.emit('global chat', json, callback=App.messageReceived)
+        App.socketio.emit('global chat', json)
 
 
     @_app.route("/login", methods=["GET", "POST"])
