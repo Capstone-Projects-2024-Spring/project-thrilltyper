@@ -1,3 +1,39 @@
+#game-container {
+    max-width: 600px;
+    margin: 50px auto;
+}
+
+#text-display {
+    font-size: 18px;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#input-box {
+    padding: 10px;
+    font-size: 16px;
+    width: 80%; /* Adjust the width as needed */
+}
+
+#result {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.typed-word {
+    color: green;
+}
+
+/* 
+
+
+    divide line 
+
+
+
+*/
+
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -69,7 +105,7 @@ body {
 
 #text-window{
     /* max-width: 500px; */
-    width: 50%;
+    width: 45%;
     min-height: 300px;
 }
 
@@ -106,27 +142,23 @@ body {
 }
 
 #player-window{
-    width: 300px;
+    width: 20%;
     min-height: 250px;
 
 }
 
-#player-window img{
-    width: 40%;
-}
-
-/*   
-
-    divide line
-    start of make player status
-    
-*/
+/* start of make player status */
 .grid-container {
-    margin-top: 50px;
+    /* margin-top: 50px; */
     display: grid;
-    grid-template-columns: 150px 550px 50px;
-    grid-template-rows: 50px 50px;
-    gap: 12px;
+    /* grid-template-columns: 150px 550px 50px; */
+    /* grid-template-rows: 50px 50px; */
+    grid-template-columns: 20% 70% 8%;
+    grid-template-rows: 50% 50%;
+    /* gap: 12px; */
+    width: 98%;
+    gap: 1%;
+    padding: 10px;
 }
 
 .grid-item1 {
@@ -144,7 +176,7 @@ body {
 }
 
 .grid-item4{
-    font-size: 20px;
+    font-size: 14px;
     align-self: center;
     padding-left: 5px;
 }
@@ -161,12 +193,12 @@ body {
     text-align: right; 
     border-radius: 15px; 
     width: 50%; 
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .progressbar-text{
     color: white;
     padding-right: 10px;
-    font-size: 20px;
+    font-size: 16px;
 }
 /* end of make player status */

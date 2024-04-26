@@ -199,17 +199,50 @@ function ThrillTyperGame() {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
+    function factoryPlayerStatus(){
+
+        // Create an array of player status components
+        // const playerStatusComponents = [];
+        // const num = 3;
+        // for (let i = 0; i < num; i++) {
+        //     playerStatusComponents.push(<MakePlayerStatus/>);
+        // }
+
+        // // Render these components inside a div
+        // return <div>{playerStatusComponents}</div>;
+        // document.getElementById('holder').appendChild(MakePlayerStatus());
+    }
+
+    // ReactDOM.render(<FactoryPlayerStatus />, document.getElementById('holder'));
+
+
+
+    var percentage = 10;
+    function updateProgressBar(){
+        percentage += 10;
+        document.getElementById("hello").style.width = percentage + "%";
+        document.getElementById("hello2").innerHTML = percentage + "%";
+    }
+
+    function insertPlayerStatus(){
+        document.getElementById("holder").appendChild(makePlayerStatus());
+        document.getElementById("holder").appendChild(makePlayerStatus());
+    }
+
     return (
         <div id="game-container">
             <h1>Thrill Typer Game</h1>
             <div id="text-display">{text}</div>
             <input type="text" id="input-box" onInput={checkInput} disabled />
             <div id="result"></div>
-            <MakePlayerStatus/>
+            <div id="holder"></div>
+            {/* <MakePlayerStatus/> */}
             <div className="button-container">
                 <button onClick={startTimer}>Start</button>
                 <button onClick={stopTimer}>Reset</button>
                 <button onClick={fillText}>Fill Text</button>
+                <button onClick={updateProgressBar}>Update Progress Bar</button>
+                <button onClick={insertPlayerStatus}>Insert Player Status</button>
             </div>
         </div>
     );
