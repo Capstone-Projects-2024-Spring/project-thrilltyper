@@ -1,9 +1,10 @@
 function Dashboard({ userSession }) {
-    const [userData, setUserData] = React.useState("");
-    const [error, setError] = React.useState("");
+    const [userData, setUserData] = React.useState("")
+    const [error, setError] = React.useState("")
+    const [raceData, setRaceData] = React.useState([])
 
     React.useEffect(() => {
-        console.log(userSession, typeof (userSession), userSession ? true : false);
+        console.log(userSession, typeof (userSession), userSession ? true : false)
 
         // Redirects to login page if not logged in
         if (!userSession) {
@@ -13,13 +14,28 @@ function Dashboard({ userSession }) {
         fetch(`/user/${userSession.userinfo.given_name}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not success');
+                    throw new Error('Network response was not success')
+                }
+                return response.json()
+            })
+            .then(data => {
+                setUserData(data)
+                console.log(data)
+            })
+            .catch(error => {
+                setError(error)
+            })
+
+        fetch(`/raceData/${userSession.userinfo.given_name}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not success')
                 }
                 return response.json();
             })
             .then(data => {
-                setUserData(data);
-                console.log(data)
+                setRaceData(data);
+                console.log("race data:", data)
             })
             .catch(error => {
                 setError(error);
@@ -40,7 +56,7 @@ function Dashboard({ userSession }) {
 
                 }
             </div>
-            {userData &&
+            {userData ?
                 <div id="userData" >
                     {/* Winnings & Losses */}
                     <section className="dashItem userOverview">
@@ -48,12 +64,12 @@ function Dashboard({ userSession }) {
                             Total Playing Time: {userData.totalTime} minutes
                         </p>
                         <p className="center flexEven">
-                            Common Error: {userData.frequentMisTypedWord}
+                            Accuracy: {userData.accuracy}%
                         </p>
                     </section>
                     {/* Specific Data, i.e. WPM and Accuracy */}
                     <section className="dashItem statistic">
-                        <p className="center flexEven">
+                        {/* <p className="center flexEven">
                             Accuracy: {Number(userData.accuracy).toFixed(2)}%
                         </p>
                         <p className="center flexEven">
@@ -64,8 +80,37 @@ function Dashboard({ userSession }) {
                         </p>
                         <p className="center flexEven">
                             Losses: {userData.losses} games
-                        </p>
+                        </p> */}
+                        <table>
+                            <tr>
+                                <th>
+                                    Mode
+                                </th>
+                                <th>
+                                    WPM
+                                </th>
+                                <th>
+                                    Time Limit
+                                </th>
+                                <th>
+                                    Date Played
+                                </th>
+                            </tr>
+                            {raceData.map((record, index) => (
+                                <tr key={index}>
+                                    <td>{record.selected_mode}</td>
+                                    <td>{record.average_wpm}</td>
+                                    <td>{record.time_limit}</td>
+                                    <td>{record.date_played}</td>
+                                </tr>
+                            )
+                            )}
+                        </table>
                     </section>
+                </div>
+                :
+                <div id="dataError">
+                    <b>No data</b>
                 </div>
             }
         </div>

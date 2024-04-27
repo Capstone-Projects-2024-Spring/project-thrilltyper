@@ -28,6 +28,15 @@
   padding: 1rem 0;
 }
 
+
+#form-ctn .form-ops .logIn{
+  order: 2;
+}
+
+#form-ctn .form-ops .signup-link{
+  order: 1;
+}
+
 #form-ctn .register-ops {
   justify-content: space-around;
 }
