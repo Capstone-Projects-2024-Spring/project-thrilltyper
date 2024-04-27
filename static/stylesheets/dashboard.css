@@ -52,6 +52,8 @@
     display: flex;
     flex-direction: column;
     width: calc(70% - 2rem);
+
+    font-size: 1.5rem;
 }
 
 #dashboard .dashItem {
@@ -73,4 +75,33 @@
 
 #dashboard .flexEven {
     flex: 1 0 50%;
+}
+
+#dashboard #dataError {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+
+    font-size: 2rem;
+
+    margin: 0 2rem;
+    border: 1rem solid #005DBB;;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#dashboard .statistic {
+    padding: 1rem;
+    overflow: auto;
+}
+
+#dashboard .statistic table {
+    width: 100%;
+    border-collapse: collapse; /* Ensure cells share borders */
+}
+
+#dashboard .statistic table th, #dashboard .statistic table td {
+    text-align: center;
+    border: 1px solid #005DBB;
 }

@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
 
-    height: 50%;
+    height: 70%;
     width: 100%;
 
     padding: 1rem 2rem;
@@ -14,14 +14,26 @@
 #multiplayer #chat {
     display: flex;
     flex-direction: column;
-    padding: 0.2rem;
+
+    border: 1px lightgrey solid;
+    border-radius: 1rem;
+}
+
+#multiplayer #chat #chatTitle {
+    color: white;
+    padding: 0.5rem;
+
+    background-color: #4E6EDD;
+    border-radius: 1rem 1rem 0 0;
 }
 
 #multiplayer #chat #message {
-    height: 80%;
-    width: 100%;
+    height: calc(70% - 2rem);
+    width: calc(100% - 2rem);
 
-    border: 4px double black;
+    margin: 1rem;
+
+    border: 2px solid lightgrey;
     border-radius: 1rem;
 
     padding: 0.2rem 0.5rem;
@@ -29,15 +41,25 @@
 
 #multiplayer #chat form {
     height: 20%;
-    padding-top: 1rem;
+    width: 100%;
+    padding: 0 1rem 0;
 }
 
 #multiplayer #chat form input:nth-child(2) {
-    width: 80%;
+    height: 2rem;
+    width: 75%;
+
+    border: 1px solid lightgrey;
+
+    padding-left: 1rem;
+    border-radius: 1rem;
+    margin-top: 0.5rem;
 }
 
 #multiplayer #chat form input:last-child {
-    width: 20%;
+    margin: 0 0.25rem;
+    height: 2rem;
+    width: calc(25% - 0.5rem);
 }
 
 
