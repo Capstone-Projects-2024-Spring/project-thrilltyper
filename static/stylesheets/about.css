@@ -1,56 +1,112 @@
 /* Add styles for the container */
 .aboutContainer {
-    margin: 0 auto; /* Add margin to center horizontally */
-    max-width: 800px; /* Limit maximum width */
-    padding: 0 20px; /* Add padding for white space on left and right */
-    text-align: center; /* Center align text */
-  }
-  
-  /* Add margin and padding to sections for space */
-  #about,
-  #features,
-  #contributors {
-    margin-bottom: 20px; /* Add margin between sections */
-    padding: 20px; /* Add padding for space within sections */
-  }
-  
-  /* Add margin and padding to paragraphs for space */
-  .aboutContainer p {
-    margin-bottom: 10px; /* Add margin between paragraphs */
-  }
-  
-  /* Style for contributor container */
-  .profiles {
-    display: flex; /* Use flexbox for layout */
-    flex-wrap: wrap; /* Allow items to wrap to next line if necessary */
-    justify-content: center; /* Center items horizontally */
-  }
-  
-  /* Style for each contributor container */
-  .contributor {
-    margin: 10px; /* Add margin around each contributor */
-    text-align: center; /* Center align text */
-    flex-basis: calc(12.5% - 20px); /* Set flex basis to evenly distribute items */
-  }
-  
-  /* Style for contributor images */
-  .contributor img {
-    width: 65px; /* Adjust width of profile images */
-    height: 65px; /* Adjust height of profile images */
-    /*65*65 px seems reasonable for, preferrably keeping each contributor on the same line horizontally*/
-  }
-  
-  /* Style for contributor names */
-  .contributor p {
-    margin-top: 5px; /* Add margin above the name */
-  }
+  margin: 0 auto; /* Add margin to center horizontally */
+  max-width: 800px; /* Limit maximum width */
+  padding: 0 20px; /* Add padding for white space on left and right */
+  text-align: center; /* Center align text */
+}
 
-  /*
-  Planning for better css
-  -a boarder for every contributor profile photo
-  -bold and more colorful visual for each contributor name
-  -visually appealing background image for the About page
-  -inner border or some sort of boundary to isolate or clarify each section of the page
-  -match the font and style of the text, enlarge the fonts
-  */
-  
+/* Add margin and padding to sections for space */
+#about,
+#features,
+#contributors {
+  margin-bottom: 40px; /* Add larger margin between sections */
+  padding: 20px; /* Add padding for space within sections */
+  background-color: #f9f9f9; /* Add background color to sections */
+  border-radius: 10px; /* Add rounded corners to sections */
+}
+
+/* Add margin and padding to paragraphs for space */
+.aboutContainer p {
+  margin-bottom: 20px; /* Add larger margin between paragraphs */
+  font-size: 18px; /* Increase font size for better readability */
+}
+
+/* Style for contributor container */
+.profiles {
+  display: flex; /* Use flexbox for layout */
+  flex-wrap: wrap; /* Allow items to wrap to next line if necessary */
+  justify-content: center; /* Center items horizontally */
+}
+
+/* Style for each contributor container */
+.contributor {
+  margin: 20px; /* Add larger margin around each contributor */
+  text-align: center; /* Center align text */
+  flex-basis: calc(25% - 40px); /* Set flex basis to evenly distribute items */
+  border: 2px solid #ddd; /* Add border around each contributor */
+  border-radius: 10px; /* Add rounded corners to contributor containers */
+  padding: 10px; /* Add padding inside each contributor container */
+}
+
+/* Style for contributor images */
+.contributor img {
+  width: 100px; /* Adjust width of profile images */
+  height: 100px; /* Adjust height of profile images */
+  border-radius: 50%; /* Make profile images circular */
+  margin-bottom: 10px; /* Add margin below each profile image */
+}
+
+/* Style for contributor names */
+.contributor p {
+  font-weight: bold; /* Make contributor names bold */
+  color: #333; /* Set color for contributor names */
+  font-size: 16px; /* Adjust font size for contributor names */
+}
+
+/* Reset styles for the "Starring Features" list */
+#features ul {
+  list-style: disc; /* Use default bullet points */
+  padding-left: 20px; /* Add padding to the left of the list */
+}
+
+/* Reset styles for the list items */
+#features li {
+  margin-bottom: 20px; /* Add margin between list items */
+  line-height: 1.6; /* Adjust line height for better spacing */
+}
+
+/* Add styles for the update log */
+#updateLog {
+  margin-bottom: 40px; /* Add larger margin between sections */
+  padding: 20px; /* Add padding for space within sections */
+  background-color: #f9f9f9; /* Add background color to sections */
+  border-radius: 10px; /* Add rounded corners to sections */
+}
+
+/* Style for each update log entry */
+.updateEntry {
+  margin-bottom: 20px; /* Add margin between update log entries */
+}
+
+/* Style for the update log labels */
+.updateLabel {
+  display: inline-block;
+  padding: 5px 10px; /* Add padding inside labels */
+  border-radius: 10px; /* Add rounded corners to labels */
+  background-color: #ff9900; /* Set background color for labels */
+  color: white; /* Set text color for labels */
+  font-weight: bold; /* Make label text bold */
+  margin-bottom: 10px; /* Add margin below labels */
+}
+
+/* Style for the update log descriptions */
+.updateDescription p {
+  margin-bottom: 10px; /* Add margin between description paragraphs */
+}
+
+/* Style for left image */
+.left-image {
+  position: fixed;
+  top: 0; /* Adjust as needed */
+  left: 0; /* Adjust as needed */
+  z-index: -1; /* Ensure the image is behind the content */
+}
+
+/* Style for right image */
+.right-image {
+  position: fixed;
+  top: 0; /* Adjust as needed */
+  right: 0; /* Adjust as needed */
+  z-index: -1; /* Ensure the image is behind the content */
+}
