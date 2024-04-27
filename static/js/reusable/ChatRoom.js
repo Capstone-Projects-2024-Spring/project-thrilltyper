@@ -26,7 +26,8 @@ function ChatRoom({ userSession = null }) {
         }
 
         newSocket.on('connect', () => {
-            newSocket.emit('event', { data: 'User Connected' });
+            console.log("connected")
+            newSocket.emit('event', { user_name: userSession ? userSession.userinfo.given_name : randomString, message: "has joined the lobby" });
         });
 
         newSocket.on('global chat', (msg) => {
@@ -62,6 +63,7 @@ function ChatRoom({ userSession = null }) {
 
     return (
         <div id="chat" className="sideComponent">
+            <h2 id="chatTitle">Chat</h2>
             <div id="message">
                 {messages.map((msg, index) => (
                     <div key={index}>
@@ -73,7 +75,7 @@ function ChatRoom({ userSession = null }) {
                 <h4>{userName}</h4>
                 <input
                     type="text"
-                    placeholder="Messages"
+                    placeholder="Write a message..."
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                 />

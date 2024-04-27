@@ -26,7 +26,7 @@ function Leaderboard() {
 
     return (
         <div>
-            <h1>Leaderboard</h1>
+            <h1 id="leaderboardTitle">Leaderboard</h1>
             <div id="leaderboard">
                 <h2>Top 50 Highest WPM</h2>
                 <table>
