@@ -199,17 +199,54 @@ function ThrillTyperGame() {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
+    
+    function changeBackground(season) {
+        const body = document.body;
+        switch(season) {
+            case 'spring':
+                body.style.backgroundImage = "url('/static/pics/spring.jpg')";
+                break;
+
+            case 'winter':
+                body.style.backgroundImage = "url('/static/pics/winter.jpg')";
+                break;
+            case 'summer':
+                body.style.backgroundImage = "url('/static/pics/summer.jpg')";
+                break;
+            case 'autumn':
+                body.style.backgroundImage = "url('/static/pics/autumn.jpg')";
+                break;
+            default:
+                body.style.backgroundImage = "none";
+        }
+    }
+
+
+
     return (
         <div id="game-container">
             <h1>Thrill Typer Game</h1>
             <div id="text-display">{text}</div>
+    
             <input type="text" id="input-box" onInput={checkInput} disabled />
             <div id="result"></div>
             <div className="button-container">
                 <button onClick={startTimer}>Start</button>
                 <button onClick={stopTimer}>Reset</button>
                 <button onClick={fillText}>Fill Text</button>
+    
+                {/* Dropdown menu */}
+                <div className="dropdown">
+                    <button className="dropbtn">Cosmetic</button>
+                    <div className="dropdown-content">
+                        <button onClick={() => changeBackground('spring')}>Spring</button>
+                        <button onClick={() => changeBackground('summer')}>Summer</button>
+                        <button onClick={() => changeBackground('autumn')}>Autumn</button>
+                        <button onClick={() => changeBackground('winter')}>Winter</button>
+                    </div>
+                </div>
             </div>
         </div>
     );
+    
 }
