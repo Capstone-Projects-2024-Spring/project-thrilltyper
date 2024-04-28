@@ -12,8 +12,9 @@
 #contributors {
   margin-bottom: 40px; /* Add larger margin between sections */
   padding: 20px; /* Add padding for space within sections */
-  background-color: #f9f9f9; /* Add background color to sections */
+  background-color: #fff9db; /* Add yellowish background color to all sections */
   border-radius: 10px; /* Add rounded corners to sections */
+  color: #333; /* Set text color for all sections */
 }
 
 /* Add margin and padding to paragraphs for space */
@@ -41,8 +42,8 @@
 
 /* Style for contributor images */
 .contributor img {
-  width: 100px; /* Adjust width of profile images */
-  height: 100px; /* Adjust height of profile images */
+  width: 60px; /* Adjust width of profile images */
+  height: 60px; /* Adjust height of profile images */
   border-radius: 50%; /* Make profile images circular */
   margin-bottom: 10px; /* Add margin below each profile image */
 }
@@ -50,7 +51,6 @@
 /* Style for contributor names */
 .contributor p {
   font-weight: bold; /* Make contributor names bold */
-  color: #333; /* Set color for contributor names */
   font-size: 16px; /* Adjust font size for contributor names */
 }
 
@@ -70,7 +70,7 @@
 #updateLog {
   margin-bottom: 40px; /* Add larger margin between sections */
   padding: 20px; /* Add padding for space within sections */
-  background-color: #f9f9f9; /* Add background color to sections */
+  background-color: #fff9db; /* Add yellowish background color to update log */
   border-radius: 10px; /* Add rounded corners to sections */
 }
 
