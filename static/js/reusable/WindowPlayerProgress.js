@@ -11,6 +11,7 @@ function WindowPlayerProgress(){
                 <span className="header-title">Player Window</span>
             </div>
             <div id="host-player-progress">
+                <MakePlayerProgress/>
                 {/* Host player progress elements if any */}
             </div>
             <div id="player-progress-list-container">

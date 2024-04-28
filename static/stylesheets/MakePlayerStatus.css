@@ -1,0 +1,115 @@
+.grid-container {
+    /* margin-top: 50px; */
+    display: grid;
+    grid-template-columns: 15% 70% 10%;
+    grid-template-rows: 50% 50%;
+    /* gap: 12px; */
+
+    width: 98%;
+    gap: 2%;
+    padding: 10px;
+}
+
+.grid-item1 {
+    grid-row: 1 / span 2;
+    justify-self: center;
+    align-self: center;
+}
+
+.grid-item1 img{
+    width: 100%;
+}
+
+.grid-item3 img{
+    width: 65%;
+    margin-top: 30%;
+}
+
+.grid-item2{
+    align-self: center;
+    position: relative; /* Establishes a positioning context for child elements */
+    width: 100%;
+}
+
+.grid-item3{
+    align-self: center;
+    justify-self: center;
+}
+
+.grid-item4{
+    font-size: 13px;
+    align-self: center;
+    padding-left: 5px;
+}
+
+.progressbar-container{
+    background-color: rgb(192, 192, 192); 
+    width: 100%; 
+    border-radius: 15px; 
+    overflow: hidden;
+    margin-top: 3%;
+}
+
+.progressbar{
+    background-color: rgb(116, 194, 92); 
+    text-align: right; 
+    border-radius: 15px; 
+    width: 50%; 
+    /* padding: 10px; */
+}
+
+.progressbar-text{
+    color: white;
+    padding-right: 10px;
+    font-size: 16px;
+}
+
+/*
+.grid-container {
+    display: grid;
+    grid-template-columns: 150px 550px 50px;
+    grid-template-rows: 50px 50px;
+    gap: 12px;
+}
+
+.grid-item1 {
+    grid-row: 1 / span 2;
+    justify-self: center;
+    align-self: center;
+}
+
+.grid-item1 img, .grid-item3 img{
+    width: 100%;
+}
+
+.grid-item2, .grid-item3{
+    align-self: center;
+}
+
+.grid-item4{
+    font-size: 20px;
+    align-self: center;
+    padding-left: 5px;
+}
+
+.progressbar-container{
+    background-color: rgb(192, 192, 192); 
+    width: 100%; 
+    border-radius: 15px; 
+    overflow: hidden;
+}
+
+.progressbar{
+    background-color: rgb(116, 194, 92); 
+    text-align: right; 
+    border-radius: 15px; 
+    width: 10%; 
+    padding: 10px;
+}
+
+.progressbar-text{
+    color: white;
+    padding-right: 10px;
+    font-size: 20px;
+}
+*/

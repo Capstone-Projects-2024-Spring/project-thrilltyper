@@ -21,9 +21,10 @@ function MakePlayerProgress(){
             <div class="grid-item5"></div>  
         </div>  
     );
+}
 
-    /*
-      // Create the container
+function makePlayerProgress(){
+    // Create the container
     var gridContainer = document.createElement('div');
     gridContainer.className = 'grid-container';
 
@@ -41,10 +42,10 @@ function MakePlayerProgress(){
     progressbarContainer.className = 'progressbar-container';
     var progressbar = document.createElement('div');
     progressbar.className = 'progressbar';
-    progressbar.id = 'hello';
+    progressbar.id = 'hello';   //assign id to progress bar 
     var progressbarText = document.createElement('span');
     progressbarText.className = 'progressbar-text';
-    progressbarText.id = 'hello2';
+    progressbarText.id = 'hello2';  //assign id to progress bar text
     progressbarText.textContent = '50%';
     progressbar.appendChild(progressbarText);
     progressbarContainer.appendChild(progressbar);
@@ -74,5 +75,5 @@ function MakePlayerProgress(){
     gridContainer.appendChild(gridItem5);
 
     return gridContainer;
-    */
+    
 }
