@@ -1,26 +1,31 @@
 function Menu({}) {
     const buttonStyle = {
-        width: '500px', /* Increase button width */
-        height: '300px', /* Increase button height */
-        fontSize: '2rem', /* Increase font size */
-        padding: '20px 15px', /* Increase padding */
-        border: '2px solid #294E95', /* Change border color */
-        borderRadius: '15px', /* Increase border radius */
-        backgroundColor: 'white', /* White background */
-        display: 'flex', /* Enable flexbox for positioning */
-        flexDirection: 'column', /* Stack elements vertically */
-        justifyContent: 'center', /* Center content vertically */
-        alignItems: 'center', /* Center content horizontally */
-        position: 'relative', /* Set position to relative for absolute positioning of image and text */
-        overflow: 'hidden', /* Hide overflowing content */
+        width: '500px',
+        height: '300px',
+        fontSize: '2rem',
+        padding: '20px 15px',
+        border: '2px solid #294E95',
+        borderRadius: '15px',
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+        textDecoration: 'none', // Remove underline from text
+        color: '#294E95', // Set text color to #294E95
+        fontFamily: 'Inter, sans-serif', // Apply Inter font
+        fontWeight: 'lighter', // Set font weight to lighter
+        letterSpacing: '2px' // Increase letter spacing
     };
 
-    const textStyle = {
-        fontFamily: 'Inter, sans-serif', /* Use Inter font */
-        fontSize: '1.5rem', /* Set font size */
-        textDecoration: 'none', /* Remove underline */
-        color: '#294E95', /* Set text color */
-        fontWeight: 'normal', /* Remove bold */
+    const linkStyle = {
+        textDecoration: 'none', // Remove underline from <a> elements
+        color: '#294E95', // Set text color to #294E95
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 'lighter', // Set font weight to lighter
+        letterSpacing: '2px' // Increase letter spacing
     };
 
     return (
@@ -29,28 +34,28 @@ function Menu({}) {
                 Choose Your Game Mode
             </h1>
             <div id="menu" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridTemplateRows: 'auto auto', rowGap: '2rem', columnGap: '4rem', justifyContent: 'center', maxWidth: '900px' }}>
-                <Link id="singlePlayerMode" to="/singlePlayer" className="menu-item">
+                <Link id="singlePlayerMode" to="/singlePlayer" className="menu-item" style={linkStyle}>
                     <button style={buttonStyle}>
                         <img src="/static/pics/SinglePlayerMode.png" alt="Single Player Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={textStyle}>Single Player</span>
+                        Single Player
                     </button>
                 </Link>
-                <Link id="robotMode" to="/robotOpponent" className="menu-item">
+                <Link id="robotMode" to="/robotOpponent" className="menu-item" style={linkStyle}>
                     <button style={buttonStyle}>
                         <img src="/static/pics/RobotMode.png" alt="Robot Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={textStyle}>Robot</span>
+                        Robot
                     </button>
                 </Link>
-                <Link id="importTextMode" to="/importText" className="menu-item">
+                <Link id="importTextMode" to="/importText" className="menu-item" style={linkStyle}>
                     <button style={buttonStyle}>
-                        <img src="/static/pics/LocalMatchMode.png" alt="Import Text Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={textStyle}>Import Text Mode</span>
+                        <img src="/static/pics/import_text_mode.png" alt="Import Text Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
+                        Import Text Mode
                     </button>
                 </Link>
-                <Link id="multiplayerMode" to="/multiplayer" className="menu-item">
+                <Link id="multiplayerMode" to="/multiplayer" className="menu-item" style={linkStyle}>
                     <button style={buttonStyle}>
                         <img src="/static/pics/MultiplayerMode.png" alt="Multiplayer Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={textStyle}>Multiplayer</span>
+                        Multiplayer
                     </button>
                 </Link>
             </div>
