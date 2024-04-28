@@ -13,11 +13,7 @@ function Menu({}) {
         alignItems: 'center', /* Center content horizontally */
         position: 'relative', /* Set position to relative for absolute positioning of image and text */
         overflow: 'hidden', /* Hide overflowing content */
-        textDecoration: 'none', /* Remove underline */
-        outline: 'none', /* Remove outline on focus */
-        cursor: 'pointer', /* Set cursor to pointer on hover */
     };
-    
 
     const textStyle = {
         fontFamily: 'Inter, sans-serif', /* Use Inter font */
@@ -25,10 +21,6 @@ function Menu({}) {
         textDecoration: 'none', /* Remove underline */
         color: '#294E95', /* Set text color */
         fontWeight: 'normal', /* Remove bold */
-    };
-
-    const buttonSpanStyle = {
-        textDecoration: 'none !important', /* Remove underline */
     };
 
     return (
@@ -40,25 +32,25 @@ function Menu({}) {
                 <Link id="singlePlayerMode" to="/singlePlayer" className="menu-item">
                     <button style={buttonStyle}>
                         <img src="/static/pics/SinglePlayerMode.png" alt="Single Player Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={{ ...textStyle, ...buttonSpanStyle }}>Single Player</span>
+                        <span style={textStyle}>Single Player</span>
                     </button>
                 </Link>
                 <Link id="robotMode" to="/robotOpponent" className="menu-item">
                     <button style={buttonStyle}>
                         <img src="/static/pics/RobotMode.png" alt="Robot Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={{ ...textStyle, ...buttonSpanStyle }}>Robot</span>
+                        <span style={textStyle}>Robot</span>
                     </button>
                 </Link>
                 <Link id="importTextMode" to="/importText" className="menu-item">
                     <button style={buttonStyle}>
                         <img src="/static/pics/LocalMatchMode.png" alt="Import Text Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={{ ...textStyle, ...buttonSpanStyle }}>Import Text Mode</span>
+                        <span style={textStyle}>Import Text Mode</span>
                     </button>
                 </Link>
                 <Link id="multiplayerMode" to="/multiplayer" className="menu-item">
                     <button style={buttonStyle}>
                         <img src="/static/pics/MultiplayerMode.png" alt="Multiplayer Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        <span style={{ ...textStyle, ...buttonSpanStyle }}>Multiplayer</span>
+                        <span style={textStyle}>Multiplayer</span>
                     </button>
                 </Link>
             </div>
