@@ -213,6 +213,7 @@ class App:
         # Gets input
         username = request.form["username"]
         password = request.form["password"]
+        email = request.form["email"]
         # Validates contraints
         if Database.query(username, "UserInfo"):
             session["error"] = "Username already used "
@@ -220,6 +221,21 @@ class App:
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
         Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
+        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_history_highest_race_wpm=0,_num_race_played=0,_user_in_game_picture=url_for("static", filename="pics/anonymous.png"))
+        user_letter_data = {
+        "_username": username,
+        "_email": email,
+        **{f"_{letter}": 0 for letter in string.ascii_lowercase},
+        "_comma": 0,
+        "_period": 0,
+        "_exclamation": 0,
+        "_question": 0,
+        "_hyphen": 0,
+        "_semicolon": 0,
+        "_single_quote": 0,
+        "_double_quote": 0,
+        }
+        Database.insert(UserLetter,**user_letter_data)
         # Store session
         playerObj =  player(username, avatar)
     
@@ -864,7 +880,7 @@ if __name__=="__main__":
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        app.db.drop_all()
+        #app.db.drop_all()
 
         app.db.create_all()
 
