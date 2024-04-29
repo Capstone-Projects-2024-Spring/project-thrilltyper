@@ -54,9 +54,10 @@ function makePlayerProgress(){
     // Create the third grid item and append an image
     var gridItem3 = document.createElement('div');
     gridItem3.className = 'grid-item3';
-    var checkmarkIcon = document.createElement('img');
-    checkmarkIcon.src = '../static/pics/checkmark.png';
-    gridItem3.appendChild(checkmarkIcon);
+    gridItem3.id = "hello3";
+    //var checkmarkIcon = document.createElement('img');
+    //checkmarkIcon.src = '../static/pics/checkmark.png';
+    //gridItem3.appendChild(checkmarkIcon);
 
     // Create the fourth grid item for WPM
     var gridItem4 = document.createElement('div');

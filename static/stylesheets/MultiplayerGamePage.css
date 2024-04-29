@@ -114,6 +114,7 @@ body {
     width: 20%;
     height: 400px;
     margin: 0 auto; /* Centers the chat window in its parent */
+    margin-top: 20%;
 }
 
 /* Keep the .window-header styles as they are */
@@ -145,7 +146,6 @@ body {
 #player-window{
     width: 20%;
     min-height: 250px;
-
 }
 
 /* start of make player status */
@@ -215,3 +215,11 @@ body {
     font-size: 16px;
 }
 /* end of make player status */
+
+#timer-window{
+    position: absolute;
+    top: 14%; /* Position as needed */
+    left: 3%;
+    width: 20%;
+    height: 30%;
+}

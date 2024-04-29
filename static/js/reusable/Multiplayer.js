@@ -10,6 +10,7 @@ function Multiplayer({userSession}) {
 
 
     function checkInput() {
+        console.log("checkInput: text = "+text);
         var userInputText = document.getElementById("input-box").value;
         var userInputLastChar = userInputText[userInputText.length - 1];
 
@@ -96,12 +97,50 @@ function Multiplayer({userSession}) {
     }
 
 
-    function startGame(){
-        console.log("start game executed");
+    function resetVariables(){
+        currentWordIndex = 0;   //initializes value for play again
+        currentCharIndex = 0;
+        userInputCorrectText = "";
+        document.getElementById("input-box").value = "";
+        document.getElementById("result").innerHTML = "";
+
+        // startTime = new Date().getTime();
+        
+
+        //stopTimerInterval();
+        //startTimerInterval();
+    }
+
+    async function startGame(){
+        let newText = await fetchRandomWordList();
+        text = newText;
+        document.getElementById("text-display").innerHTML = text;
+        words = text.split(" ");
+        resetVariables();
+        document.getElementById("input-box").disabled = false;
+        console.log("start game");
+    }
+
+    async function fetchRandomWordList() {
+        let newText = "";
+        try {
+            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            newText = await response.text();
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        return newText;
     }
 
     function stopGame(){
-
+        resetVariables();
+        document.getElementById("input-box").disabled = true;
+        console.log("stop game");
     }
 
     function addPlayerProgress(){
@@ -126,6 +165,12 @@ function Multiplayer({userSession}) {
         const progressBarText = document.getElementById("hello2");
         progressBar.style.width = newWidth + "%";
         progressBarText.innerHTML = newWidth + "%";
+
+        if(newWidth === 100){
+            var checkmarkIcon = document.createElement('img');
+            checkmarkIcon.src = '../static/pics/checkmark.png';
+            document.getElementById("hello3").appendChild(checkmarkIcon);
+        }
         console.log("updatePlayerProgress: progressWidth = "+newWidth);
     }
 
@@ -159,6 +204,9 @@ function Multiplayer({userSession}) {
                 </div>
             </div>
 
+            <div class="window-container" id="timer-window">
+                
+            </div>
 
             <div class="window-container" id="text-window">
                 <div class="window-header">
@@ -175,8 +223,10 @@ function Multiplayer({userSession}) {
                     <div id="text-display">
                         {text}
                     </div>
-                    <input type="text" id="input-box" onInput={checkInput}/>
+                    <input type="text" id="input-box" onInput={checkInput} disabled/>
                 </div>
+
+                <div id="result"></div>
                 <button onClick={startGame}>Start</button>
                 <button onClick={stopGame}>Reset</button>
             </div>
@@ -195,12 +245,12 @@ function Multiplayer({userSession}) {
                         <div class="grid-item2">
                             <div class="progressbar-container"> 
                                 <div class="progressbar" id="hello">
-                                    <span class="progressbar-text" id="hello2">10%</span>
+                                    <span class="progressbar-text" id="hello2"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="grid-item3">
-                            <img src="../static/pics/checkmark.png"/>
+                        <div class="grid-item3" id="hello3">
+                            {/* <img src="../static/pics/checkmark.png"/> */}
                         </div>  
                         <div class="grid-item4">
                             WPM: 89
