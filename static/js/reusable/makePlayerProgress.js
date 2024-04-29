@@ -43,10 +43,8 @@ function makePlayerProgress(id){
     progressbarContainer.className = 'progressbar-container';
     var progressbar = document.createElement('div');
     progressbar.className = 'progressbar';
-    // progressbar.id = 'hello';   //assign id to progress bar 
     var progressbarText = document.createElement('span');
     progressbarText.className = 'progressbar-text';
-    // progressbarText.id = 'hello2';  //assign id to progress bar text
     progressbarText.textContent = '50%';
     progressbar.appendChild(progressbarText);
     progressbarContainer.appendChild(progressbar);
@@ -55,7 +53,6 @@ function makePlayerProgress(id){
     // Create the third grid item and append an image
     var gridItem3 = document.createElement('div');
     gridItem3.className = 'grid-item3';
-    // gridItem3.id = "hello3";
 
     //var checkmarkIcon = document.createElement('img');    controlled by updateTimer()
     //checkmarkIcon.src = '../static/pics/checkmark.png';

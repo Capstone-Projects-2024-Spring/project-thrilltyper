@@ -130,32 +130,6 @@ function Multiplayer({userSession}) {
         
     }
 
-
-    function resetVariables(){
-        currentWordIndex = 0;   //initializes value for play again
-        currentCharIndex = 0;
-        userInputCorrectText = "";
-        document.getElementById("input-box").value = "";
-        document.getElementById("timer-display").innerHTML = "";
-        document.getElementById("result-display").innerHTML = "";
-
-        const progressBarContainer = document.getElementById(playerProgressList[0]);
-        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
-        progressBarIconContainer.innerHTML = "";
-
-    }
-
-    async function startGame(){
-        let newText = await fetchRandomWordList();
-        text = newText;
-        document.getElementById("text-display").innerHTML = text;
-        words = text.split(" ");
-        resetVariables();
-        document.getElementById("input-box").disabled = false;
-        startTimer();
-        console.log("start game");
-    }
-
     async function fetchRandomWordList() {
         let newText = "";
         try {
@@ -172,11 +146,36 @@ function Multiplayer({userSession}) {
         return newText;
     }
 
+    function resetVariables(){
+        currentWordIndex = 0;   //initializes value for play again
+        currentCharIndex = 0;
+        userInputCorrectText = "";
+        document.getElementById("input-box").value = "";
+        document.getElementById("timer-display").innerHTML = "";
+        document.getElementById("result-display").innerHTML = "";
+    }
+
+    async function startGame(){
+        let newText = await fetchRandomWordList();
+        text = newText;
+        document.getElementById("text-display").innerHTML = text;
+        words = text.split(" ");
+        
+        resetVariables();
+        resetPlayerProgress();
+        startTimer();
+        
+        document.getElementById("input-box").disabled = false;
+        console.log("start game");
+    }
+
+
+
     function stopGame(){
         //resetVariables();
+        document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
         stopTimer();
-        document.getElementById("text-display").innerHTML = "Click start button to start!";
         console.log("stop game");
     }
 
@@ -231,6 +230,19 @@ function Multiplayer({userSession}) {
             progressBarIconContainer.appendChild(checkmarkIcon);
         }
         console.log("updatePlayerProgress: progressWidth = "+newWidth);
+    }
+
+    //clear host progress bar
+    function resetPlayerProgress(){
+        const progressBarContainer = document.getElementById(playerProgressList[0]);
+        const progressBar = progressBarContainer.querySelector(".progressbar");
+        const progressBarText = progressBarContainer.querySelector(".progressbar-text");
+        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
+
+        progressBar.style.width = 0 + "%";
+        progressBarText.innerHTML = "";
+        progressBarIconContainer.innerHTML = "";
+
     }
 
     function fillText(){
@@ -291,7 +303,7 @@ function Multiplayer({userSession}) {
                 <div id="result-display"></div>
                 <div id="button-holder">
                     <button onClick={startGame}>Start</button>
-                    <button onClick={stopGame}>Reset</button>
+                    <button onClick={stopGame}>Stop</button>
                     <button onClick={fillText}>Fill Text</button>
                 </div>
             </div>
