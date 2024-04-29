@@ -135,7 +135,22 @@ class App:
 
                 # Insert user info into the database if doesn"t exists yet
                 if Database.query(uname, "UserInfo") is None:
-                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
+                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=uname, _profile_photo=picture)
+                    Database.insert(UserData, _username=uname,_email=uname,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_history_highest_race_wpm=0,_num_race_played=0,_user_in_game_picture=picture)
+                    user_letter_data = {
+                    "_username": uname,
+                    "_email": uname,
+                    **{f"_{letter}": 0 for letter in string.ascii_lowercase},
+                    "_comma": 0,
+                    "_period": 0,
+                    "_exclamation": 0,
+                    "_question": 0,
+                    "_hyphen": 0,
+                    "_semicolon": 0,
+                    "_single_quote": 0,
+                    "_double_quote": 0,
+                    }
+                    Database.insert(UserLetter,**user_letter_data)
             else:
                 # Handle the case where access is denied (user cancelled the login)
                 return "Access denied: Google login was canceled or failed."
@@ -849,7 +864,7 @@ if __name__=="__main__":
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        #app.db.drop_all()
+        app.db.drop_all()
 
         app.db.create_all()
 
@@ -858,7 +873,7 @@ if __name__=="__main__":
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         #after testing, you can repeat the number, but preferrably not to do that
-        #Database.populate_sample_date(10000)
+        #Database.populate_sample_date(1000)
 
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
