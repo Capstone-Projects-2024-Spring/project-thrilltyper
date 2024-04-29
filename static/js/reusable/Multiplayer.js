@@ -1,13 +1,18 @@
 function Multiplayer({userSession}) {
     let text = "Click start button to start!";
     let words = text.split(" ");
-
+    let startTime;
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
     let userInputCorrectText = "";
 
+    const intervalRef = React.useRef(null);
 
+    //updates typed display, wpm display, and accuracy display
+    function updateStatusContainer(){
+
+    }
 
     function checkInput() {
         console.log("checkInput: text = "+text);
@@ -33,7 +38,7 @@ function Multiplayer({userSession}) {
         }
 
         //update player progress bar
-        updatePlayerProgress(Math.ceil(currentCharIndex/text.length*100));
+        updatePlayerProgress(playerProgressList[0], Math.ceil(currentCharIndex/text.length*100));
        
         //submit input if last letter is typed
         if (currentCharIndex >= text.length) {
@@ -102,7 +107,7 @@ function Multiplayer({userSession}) {
         currentCharIndex = 0;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
-        document.getElementById("result").innerHTML = "";
+        document.getElementById("timer-display").innerHTML = "";
 
         // startTime = new Date().getTime();
         
@@ -118,6 +123,7 @@ function Multiplayer({userSession}) {
         words = text.split(" ");
         resetVariables();
         document.getElementById("input-box").disabled = false;
+        startTimer();
         console.log("start game");
     }
 
@@ -140,36 +146,56 @@ function Multiplayer({userSession}) {
     function stopGame(){
         resetVariables();
         document.getElementById("input-box").disabled = true;
+        stopTimer();
+        document.getElementById("text-display").innerHTML = "Click start button to start!";
         console.log("stop game");
     }
 
+    function startTimer(){
+        startTime = new Date().getTime();
+        intervalRef.current = setInterval(updateTimer, 10);
+    }
+
+    function stopTimer(){
+        clearInterval(intervalRef.current);
+    }
+
+    function updateTimer(){
+        const currentTime = new Date().getTime();
+        const elapsedTime = (currentTime - startTime) / 1000;
+        document.getElementById("timer-display").innerHTML = `${elapsedTime.toFixed(2)} seconds`;
+    }
+
+
+    const playerProgressList = ["player1"];
+
     function addPlayerProgress(){
+        const newProgressID = "player" + (playerProgressList.length + 1);
+        playerProgressList.push(newProgressID);
         const element = document.getElementById("player-progress-list-container");
-        element.appendChild(makePlayerProgress());       
+        element.appendChild(makePlayerProgress(newProgressID));       
+        console.log("addPlayerProgrss: playerProgressList = " + playerProgressList);
     }
 
     function removePlayerProgress(){
-
+        const element = document.getElementById("player-progress-list-container");
+        const toRemove = document.getElementById(playerProgressList.pop());
+        element.removeChild(toRemove);
     }
-
-
-
     
-    function updatePlayerProgress(newWidth){
-        //const progressList = {};
-        //var progressWidth = 10; //place outside later
-        //const progressContainer = document.getElementById("progressID");
-        //const progressBar = progressContainer.querySelector(".progressbar");
+    function updatePlayerProgress(id, newWidth){
+        const progressBarContainer = document.getElementById(id);
+        const progressBar = progressBarContainer.querySelector(".progressbar");
+        const progressBarText = progressBarContainer.querySelector(".progressbar-text");
+        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3")
 
-        const progressBar = document.getElementById("hello");
-        const progressBarText = document.getElementById("hello2");
         progressBar.style.width = newWidth + "%";
         progressBarText.innerHTML = newWidth + "%";
 
         if(newWidth === 100){
             var checkmarkIcon = document.createElement('img');
             checkmarkIcon.src = '../static/pics/checkmark.png';
-            document.getElementById("hello3").appendChild(checkmarkIcon);
+            progressBarIconContainer.appendChild(checkmarkIcon);
         }
         console.log("updatePlayerProgress: progressWidth = "+newWidth);
     }
@@ -205,7 +231,7 @@ function Multiplayer({userSession}) {
             </div>
 
             <div class="window-container" id="timer-window">
-                
+                <div id="timer-display"></div>
             </div>
 
             <div class="window-container" id="text-window">
@@ -226,7 +252,7 @@ function Multiplayer({userSession}) {
                     <input type="text" class="input-bpx" id="input-box" onInput={checkInput} disabled/>
                 </div>
 
-                <div id="result"></div>
+                <div id="result-display"></div>
                 <button onClick={startGame}>Start</button>
                 <button onClick={stopGame}>Reset</button>
             </div>
@@ -237,20 +263,20 @@ function Multiplayer({userSession}) {
                     <span className="header-title">Player Window</span>
                 </div>
                 <div id="host-player-progress">
-                    <div class="grid-container">
+                    <div class="grid-container" id="player1">
                         <div class="grid-item1">
                             <img src="../static/pics/defaultUserIcon.jpg"/>
                         </div>
 
                         <div class="grid-item2">
                             <div class="progressbar-container"> 
-                                <div class="progressbar" id="hello">
-                                    <span class="progressbar-text" id="hello2"></span>
+                                <div class="progressbar">
+                                    <span class="progressbar-text"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="grid-item3" id="hello3">
-                            {/* <img src="../static/pics/checkmark.png"/> */}
+                        <div class="grid-item3">
+                            {/* checkmark placeholder */}
                         </div>  
                         <div class="grid-item4">
                             WPM: 89
@@ -261,7 +287,7 @@ function Multiplayer({userSession}) {
                 <div id="player-progress-list-container">
                 </div>
                 <button onClick={addPlayerProgress}>Test Adding</button>
-                <button onClick={() => updatePlayerProgress(100)}>Test Upgrading</button>
+                <button onClick={() => removePlayerProgress()}>Test Removing</button>
             </div>
 
         </div>

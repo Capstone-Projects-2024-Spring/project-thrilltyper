@@ -23,10 +23,11 @@ function MakePlayerProgress(){
     );
 }
 
-function makePlayerProgress(){
+function makePlayerProgress(id){
     // Create the container
     var gridContainer = document.createElement('div');
     gridContainer.className = 'grid-container';
+    gridContainer.id = id;
 
     // Create the first grid item and append an image
     var gridItem1 = document.createElement('div');
@@ -42,10 +43,10 @@ function makePlayerProgress(){
     progressbarContainer.className = 'progressbar-container';
     var progressbar = document.createElement('div');
     progressbar.className = 'progressbar';
-    progressbar.id = 'hello';   //assign id to progress bar 
+    // progressbar.id = 'hello';   //assign id to progress bar 
     var progressbarText = document.createElement('span');
     progressbarText.className = 'progressbar-text';
-    progressbarText.id = 'hello2';  //assign id to progress bar text
+    // progressbarText.id = 'hello2';  //assign id to progress bar text
     progressbarText.textContent = '50%';
     progressbar.appendChild(progressbarText);
     progressbarContainer.appendChild(progressbar);
@@ -54,8 +55,9 @@ function makePlayerProgress(){
     // Create the third grid item and append an image
     var gridItem3 = document.createElement('div');
     gridItem3.className = 'grid-item3';
-    gridItem3.id = "hello3";
-    //var checkmarkIcon = document.createElement('img');
+    // gridItem3.id = "hello3";
+
+    //var checkmarkIcon = document.createElement('img');    controlled by updateTimer()
     //checkmarkIcon.src = '../static/pics/checkmark.png';
     //gridItem3.appendChild(checkmarkIcon);
 

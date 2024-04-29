@@ -199,23 +199,6 @@ function ThrillTyperGame() {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
-    function factoryPlayerStatus(){
-
-        // Create an array of player status components
-        // const playerStatusComponents = [];
-        // const num = 3;
-        // for (let i = 0; i < num; i++) {
-        //     playerStatusComponents.push(<MakePlayerStatus/>);
-        // }
-
-        // // Render these components inside a div
-        // return <div>{playerStatusComponents}</div>;
-        // document.getElementById('holder').appendChild(MakePlayerStatus());
-    }
-
-    // ReactDOM.render(<FactoryPlayerStatus />, document.getElementById('holder'));
-
-
 
     var percentage = 10;
     function updateProgressBar(){
@@ -236,7 +219,6 @@ function ThrillTyperGame() {
             <input type="text" id="input-box" onInput={checkInput} disabled />
             <div id="result"></div>
             <div id="holder"></div>
-            {/* <MakePlayerStatus/> */}
             <div className="button-container">
                 <button onClick={startTimer}>Start</button>
                 <button onClick={stopTimer}>Reset</button>
