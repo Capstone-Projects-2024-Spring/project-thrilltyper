@@ -403,9 +403,7 @@ class Database:
                     "_wins": 10+i,
                     "_losses": 1+i,
                     "_freq_mistyped_words": f"word{i}|mistake{i}",
-                    "_total_playing_time": 3600*i,
-                    "_play_date": current_datetime
-
+                    "_total_playing_time": 3600*i
                 }
 
                 user_letter_data = {
@@ -731,7 +729,6 @@ class UserData(App.db.Model):
     _losses : number of multiplayer matches lost
     _freq_mistyped_words : string of words/phrases frequently mistyped separated by the "|" character
     _total_playing_time : record the total number of time the user is playing the game
-    _play_date : record the date and time user log on and plays the game
     _user_in_game_picture : the in game picture representing an user
     _last_login_time : records the last login time of an user
     _num_races : records the total number of races played by user
@@ -747,7 +744,6 @@ class UserData(App.db.Model):
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
-    _play_date = App.db.Column(App.db.DateTime)
 
     #newly added
     _top_wpm = App.db.Column(App.db.SmallInteger, default=0)
