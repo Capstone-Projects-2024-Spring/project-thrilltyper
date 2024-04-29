@@ -136,7 +136,7 @@ class App:
                 # Insert user info into the database if doesn"t exists yet
                 if Database.query(uname, "UserInfo") is None:
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=uname, _profile_photo=picture)
-                    Database.insert(UserData, _username=uname,_email=uname,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_history_highest_race_wpm=0,_num_race_played=0,_user_in_game_picture=picture)
+                    Database.insert(UserData, _username=uname,_email=uname,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=picture)
                     user_letter_data = {
                     "_username": uname,
                     "_email": uname,
@@ -221,7 +221,7 @@ class App:
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
         Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
-        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_history_highest_race_wpm=0,_num_race_played=0,_user_in_game_picture=url_for("static", filename="pics/anonymous.png"))
+        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=url_for("static", filename="pics/anonymous.png"))
         user_letter_data = {
         "_username": username,
         "_email": email,
@@ -288,14 +288,12 @@ class App:
     @_app.route('/user/<username>')
     def get_user_data(username):
         userData = Database.query(str(username), "UserData")
-        print(userData)
-        print(Database.query("user1", "UserData"))
         if userData is None:
             return jsonify({'error': 'User not found'}), 404
         else:
             return jsonify({
                 "username": userData._username,
-                "highestWPM" : userData._history_highest_race_wpm,
+                "highestWPM" : userData._top_wpm,
                 "wins": userData._wins,
                 "losses": userData._losses,
                 "accuracy" : userData._accuracy,
@@ -314,12 +312,12 @@ class App:
         """
         try:
             #retrieve highest wpm from UserData
-            top_scores = UserData.query.order_by(UserData._history_highest_race_wpm.desc()).limit(n).all()
+            top_scores = UserData.query.order_by(UserData._top_wpm.desc()).limit(n).all()
 
             #extracting username and highest wpm from query result
             leaderboard_info = [{
                 'username': scores._username,
-                'highest_wpm': scores._history_highest_race_wpm
+                'highest_wpm': scores._top_wpm
             } for scores in top_scores]
             return jsonify(leaderboard_info)
         except Exception as e:
@@ -400,7 +398,7 @@ class Database:
                 user_data_data = {
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_history_highest_race_wpm": 10+i,
+                    "_top_wpm": 10+i,
                     "_accuracy": 80 + (i*0.5),
                     "_wins": 10+i,
                     "_losses": 1+i,
@@ -727,7 +725,7 @@ class UserData(App.db.Model):
     Representation of user(for user dashboard) in game data stored in the database under the UserData table
     _username : non-nullable and unique identifier of a user, act as the primary key and foreign key referencing UserInfo table
     _email : unique email address of user
-    _history_highest_race_wpm : words per minute
+    _top_wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
     _losses : number of multiplayer matches lost
@@ -736,7 +734,7 @@ class UserData(App.db.Model):
     _play_date : record the date and time user log on and plays the game
     _user_in_game_picture : the in game picture representing an user
     _last_login_time : records the last login time of an user
-    _num_race_played : records the total number of races played by user
+    _num_races : records the total number of races played by user
     """
     #_user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
     _username = App.db.Column(App.db.String(30),App.db.ForeignKey("user_info._username"), primary_key=True) #foreign key referencing UserInfo table
@@ -752,10 +750,10 @@ class UserData(App.db.Model):
     _play_date = App.db.Column(App.db.DateTime)
 
     #newly added
-    _history_highest_race_wpm = App.db.Column(App.db.SmallInteger, default=0)
+    _top_wpm = App.db.Column(App.db.SmallInteger, default=0)
     _user_in_game_picture = App.db.Column(App.db.String(100)) #should be different from login profile photo
     _last_login_time = App.db.Column(App.db.DateTime) #need configuration later to log user's lastest login time
-    _num_race_played = App.db.Column(App.db.Integer, default=0)
+    _num_races = App.db.Column(App.db.Integer, default=0)
 
     #validation of whether the username exists in table "user_info" when adding to user_data table
     #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
@@ -880,7 +878,7 @@ if __name__=="__main__":
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        #app.db.drop_all()
+        app.db.drop_all()
 
         app.db.create_all()
 
