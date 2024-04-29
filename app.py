@@ -301,7 +301,12 @@ class App:
         """
         #TODO: need to secure data transfer and verify origin
         if request.is_json:
-            
+            usrSession = session.get("user")
+            if usrSession:
+                usr = usrSession["userinfo"]["given_name"]
+                data = request.json
+                print(data)
+                Database.update(usr,"UserData",_accuracy=data["accuracy"])
             return "Successful"
         return "Not successful"
 
@@ -463,7 +468,7 @@ class Database:
         """
         try:
             #first validate the table name given in string
-            valid_table_list = ["UserInfo","UserData","UserLetter"]
+            valid_table_list = ["UserInfo","UserData","UserLetter","UserRace"]
             if db_table_name not in valid_table_list:
                 raise ValueError(f"Invalid table name: {db_table_name}")
             
@@ -533,7 +538,7 @@ class Database:
         """
         try:
             #a list of valid table names
-            valid_table_list = ["UserInfo","UserData","UserLetter"]
+            valid_table_list = ["UserInfo","UserData","UserLetter","UserRace"]
             #validates if the given string is in the list
             if db_table_class in valid_table_list:
                 #find the table class object by the given string
@@ -707,6 +712,7 @@ class UserData(App.db.Model):
     _email = App.db.Column(App.db.String(60), unique=True)
     #this "user_info" from the above line is mentioning the table name of UserInfo
     #this underscore and the lower case is automated by the system
+    #Ask Wenjie if we should add back wpm
     _accuracy = App.db.Column(App.db.Numeric)
     _wins = App.db.Column(App.db.Integer, default=0)
     _losses = App.db.Column(App.db.Integer, default=0)
