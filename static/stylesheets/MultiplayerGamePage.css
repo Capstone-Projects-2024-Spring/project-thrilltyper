@@ -3,12 +3,14 @@
     margin-bottom: 20px;
     white-space: pre-wrap;
     word-wrap: break-word;
+    text-align: center;
 }
 
 .input-box {
     padding: 10px;
     font-size: 16px;
     width: 80%; /* Adjust the width as needed */
+    
 }
 
 #result {
@@ -103,6 +105,10 @@ body {
     /* max-width: 500px; */
     width: 45%;
     min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: center; */
 }
 
 #chat-window {
@@ -217,8 +223,29 @@ body {
     left: 3%;
     width: 20%;
     height: 30%;
+    display: flex;
+    align-items: center; /* Vertically centers the content in the container */
+    justify-content: center; /* Horizontally centers the content (optional) */
+    font-size: 35px;
 }
 
-#timer-display{
-    
+
+#button-holder{
+    text-align: center;
+}
+
+.text-display-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-display{
+    width: 80%;
+}
+
+#result-display{
+    padding: 10px;
+    text-align: center;
 }

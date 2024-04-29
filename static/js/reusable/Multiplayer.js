@@ -5,13 +5,35 @@ function Multiplayer({userSession}) {
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
+    let wrongCharCount = 0;
     let userInputCorrectText = "";
 
     const intervalRef = React.useRef(null);
 
     //updates typed display, wpm display, and accuracy display
     function updateStatusContainer(){
+        const currentTime = new Date().getTime();
+        const elapsedTime = (currentTime - startTime) / 1000;
 
+        const typed = currentCharIndex + "/" + text.length;
+        const wpm = Math.round((currentCharIndex/5 / elapsedTime) * 60);
+        const accuracy = (text.length - wrongCharCount)/text.length*100;
+
+        document.querySelector(".progress-display").innerHTML = "Typed: " + typed;
+        document.querySelector(".wpm-display").innerHTML = "WPM: " + wpm;
+        document.querySelector(".accuracy-display").innerHTML = "Accuracy:" + accuracy.toFixed(1) + "%"; 
+
+        const progressBarContainer = document.getElementById(playerProgressList[0]);
+        const progressBarWPM = progressBarContainer.querySelector(".grid-item4");
+        progressBarWPM.innerHTML = "WPM: " + wpm;
+        
+
+         
+/*  
+        <div class="progress-display">Typed: 344/1766</div>
+        <div class="wpm-display">WPM: 60</div>
+        <div class="accuracy-display">Accuracy: 94%</div>
+*/
     }
 
     function checkInput() {
@@ -35,6 +57,8 @@ function Multiplayer({userSession}) {
 
         if (userInputLastChar == text[currentCharIndex]) {
             currentCharIndex++;
+        }else{
+            wrongCharCount++;
         }
 
         //update player progress bar
@@ -45,6 +69,11 @@ function Multiplayer({userSession}) {
             submitInput();
         }
         
+    }
+
+    function submitInput(){
+        stopGame();
+        document.getElementById("result-display").innerHTML = "Congratulations! You completed the game!";
     }
 
     //update text color as user types text
@@ -108,12 +137,12 @@ function Multiplayer({userSession}) {
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
         document.getElementById("timer-display").innerHTML = "";
+        document.getElementById("result-display").innerHTML = "";
 
-        // startTime = new Date().getTime();
-        
+        const progressBarContainer = document.getElementById(playerProgressList[0]);
+        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
+        progressBarIconContainer.innerHTML = "";
 
-        //stopTimerInterval();
-        //startTimerInterval();
     }
 
     async function startGame(){
@@ -144,7 +173,7 @@ function Multiplayer({userSession}) {
     }
 
     function stopGame(){
-        resetVariables();
+        //resetVariables();
         document.getElementById("input-box").disabled = true;
         stopTimer();
         document.getElementById("text-display").innerHTML = "Click start button to start!";
@@ -163,14 +192,16 @@ function Multiplayer({userSession}) {
     function updateTimer(){
         const currentTime = new Date().getTime();
         const elapsedTime = (currentTime - startTime) / 1000;
-        document.getElementById("timer-display").innerHTML = `${elapsedTime.toFixed(2)} seconds`;
+        console.log("updateTimer: elapsedTime: " + elapsedTime);
+        document.getElementById("timer-display").innerHTML = `${elapsedTime.toFixed(2)} s`;
+        updateStatusContainer();    //should placed somewhere else but put here for convenience
     }
 
 
-    const playerProgressList = ["player1"];
+    const playerProgressList = ["player0"];
 
     function addPlayerProgress(){
-        const newProgressID = "player" + (playerProgressList.length + 1);
+        const newProgressID = "player" + playerProgressList.length;
         playerProgressList.push(newProgressID);
         const element = document.getElementById("player-progress-list-container");
         element.appendChild(makePlayerProgress(newProgressID));       
@@ -179,15 +210,17 @@ function Multiplayer({userSession}) {
 
     function removePlayerProgress(){
         const element = document.getElementById("player-progress-list-container");
-        const toRemove = document.getElementById(playerProgressList.pop());
-        element.removeChild(toRemove);
+        if(playerProgressList.length > 1){
+            const toRemove = document.getElementById(playerProgressList.pop());
+            element.removeChild(toRemove);
+        }
     }
     
     function updatePlayerProgress(id, newWidth){
         const progressBarContainer = document.getElementById(id);
         const progressBar = progressBarContainer.querySelector(".progressbar");
         const progressBarText = progressBarContainer.querySelector(".progressbar-text");
-        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3")
+        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
 
         progressBar.style.width = newWidth + "%";
         progressBarText.innerHTML = newWidth + "%";
@@ -200,12 +233,15 @@ function Multiplayer({userSession}) {
         console.log("updatePlayerProgress: progressWidth = "+newWidth);
     }
 
-
+    function fillText(){
+        userInputCorrectText = text.substring(0, text.length-1);
+        currentCharIndex = text.length-1;
+        updateText();
+        //console.log("text: " + text);
+        //console.log("userInputCorrectText: " + userInputCorrectText);
+    }
 
     return (
-
-
-
 
         <div id="multiplayer-game-container">
             {/*
@@ -240,9 +276,9 @@ function Multiplayer({userSession}) {
                 </div>
             
                 <div class="stats-container">
-                    <div class="progress-display">Typed: 344/1766</div>
-                    <div class="wpm-display">WPM: 60</div>
-                    <div class="accuracy-display">Accuracy: 94%</div>
+                    <div class="progress-display">Typed: 0</div>
+                    <div class="wpm-display">WPM: 0</div>
+                    <div class="accuracy-display">Accuracy: 100%</div>
                 </div>
             
                 <div class="text-display-container">
@@ -253,8 +289,11 @@ function Multiplayer({userSession}) {
                 </div>
 
                 <div id="result-display"></div>
-                <button onClick={startGame}>Start</button>
-                <button onClick={stopGame}>Reset</button>
+                <div id="button-holder">
+                    <button onClick={startGame}>Start</button>
+                    <button onClick={stopGame}>Reset</button>
+                    <button onClick={fillText}>Fill Text</button>
+                </div>
             </div>
 
 
@@ -263,7 +302,7 @@ function Multiplayer({userSession}) {
                     <span className="header-title">Player Window</span>
                 </div>
                 <div id="host-player-progress">
-                    <div class="grid-container" id="player1">
+                    <div class="grid-container" id="player0">
                         <div class="grid-item1">
                             <img src="../static/pics/defaultUserIcon.jpg"/>
                         </div>
@@ -275,11 +314,9 @@ function Multiplayer({userSession}) {
                                 </div>
                             </div>
                         </div>
-                        <div class="grid-item3">
-                            {/* checkmark placeholder */}
-                        </div>  
+                        <div class="grid-item3"> {/* checkmark placeholder */}</div>  
                         <div class="grid-item4">
-                            WPM: 89
+                            WPM: 0
                         </div>
                         <div class="grid-item5"></div>  
                     </div>  
