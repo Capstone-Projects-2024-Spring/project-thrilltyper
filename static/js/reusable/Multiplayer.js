@@ -220,10 +220,10 @@ function Multiplayer({userSession}) {
                 </div>
             
                 <div class="text-display-container">
-                    <div id="text-display">
+                    <div class="text-display" id="text-display">
                         {text}
                     </div>
-                    <input type="text" id="input-box" onInput={checkInput} disabled/>
+                    <input type="text" class="input-bpx" id="input-box" onInput={checkInput} disabled/>
                 </div>
 
                 <div id="result"></div>
