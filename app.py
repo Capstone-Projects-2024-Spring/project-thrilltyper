@@ -846,7 +846,7 @@ class UserRace(App.db.Model):
     Representing the instance of a race initiated by user
     Relative in game data will be recorded
     _username : acts as the primary and foreign key of the table, rooted from UserInfo
-    _email : unique and nullable attribute of user's email address
+    _email : nullable attribute of user's email address
     _average_wpm : the average of words per min in an instance of a race
     _selected_mode : the selected mode of a typing race/practice
     _time_limit : optional recording of time limit of a certain game mode
@@ -854,7 +854,7 @@ class UserRace(App.db.Model):
     """
     _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True)
     #email is in every table for query purposes
-    _email = App.db.Column(App.db.String(60), unique=True)
+    _email = App.db.Column(App.db.String(60))
     #different from highest wpm, this is a record of per game/race
     _average_wpm = App.db.Column(App.db.Integer, default=0)
     #representing the mode selected by user at that game/race instance
@@ -862,7 +862,7 @@ class UserRace(App.db.Model):
     #optional input when user selected a mode with time limit
     _time_limit = App.db.Column(App.db.Float)
     #records the date user played that race
-    _date_played = App.db.Column(App.db.DateTime)
+    _date_played = App.db.Column(App.db.DateTime,primary_key=True)
 
     #regular check of user info username when entering data in UserRace
     @validates("_username")
