@@ -111,9 +111,9 @@ body {
 
 #chat-window {
     width: 20%;
-    height: 400px;
+    height: 350px;
     margin: 0 auto; /* Centers the chat window in its parent */
-    margin-top: 20%;
+    margin-top: 17%;
 }
 
 /* Keep the .window-header styles as they are */
