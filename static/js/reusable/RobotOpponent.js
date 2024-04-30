@@ -153,9 +153,9 @@ function RobotOpponent() {
         }
     }
 
-    async function postUserMetrics(wpm, accuracy){
+    async function postUserMetrics(wpm, accuracy, elapsedTime){
         try{
-            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent"}
+            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent","elapsedTime":elapsedTime/60}
             const response = await fetch('/update_db',{
             method: 'POST',
             headers: {
@@ -299,7 +299,7 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
-        postUserMetrics(wordsPerMinute,accuracy);
+        postUserMetrics(wordsPerMinute,accuracy,elapsedTime);
     }
 
 
@@ -311,7 +311,7 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Sadly, Robot finished the game first in ${elapsedTime.toFixed(2)} seconds. Robot speed: ${wordsPerMinute} WPM.`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
-        postUserMetrics(Math.round((currentCharIndex/5 / elapsedTime) * 60),(correctCharsTyped / totalCharsTyped) * 100);
+        postUserMetrics(Math.round((currentCharIndex/5 / elapsedTime) * 60),(correctCharsTyped / totalCharsTyped) * 100, elapsedTime);
     }
 
     React.useEffect(() => {
