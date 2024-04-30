@@ -344,7 +344,11 @@ class App:
                 num_races = int(user_data._num_races)
                 game_wpm = game_data["wpm"]
                 Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1),_num_races=num_races+1,_total_playing_time=user_data._total_playing_time+game_data["elapsedTime"],_top_wpm=game_wpm if game_wpm>int(user_data._top_wpm) else int(user_data._top_wpm))
-                Database.insert(UserRace,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=datetime.fromisoformat(game_data["date"]))
+                last_user_race = UserRace.query.filter_by(_username=usr).order_by(UserRace._date_played.desc()).first()
+                if last_user_race:
+                    Database.insert(UserRace,_game_num=int(last_user_race._game_num)+1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=datetime.fromisoformat(game_data["date"]))
+                else:
+                    Database.insert(UserRace,_game_num=1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=datetime.fromisoformat(game_data["date"]))
                 mistyped_chars = game_data.get("mistypedChars") #expect a dict for this {"_char":mistyped_count}
                 if mistyped_chars:
                     user_letter = Database.query(usr,"UserLetter")
@@ -864,6 +868,7 @@ class UserRace(App.db.Model):
     _time_limit : optional recording of time limit of a certain game mode
     _date_played : the date/time the race/practice is initiated
     """
+    _game_num = App.db.Column(App.db.Integer, default=0, primary_key=True)
     _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True)
     #email is in every table for query purposes
     _email = App.db.Column(App.db.String(60))
@@ -874,7 +879,7 @@ class UserRace(App.db.Model):
     #optional input when user selected a mode with time limit
     _time_limit = App.db.Column(App.db.Float)
     #records the date user played that race
-    _date_played = App.db.Column(App.db.DateTime,primary_key=True)
+    _date_played = App.db.Column(App.db.DateTime)
 
     #regular check of user info username when entering data in UserRace
     @validates("_username")
