@@ -1,7 +1,8 @@
+
 function Menu({}) {
     const buttonStyle = {
-        width: '100%',
-        height: 'auto',
+        width: '100%', // Change button width to be responsive
+        height: 'auto', // Allow button height to adjust based on content
         fontSize: '2rem',
         padding: '20px 15px',
         border: '2px solid #294E95',
@@ -13,26 +14,26 @@ function Menu({}) {
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
-        textDecoration: 'none',
-        color: '#294E95',
-        fontFamily: 'Inter, sans-serif',
-        fontWeight: 'lighter',
-        letterSpacing: '2px'
+        textDecoration: 'none', // Remove underline from text
+        color: '#294E95', // Set text color to #294E95
+        fontFamily: 'Inter, sans-serif', // Apply Inter font
+        fontWeight: 'lighter', // Set font weight to lighter
+        letterSpacing: '2px' // Increase letter spacing
     };
 
     const linkStyle = {
-        textDecoration: 'none',
-        color: '#294E95',
+        textDecoration: 'none', // Remove underline from <a> elements
+        color: '#294E95', // Set text color to #294E95
         fontFamily: 'Inter, sans-serif',
-        fontWeight: 'lighter',
-        letterSpacing: '2px'
+        fontWeight: 'lighter', // Set font weight to lighter
+        letterSpacing: '2px' // Increase letter spacing
     };
 
     return (
         <div id="menu-ctn">
-            <div id="title-container"> {/* Container for the h1 */}
-                <h1>Choose Your Game Mode</h1> {/* Moved the h1 here */}
-            </div>
+            <h1 style={{ color: '#294E95', fontFamily: 'Arial, sans-serif', fontWeight: 'bold', width: 'calc(100% - 20px)', textAlign: 'center', padding: '1rem', borderBottom: '1px solid #294E95', maxWidth: '900px' }}>
+                Choose Your Game Mode
+            </h1>
             <div id="menu" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gridTemplateRows: 'auto auto', rowGap: '2rem', columnGap: '4rem', justifyContent: 'center', maxWidth: '900px' }}>
                 <Link id="singlePlayerMode" to="/singlePlayer" className="menu-item" style={linkStyle}>
                     <button style={buttonStyle}>
