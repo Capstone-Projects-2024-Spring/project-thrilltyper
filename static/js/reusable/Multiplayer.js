@@ -10,6 +10,12 @@ function Multiplayer({userSession}) {
 
     const intervalRef = React.useRef(null);
 
+    React.useEffect(() => {
+        return () => {
+          clearInterval(intervalRef.current);
+        };
+    }, []);
+
     //updates typed display, wpm display, and accuracy display
     function updateStatusContainer(){
         const currentTime = new Date().getTime();
@@ -66,6 +72,7 @@ function Multiplayer({userSession}) {
        
         //submit input if last letter is typed
         if (currentCharIndex >= text.length) {
+            updateStatusContainer();
             submitInput();
         }
         
@@ -256,7 +263,7 @@ function Multiplayer({userSession}) {
     return (
 
         <div id="multiplayer-game-container">
-            {/*
+            {/* original code
             <div id="multiplayer">
                 <ChatRoom userSession={userSession}/>
                 <ThrillTyperGame />
@@ -266,6 +273,7 @@ function Multiplayer({userSession}) {
             </div>
             */}
 
+            {/* modified code without integration
             <div class="window-container" id="chat-window">
                 <div class="window-header">
                     <span class="header-title">Chat Window</span>
@@ -275,6 +283,13 @@ function Multiplayer({userSession}) {
                 </div>
                 <div class="chat-input">
                     Enter Message Here
+                </div>
+            </div>
+            */}
+
+            <div class="window-container" id="chat-window">
+                <div id="multiplayer">
+                    <ChatRoom userSession={userSession}/>
                 </div>
             </div>
 
