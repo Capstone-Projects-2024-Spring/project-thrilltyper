@@ -170,6 +170,7 @@ function Multiplayer({userSession}) {
         
         resetVariables();
         resetPlayerProgress();
+        stopTimer();
         startTimer();
         
         document.getElementById("input-box").disabled = false;

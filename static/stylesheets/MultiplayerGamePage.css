@@ -102,13 +102,11 @@ body {
 }
 
 #text-window{
-    /* max-width: 500px; */
     width: 45%;
     min-height: 300px;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
-    /* justify-content: center; */
+    height: 450px;
 }
 
 #chat-window {
@@ -147,11 +145,12 @@ body {
 #player-window{
     width: 20%;
     min-height: 250px;
+    height: 550px;
+    overflow-y: auto;
 }
 
 /* start of make player status */
 .grid-container {
-    /* margin-top: 50px; */
     display: grid;
     grid-template-columns: 15% 70% 10%;
     grid-template-rows: 50% 50%;
