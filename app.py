@@ -226,7 +226,7 @@ class App:
             return redirect("/signup")
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
-        Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
+        Database.insert(UserInfo, _username=username, _email=email, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
         Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=url_for("static", filename="pics/anonymous.png"),_last_login_time=datetime.now(timezone.utc))
         user_letter_data = {
         "_username": username,
