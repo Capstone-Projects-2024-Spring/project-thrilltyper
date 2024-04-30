@@ -135,7 +135,7 @@ class App:
 
                 # Insert user info into the database if doesn"t exists yet
                 if Database.query(uname, "UserInfo") is None:
-                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=uname, _profile_photo=picture)
+                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=uname)
                     Database.insert(UserData, _username=uname,_email=uname,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=picture,_last_login_time=datetime.now(timezone.utc))
                     user_letter_data = {
                     "_username": uname,
