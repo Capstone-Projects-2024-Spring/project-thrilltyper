@@ -327,16 +327,18 @@ class App:
     def get_top_n_highest_wpm_leaderboard(n):
         try:
             top_scores = UserData.query \
-                .with_entities(UserData._username, UserData._history_highest_race_wpm, UserData._accuracy, UserInfo._profile_photo) \
+                .with_entities(UserData._username, UserData._top_wpm, UserData._accuracy, UserInfo._profile_photo) \
                 .join(UserInfo, UserData._username == UserInfo._username) \
-                .order_by(UserData._history_highest_race_wpm.desc()) \
+                .order_by(UserData._top_wpm.desc()) \
                 .limit(n) \
                 .all()
 
             leaderboard_info = [{
-                'username': scores._username,
-                'highest_wpm': scores._top_wpm
-            } for scores in top_scores]
+                'username': player._username,
+                'highest_wpm': player._top_wpm,
+                'accuracy':player._accuracy,
+                'profile_photo':player._profile_photo
+            } for player in top_scores]
             return jsonify(leaderboard_info)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
