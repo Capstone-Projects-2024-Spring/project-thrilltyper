@@ -8,6 +8,8 @@ function ThrillTyperGame() {
     let startTime;
     //let timerInterval;
     let userInputCorrectText = "";
+    let correctCharsTyped = 0; // Track correct characters typed
+    let totalCharsTyped = 0; // Track total characters typed
 
     const intervalRef = React.useRef(null);
 
@@ -40,6 +42,24 @@ function ThrillTyperGame() {
             console.error('There was a problem with the fetch operation:', error);
         }
         return newText;
+    }
+
+    async function postUserMetrics(wpm, accuracy, elapsedTime){
+        try{
+            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent","elapsedTime":elapsedTime/60}
+            const response = await fetch('/update_db',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)});
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+        }
+        catch(error){
+            console.error('There was a problem with the fetch operation:', error);
+        }
     }
 
     //update text color as user types text
@@ -158,8 +178,10 @@ function ThrillTyperGame() {
         }
 
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
+            correctCharsTyped++;
             currentCharIndex++;
         }
+        totalCharsTyped++;
 
         //submit input if last letter is typed
         if (currentCharIndex >= text.length) {
@@ -173,7 +195,8 @@ function ThrillTyperGame() {
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
         const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
-        document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM.`;
+        const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
+        document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
     }
