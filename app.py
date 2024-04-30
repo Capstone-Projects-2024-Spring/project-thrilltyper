@@ -342,7 +342,8 @@ class App:
                 user_data = Database.query(usr, "UserData")
                 game_data = request.json
                 num_races = int(user_data._num_races)
-                Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1),_num_races=num_races+1,_total_playing_time=user_data._total_playing_time+game_data["elapsedTime"])
+                game_wpm = game_data["wpm"]
+                Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1),_num_races=num_races+1,_total_playing_time=user_data._total_playing_time+game_data["elapsedTime"],_top_wpm=game_wpm if game_wpm>int(user_data._top_wpm) else int(user_data._top_wpm))
             return "Successful"
         return "Not successful"
 
