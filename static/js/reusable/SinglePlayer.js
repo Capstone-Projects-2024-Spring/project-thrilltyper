@@ -199,6 +199,7 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
+        postUserMetrics(wordsPerMinute,accuracy,elapsedTime);
     }
 
     function stopTimer(){
