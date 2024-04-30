@@ -291,6 +291,30 @@ function RobotOpponent() {
         document.getElementById("input-box").disabled = true;
     }
 
+
+
+    function changeBackground(season) {
+        const body = document.body;
+        switch(season) {
+            case 'spring':
+                body.style.backgroundImage = "url('/static/pics/spring.jpg')";
+                break;
+
+            case 'winter':
+                body.style.backgroundImage = "url('/static/pics/winter.jpg')";
+                break;
+            case 'summer':
+                body.style.backgroundImage = "url('/static/pics/summer.jpg')";
+                break;
+            case 'autumn':
+                body.style.backgroundImage = "url('/static/pics/autumn.jpg')";
+                break;
+            default:
+                body.style.backgroundImage = "none";
+        }
+    }
+
+
     React.useEffect(() => {
         const inputBox = document.getElementById("input-box");
         const startBtn = document.getElementById("startBtn");
@@ -308,7 +332,6 @@ function RobotOpponent() {
         };
     }, []);
 
-
     return (
         <div id="game-container">
             <h1>Robot</h1>
@@ -319,15 +342,27 @@ function RobotOpponent() {
             <div id="stats"></div>
             <button id="startBtn">Start</button>
             <input type="radio" id="easyBtn" value="Easy" name="difficulty" defaultChecked></input>
-            <label for="easyBtn">Easy</label>
+            <label htmlFor="easyBtn">Easy</label>
             <input type="radio" id="medBtn" value="Medium" name="difficulty"></input>
-            <label for="medBtn">Medium</label>
+            <label htmlFor="medBtn">Medium</label>
             <input type="radio" id="hardBtn" value="Hard" name="difficulty"></input>
-            <label for="hardBtn">Hard</label>
+            <label htmlFor="hardBtn">Hard</label>
             <svg id="progressCircle" width="100" height="100">
-                <circle cx="50" cy="50" r="52" fill="none" stroke="#ccc" stroke-width="4"></circle>
+                <circle cx="50" cy="50" r="52" fill="none" stroke="#ccc" strokeWidth="4"></circle>
             </svg>
             <div id="progressText"></div>
+    
+            {/* Dropdown menu */}
+            <div className="dropdown">
+                <button className="dropbtn">Cosmetic</button>
+                <div className="dropdown-content">
+                    <button onClick={() => changeBackground('spring')}>Spring</button>
+                    <button onClick={() => changeBackground('summer')}>Summer</button>
+                    <button onClick={() => changeBackground('autumn')}>Autumn</button>
+                    <button onClick={() => changeBackground('winter')}>Winter</button>
+                </div>
+            </div>
         </div>
     );
+    
 }
