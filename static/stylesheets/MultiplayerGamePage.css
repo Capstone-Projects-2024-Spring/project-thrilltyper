@@ -1,14 +1,47 @@
+.text-display {
+    font-size: 18px;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+.input-box {
+    padding: 10px;
+    font-size: 16px;
+    width: 80%; /* Adjust the width as needed */
+    
+}
+
+#result {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.typed-word {
+    color: green;
+}
+
+/* 
+
+
+    divide line 
+
+
+
+*/
+
+/*
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 20px;
     background-color: #f4f4f4;
 }
+*/
 
-#content{
+#multiplayer-game-container{
     display: flex; /* This will align the children (.window-container) in a row */
-    /* justify-content: center; This will center the windows in the wrapper */
-    /* align-items: flex-start; This will align the windows at the top */
     gap: 20px;
     margin: 0 auto; /* Centers the wrapper on the page */
     padding: 20px; /* Padding around the entire wrapper */
@@ -46,6 +79,7 @@ body {
 .accuracy-display {
     display: inline-block;
     padding: 5px 10px;
+    font-weight: bold;
 }
 
 .text-display-container {
@@ -69,14 +103,19 @@ body {
 
 #text-window{
     /* max-width: 500px; */
-    width: 50%;
+    width: 45%;
     min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: center; */
 }
 
 #chat-window {
     width: 20%;
     height: 400px;
     margin: 0 auto; /* Centers the chat window in its parent */
+    margin-top: 20%;
 }
 
 /* Keep the .window-header styles as they are */
@@ -106,27 +145,21 @@ body {
 }
 
 #player-window{
-    width: 300px;
+    width: 20%;
     min-height: 250px;
-
 }
 
-#player-window img{
-    width: 40%;
-}
-
-/*   
-
-    divide line
-    start of make player status
-    
-*/
+/* start of make player status */
 .grid-container {
-    margin-top: 50px;
+    /* margin-top: 50px; */
     display: grid;
-    grid-template-columns: 150px 550px 50px;
-    grid-template-rows: 50px 50px;
-    gap: 12px;
+    grid-template-columns: 15% 70% 10%;
+    grid-template-rows: 50% 50%;
+    /* gap: 12px; */
+
+    width: 98%;
+    gap: 2%;
+    padding: 10px;
 }
 
 .grid-item1 {
@@ -135,16 +168,28 @@ body {
     align-self: center;
 }
 
-.grid-item1 img, .grid-item3 img{
+.grid-item1 img{
     width: 100%;
 }
 
-.grid-item2, .grid-item3{
+.grid-item3 img{
+    width: 65%;
+    margin-top: 30%;
+}
+
+.grid-item2{
     align-self: center;
+    position: relative; /* Establishes a positioning context for child elements */
+    width: 100%;
+}
+
+.grid-item3{
+    align-self: center;
+    justify-self: center;
 }
 
 .grid-item4{
-    font-size: 20px;
+    font-size: 13px;
     align-self: center;
     padding-left: 5px;
 }
@@ -154,6 +199,7 @@ body {
     width: 100%; 
     border-radius: 15px; 
     overflow: hidden;
+    margin-top: 3%;
 }
 
 .progressbar{
@@ -161,12 +207,45 @@ body {
     text-align: right; 
     border-radius: 15px; 
     width: 50%; 
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .progressbar-text{
     color: white;
     padding-right: 10px;
-    font-size: 20px;
+    font-size: 16px;
 }
 /* end of make player status */
+
+#timer-window{
+    position: absolute;
+    top: 14%; /* Position as needed */
+    left: 3%;
+    width: 20%;
+    height: 30%;
+    display: flex;
+    align-items: center; /* Vertically centers the content in the container */
+    justify-content: center; /* Horizontally centers the content (optional) */
+    font-size: 35px;
+}
+
+
+#button-holder{
+    text-align: center;
+}
+
+.text-display-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-display{
+    width: 80%;
+}
+
+#result-display{
+    padding: 10px;
+    text-align: center;
+}

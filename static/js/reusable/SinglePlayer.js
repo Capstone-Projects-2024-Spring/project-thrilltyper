@@ -199,16 +199,32 @@ function ThrillTyperGame() {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
+
+    var percentage = 10;
+    function updateProgressBar(){
+        percentage += 10;
+        document.getElementById("hello").style.width = percentage + "%";
+        document.getElementById("hello2").innerHTML = percentage + "%";
+    }
+
+    function insertPlayerStatus(){
+        document.getElementById("holder").appendChild(makePlayerStatus());
+        document.getElementById("holder").appendChild(makePlayerStatus());
+    }
+
     return (
         <div id="game-container">
             <h1>Thrill Typer Game</h1>
             <div id="text-display">{text}</div>
             <input type="text" id="input-box" onInput={checkInput} disabled />
             <div id="result"></div>
+            <div id="holder"></div>
             <div className="button-container">
                 <button onClick={startTimer}>Start</button>
                 <button onClick={stopTimer}>Reset</button>
                 <button onClick={fillText}>Fill Text</button>
+                <button onClick={updateProgressBar}>Update Progress Bar</button>
+                <button onClick={insertPlayerStatus}>Insert Player Status</button>
             </div>
         </div>
     );

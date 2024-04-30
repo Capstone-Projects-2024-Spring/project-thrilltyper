@@ -39,3 +39,9 @@
 .typed-word {
     color: green;
 }
+
+#holder {
+    width: 500px !important;
+    height: 500px !important;
+    padding: 50px;
+}

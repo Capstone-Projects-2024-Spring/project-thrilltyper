@@ -32,6 +32,8 @@
     <!-- added by Hu -->
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/HomePage.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/StarAnimation.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/MakePlayerProgress.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/MultiplayerGamePage.css')}}">
     {% block head %} {% endblock %}
 </head>
 
@@ -60,6 +62,7 @@
 
     <!-- added by Hu -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/HomePage.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/MakePlayerProgress.js')}}"></script>
 
     <!-- Pure JS code -->
     <script>
