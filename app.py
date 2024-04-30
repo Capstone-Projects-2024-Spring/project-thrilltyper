@@ -330,12 +330,13 @@ class App:
         """
         #TODO: need to secure data transfer and verify origin
         if request.is_json:
-            usrSession = session.get("user")
-            if usrSession:
-                usr = usrSession["userinfo"]["given_name"]
-                data = request.json
-                print(data)
-                Database.update(usr,"UserData",_accuracy=data["accuracy"])
+            usr_session = session.get("user")
+            if usr_session:
+                usr = usr_session["userinfo"]["given_name"]
+                user_data = Database.query(usr, "UserData")
+                game_data = request.json
+                num_races = int(user_data._num_races)
+                Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1))
             return "Successful"
         return "Not successful"
 
@@ -874,7 +875,7 @@ if __name__=="__main__":
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
-        app.db.drop_all()
+        #app.db.drop_all()
 
         app.db.create_all()
 
