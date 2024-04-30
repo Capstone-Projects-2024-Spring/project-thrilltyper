@@ -49,7 +49,7 @@ function Menu({}) {
                 </Link>
                 <Link id="importTextMode" to="/importText" className="menu-item" style={linkStyle}>
                     <button style={buttonStyle}>
-                        <img src="/static/pics/import_text_mode.png" alt="Import Text Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
+                        <img src="/static/pics/import_text_mode.png" alt="Import Text Image" style={{ width: '150px', height: '150px', marginBottom: '20px' }} />
                         Import Text Mode
                     </button>
                 </Link>
