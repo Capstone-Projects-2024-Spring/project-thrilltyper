@@ -122,27 +122,29 @@ function RobotOpponent() {
                 return 1000/(Math.random() * (10 - 43.0/6) + 43.0/6);
         }
     }
-
-    async function fetchRandomWordList(difficulty,msPerChar) {
-        let newText = "";
+    function getNumWords(difficulty,msPerChar){
         let avgWordLen;
+        switch(difficulty){
+            case "Easy":
+                avgWordLen=avgEasyWordTxtLen;
+                break;
+            case "Medium":
+                avgWordLen=avgMedWordTxtLen;
+                break;
+            case "Hard":
+                avgWordLen=avgHardWordTxtLen;
+                break;
+        }
+        return Math.floor((60/(msPerChar*avgWordLen/1000)));
+    }
+
+    async function fetchRandomWordList(difficulty,numWords) {
+        let newText = "";
         try {
-            switch(difficulty){
-                case "Easy":
-                    avgWordLen=avgEasyWordTxtLen;
-                    break;
-                case "Medium":
-                    avgWordLen=avgMedWordTxtLen;
-                    break;
-                case "Hard":
-                    avgWordLen=avgHardWordTxtLen;
-                    break;
-            }
-            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+Math.floor((60/(msPerChar*avgWordLen/1000))));
+            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+numWords);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
             newText = await response.text();
             text=newText
             document.getElementById("text-display").innerHTML = text;
@@ -153,7 +155,7 @@ function RobotOpponent() {
 
     async function postUserMetrics(wpm, accuracy){
         try{
-            const postData = {wpm:wpm,accuracy:accuracy}
+            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent"}
             const response = await fetch('/update_db',{
             method: 'POST',
             headers: {
@@ -186,8 +188,9 @@ function RobotOpponent() {
 
     function startGame(){
         var difficulty = getDifficulty();
-        var robotMsPerChar = getRobotMsPerChar(difficulty)
-        fetchRandomWordList(difficulty,robotMsPerChar);
+        var robotMsPerChar = getRobotMsPerChar(difficulty);
+        var numWords = getNumWords(difficulty,robotMsPerChar);
+        fetchRandomWordList(difficulty,numWords);
         startTimer();
         robotType(robotMsPerChar);
     }
