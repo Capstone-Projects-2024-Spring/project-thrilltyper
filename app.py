@@ -179,6 +179,7 @@ class App:
 
             # Performs validation 
             if user is not None and user._password == password:
+                Database.update(user._username,"UserData",_last_login_time=datetime.now(timezone.utc))
                 # Gets avatar
                 playerObj = player(username, user._profile_photo)
                 # Stores the Player object in the session
