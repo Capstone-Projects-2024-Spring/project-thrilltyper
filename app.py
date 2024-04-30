@@ -221,6 +221,9 @@ class App:
         if Database.query(username, "UserInfo"):
             session["error"] = "Username already used "
             return redirect("/signup")
+        if Database.query(email,"UserInfo"):
+            session["error"] = "Email already used "
+            return redirect("/signup")
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
         Database.insert(UserInfo, _username=username, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
