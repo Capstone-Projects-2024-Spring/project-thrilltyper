@@ -4,28 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thrill Typer Game</title>
-    <link href="../static/css/GamePage.css" rel="stylesheet" type="text/css" />
+    <link href="../static/css/MultiplayerGamePage.css" rel="stylesheet" type="text/css" />
+    <!-- <link href="../static/css/MakePlayerStatus.css" rel="stylesheet" type="text/css" /> -->
+
     <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
+
+    <script src='../static/js/reusable/makePlayerStatus.js'></script>
 </head>
 
-<body>
-    <!-- <div id="game-container">
-        <h1>Thrill Typer Game</h1>
-        <div id="text-display"></div>
-        
-        <div id="gameNav">
-            <button onclick="startTimer()">Start</button>
-            <button>Pause</button>
-            <button>Select Mode</button>
-            <button>Home</button>
-            <button>Settings</button>
-            <input type="text" id="input-box" oninput="checkInput()" disabled>
-        </div>
-
-        <div id="result"></div>
-    </div> -->
-    
+<body>    
     <div id="content">
         <div class="window-container" id="chat-window">
             <div class="window-header">
@@ -75,32 +63,8 @@
     </div>
     <script>
     "use strict";
-        document.getElementById("placeholder").innerHTML = makePlayerStatus();
-        
-        function makePlayerStatus(){
-            return (
-                <div class="grid-container">
-                    <div class="grid-item1">
-                        <img src="defaultUserIcon.jpg"/>
-                    </div>
-
-                    <div class="grid-item2">
-                        <div class="progressbar-container"> 
-                            <div class="progressbar">
-                                <span class="progressbar-text">10%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid-item3">
-                        <img src="checkmark.png"/>
-                    </div>  
-                    <div class="grid-item4">
-                        WPM: 89
-                    </div>
-                    <div class="grid-item5"></div>  
-                </div>  
-            );
-        }
+        document.getElementById("placeholder").appendChild(makePlayerStatus());
+        document.getElementById("placeholder").appendChild(makePlayerStatus());
 
         /*
             known bugs

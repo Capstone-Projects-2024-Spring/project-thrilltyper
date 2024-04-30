@@ -8,21 +8,32 @@
     <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
 
-    <!-- This next CDN lets you use JSX (looks like HTML tags in JS) -->
+    <!-- This next CDN lets you use JSX and Socket IO (looks like HTML tags in JS) -->
     <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 
     <!-- This lets you use React Routing -->
     <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/main.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/menu.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/dashboard.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/typeInterface.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/robotOpponent.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/multiplayer.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/leaderboard.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/about.css')}}">
+
 
     <!-- added by Hu -->
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/HomePage.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/StarAnimation.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/MakePlayerProgress.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/MultiplayerGamePage.css')}}">
     {% block head %} {% endblock %}
 </head>
 
@@ -34,16 +45,24 @@
 
     <!-- Imports of necessary js components -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/Profile.js')}}"></script>
-    <!-- No longer use Home.js -->
     <!-- <script type="text/babel" src="{{url_for('static', filename='js/content/Home.js')}}"></script> -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/Menu.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Dashboard.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/SinglePlayer.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/RobotOpponent.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/ChatRoom.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/Multiplayer.js')}}"></script>
+
+
+
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/ImportTextPlay.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/content/Leaderboard.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/content/About.js')}}"></script>
 
     <!-- added by Hu -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/HomePage.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/MakePlayerProgress.js')}}"></script>
 
     <!-- Pure JS code -->
     <script>
@@ -53,6 +72,7 @@
 
     <!-- JSX code with REACT -->
     <script type="text/babel">
+        console.log(userSession)
         // REACT component for Home page, available across all child htmls
         const Link = ReactRouterDOM.Link;
         const Route = ReactRouterDOM.Route;
@@ -67,12 +87,12 @@
                         <Link to="/"><h1 className="brand-title">Thrill Typer</h1></Link>
                     </div>
 
-                    <nav>
+                    <nav className="nav-links">
                         <Link to="/">Home</Link>
                         <Link to="/menu">Play</Link>
-                        <Link to="/">Leaderboards</Link>
+                        <Link to="/leaderboard">Leaderboards</Link>
                         <Link to="/dashboard">Dashboard</Link>
-                        <Link to="/">About</Link>
+                        <Link to="/about">About</Link>
                     </nav>
                     <Profile userSession={userSession} />
                 </header>
@@ -81,7 +101,11 @@
                     <Route path="/menu" component={Menu} />
                     <Route path="/singlePlayer" component={ThrillTyperGame} />
                     <Route path="/robotOpponent" component={RobotOpponent} />
+                    <Route path="/multiplayer" component={(props) => <Multiplayer {...props} userSession={userSession} />} />
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
+                    <Route path="/leaderboard" component={Leaderboard} />
+                    <Route path="/about" component={About}/>
+                    <Route path="/importText" component={ImportText} />
                 </div>
             </ReactRouterDOM.HashRouter>
         );

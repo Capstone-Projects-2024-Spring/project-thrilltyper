@@ -1,5 +1,4 @@
-function ThrillTyperGame() {
-    const date = new Date();
+function ImportText() {
     let text = "Click start button to start!";
     let words = text.split(" ");
 
@@ -9,8 +8,6 @@ function ThrillTyperGame() {
     let startTime;
     //let timerInterval;
     let userInputCorrectText = "";
-    let correctCharsTyped = 0; // Track correct characters typed
-    let totalCharsTyped = 0; // Track total characters typed
 
     const intervalRef = React.useRef(null);
 
@@ -29,39 +26,19 @@ function ThrillTyperGame() {
         };
     }, []);
 
-    async function fetchRandomWordList() {
+    async function fetchRandomWordUser() {
         let newText = "";
         try {
-            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            newText = prompt("Please enter your words:", "");
+            if (newText == null || newText == "") {
+                console.log("User cancelled the prompt.");
             }
-
-            newText = await response.text();
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
         return newText;
     }
-
-    async function postUserMetrics(wpm, accuracy, elapsedTime){
-        try{
-            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Single Player","elapsedTime":elapsedTime/60,"date":date.toISOString()}
-            const response = await fetch('/update_db',{
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postData)});
-            if(!response.ok){
-                throw new Error('Network response was not ok');
-            }
-        }
-        catch(error){
-            console.error('There was a problem with the fetch operation:', error);
-        }
-    }
+    
 
     //update text color as user types text
     //green text if user typed correctly
@@ -133,7 +110,7 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        text = await fetchRandomWordList();
+        text = await fetchRandomWordUser();
 
         words = text.split(" ");
 
@@ -179,10 +156,8 @@ function ThrillTyperGame() {
         }
 
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
-            correctCharsTyped++;
             currentCharIndex++;
         }
-        totalCharsTyped++;
 
         //submit input if last letter is typed
         if (currentCharIndex >= text.length) {
@@ -195,12 +170,10 @@ function ThrillTyperGame() {
         stopTimerInterval();
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
-        const wordsPerMinute = Math.round((correctCharsTyped / 5 / elapsedTime) * 60);
-        const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
-        document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
+        const wordsPerMinute = Math.round((text.split(" ").length / elapsedTime) * 60);
+        document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM.`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
-        postUserMetrics(wordsPerMinute,accuracy,elapsedTime);
     }
 
     function stopTimer(){
@@ -212,7 +185,7 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
         currentWordIndex = 0;   //initializes value for play again
         updateText();
-        document.getElementById("text-display").innerHTML = "Click start button to start!";
+        document.getElementById("text-display").innerHTML = "Click start button to input new words.";
 
     }
 
@@ -224,8 +197,6 @@ function ThrillTyperGame() {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
-
-    
     function changeBackground(season) {
         const body = document.body;
         switch(season) {
@@ -248,47 +219,29 @@ function ThrillTyperGame() {
     }
 
 
-
-    var percentage = 10;
-    function updateProgressBar(){
-        percentage += 10;
-        document.getElementById("hello").style.width = percentage + "%";
-        document.getElementById("hello2").innerHTML = percentage + "%";
-    }
-
-    function insertPlayerStatus(){
-        document.getElementById("holder").appendChild(makePlayerStatus());
-        document.getElementById("holder").appendChild(makePlayerStatus());
-    }
-return (
-    <div id="game-container">
-        <h1>Thrill Typer Game</h1>
-        <div id="text-display">{text}</div>
-
-        <input type="text" id="input-box" onInput={checkInput} disabled />
-        <div id="result"></div>
-        <div id="holder"></div>
-        <div className="button-container">
-            <button onClick={startTimer}>Start</button>
-            <button onClick={stopTimer}>Reset</button>
-            <button onClick={fillText}>Fill Text</button>
-            
-            {/* Dropdown menu */}
-            <div className="dropdown">
-                <button className="dropbtn">Cosmetic</button>
-                <div className="dropdown-content">
-                    <button onClick={() => changeBackground('spring')}>Spring</button>
-                    <button onClick={() => changeBackground('summer')}>Summer</button>
-                    <button onClick={() => changeBackground('autumn')}>Autumn</button>
-                    <button onClick={() => changeBackground('winter')}>Winter</button>
+    return (
+        <div id="game-container">
+            <h1>Thrill Typer Game Input Mode</h1>
+            <div id="text-display">{text}</div>
+            <input type="text" id="input-box" onInput={checkInput} disabled />
+            <div id="result"></div>
+            <div className="button-container">
+                <button onClick={startTimer}>Start</button>
+                <button onClick={stopTimer}>Reset</button>
+                <button onClick={fillText}>Fill Text</button>
+    
+                {/* Dropdown menu */}
+                <div className="dropdown">
+                    <button className="dropbtn">Cosmetic</button>
+                    <div className="dropdown-content">
+                        <button onClick={() => changeBackground('spring')}>Spring</button>
+                        <button onClick={() => changeBackground('summer')}>Summer</button>
+                        <button onClick={() => changeBackground('autumn')}>Autumn</button>
+                        <button onClick={() => changeBackground('winter')}>Winter</button>
+                    </div>
                 </div>
             </div>
-
-            <button onClick={updateProgressBar}>Update Progress Bar</button>
-            <button onClick={insertPlayerStatus}>Insert Player Status</button>
         </div>
-    </div>
-);
-
+    );
     
 }

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, disconnect, emit
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import validates #for validation of data in tables
@@ -57,6 +58,9 @@ class App:
         server_metadata_url=f"{appConf.get('OAUTH2_META_URL')}",
     )
 
+    socketio = SocketIO(_app) 
+
+
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
         Calls Flask's run function with the specified parameters to run the backend for the web application.\n
@@ -78,6 +82,14 @@ class App:
             information.
         """
         self._app.run(host,port,debug,load_dotenv)
+
+
+    @socketio.on('event')
+    def handle_chat_global(json):
+        global socketio
+        print('received my event: ' + str(json))
+        App.socketio.emit('global chat', json)
+
 
     @_app.route("/login", methods=["GET", "POST"])
     def login():
@@ -215,6 +227,7 @@ class App:
         """
         # Gets input
         username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
         email = request.form["email"]
         # Validates contraints
@@ -227,7 +240,7 @@ class App:
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
         Database.insert(UserInfo, _username=username, _email=email, _password=password)
-        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=url_for("static", filename="pics/anonymous.png"),_last_login_time=datetime.now(timezone.utc))
+        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_last_login_time=datetime.now(timezone.utc))
         user_letter_data = {
         "_username": username,
         "_email": email,
@@ -261,6 +274,7 @@ class App:
         # Pop out the user session
         session.pop("user", None)
         return redirect("/")
+    
     
     @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
@@ -308,19 +322,17 @@ class App:
                 "frequentMisTypedWord" : userData._freq_mistyped_words
             })
         
+
     @_app.route('/leaderboard/top_n_highest_wpm/<int:n>', methods=['GET'])
     def get_top_n_highest_wpm_leaderboard(n):
-        """
-        Retrieve UserData table highest_wpm and converting to json format and send to frontend
-        :param n: an input of the top n number for leaderboard
-        :type n: int
-        :returns: json format leaderboard info 
-        """
         try:
-            #retrieve highest wpm from UserData
-            top_scores = UserData.query.order_by(UserData._top_wpm.desc()).limit(n).all()
+            top_scores = UserData.query \
+                .with_entities(UserData._username, UserData._history_highest_race_wpm, UserData._accuracy, UserInfo._profile_photo) \
+                .join(UserInfo, UserData._username == UserInfo._username) \
+                .order_by(UserData._history_highest_race_wpm.desc()) \
+                .limit(n) \
+                .all()
 
-            #extracting username and highest wpm from query result
             leaderboard_info = [{
                 'username': scores._username,
                 'highest_wpm': scores._top_wpm
@@ -363,6 +375,26 @@ class App:
                         return "Not successful"
             return "Successful"
         return "Not successful"
+              
+    @_app.route('/raceData/<username>', methods=['GET', 'POST'])
+    def getUserRaceData(username):
+        try:
+            userData = UserRace.query \
+                .with_entities(UserRace._average_wpm, UserRace._selected_mode, UserRace._time_limit, UserRace._date_played) \
+                .filter(UserRace._username == username) \
+                .order_by(UserRace._date_played.desc()) \
+                .all()
+
+            raceData = [{
+                'average_wpm': player._average_wpm,
+                'selected_mode': player._selected_mode,
+                'time_limit': player._time_limit,
+                'date_played': player._date_played
+            } for player in userData]
+
+            return jsonify(raceData)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
 class Database:
     """
@@ -416,7 +448,7 @@ class Database:
                     "_username": f"user{i}",
                     "_password": f"password{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_profile_photo":  f'./static/pics/anonymous.png',
+                    "_profile_photo":  f'./static/pics/terraria_player.png',
                     "_google_id": sample_google_id
                 }
 
@@ -742,6 +774,9 @@ class UserInfo(App.db.Model):
 
     #another backref relationship for UserLetter class (for delete)
     user_letter_ref = App.db.relationship("UserLetter", backref=App.db.backref("user_info_ref_letter", uselist=False), cascade="all, delete-orphan", single_parent=True)
+    #backref to UserRace accesssing from UserInfo
+    user_race_ref = App.db.relationship("UserRace", backref=App.db.backref("user_info_ref_race", uselist=False), cascade="all, delete-orphan", single_parent=True)
+
 
 class UserData(App.db.Model):
     """
@@ -763,13 +798,11 @@ class UserData(App.db.Model):
     _email = App.db.Column(App.db.String(60), unique=True)
     #this "user_info" from the above line is mentioning the table name of UserInfo
     #this underscore and the lower case is automated by the system
-    #Ask Wenjie if we should add back wpm
-    _accuracy = App.db.Column(App.db.Numeric)
+    _accuracy = App.db.Column(App.db.Float)
     _wins = App.db.Column(App.db.Integer, default=0)
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
-
     #newly added
     _top_wpm = App.db.Column(App.db.SmallInteger, default=0)
     _user_in_game_picture = App.db.Column(App.db.String(100)) #should be different from login profile photo
@@ -873,7 +906,7 @@ class UserRace(App.db.Model):
     #email is in every table for query purposes
     _email = App.db.Column(App.db.String(60))
     #different from highest wpm, this is a record of per game/race
-    _average_wpm = App.db.Column(App.db.Integer, default=0)
+    _average_wpm = App.db.Column(App.db.Integer, default=0) #a method might be needed to calculate the averagee wpm for each user
     #representing the mode selected by user at that game/race instance
     _selected_mode = App.db.Column(App.db.String(20))
     #optional input when user selected a mode with time limit
@@ -897,6 +930,7 @@ class UserRace(App.db.Model):
 if __name__=="__main__":
     app = App()
 
+
     #creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
@@ -909,10 +943,10 @@ if __name__=="__main__":
         #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
         #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
         #after testing, you can repeat the number, but preferrably not to do that
-        #Database.populate_sample_date(1000)
+        #Database.populate_sample_date(100)
 
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
 
-    app.run(host="localhost", debug=True)
+    app.socketio.run(app._app, host="localhost", debug=True)

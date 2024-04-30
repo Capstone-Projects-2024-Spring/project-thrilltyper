@@ -8,6 +8,7 @@ node_modules/
 
 # Python compiled files
 __pycache__/
+.pytest_cache/
 
 # Environment variables
 .env

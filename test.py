@@ -1,4 +1,5 @@
 # test.py
+import time
 import pytest
 from app import App
 from app import Database, UserInfo, UserData, UserLetter
@@ -6,7 +7,7 @@ from text_generator import Text_Generator
 from datetime import datetime, timezone
 import random
 import string
-import requests
+from flask_socketio import SocketIO, SocketIOTestClient
 
 # Client that sends requests to endpoints of the application
 
@@ -26,9 +27,10 @@ def test_registration(client):
     Result: True if the username and password have been successfully stored in the database
     """
     username = "uname"
+    email = "123@gmail.com"
     password = "pswrd"
-    client.post("/register", data={"username": username, "password": password})
-    assert Database.query(username, "UserInfo")
+    client.post("/register", data={"username": username, "email": email, "password": password})
+    assert Database.query(username, "UserInfo") is not None
 
 
 def test_invalid_login(client):
@@ -150,6 +152,34 @@ def test_matchmaking(client):
     assert response.status_code==200
     response_data = response.data.decode('utf-8')
     assert response_data=="Matching successful." or response_data=="Match could not be found."
+
+def test_socketio_connection(client):
+    """Test SocketIO connection."""
+    sok = App.socketio
+    # Connect the SocketIO client
+    socketio_test_client = sok.test_client(App._app)
+
+    try:
+        # Test if the client is connected
+        assert socketio_test_client.is_connected(), "SocketIO client failed to connect"
+        
+        # Emit an event
+        socketio_test_client.emit('event', {'data': 'test'})
+        
+        # Wait for events to be processed
+        time.sleep(1)
+
+        # Get the received messages
+        received_messages = socketio_test_client.get_received()
+        print(received_messages)
+        
+        # Assertions
+        assert received_messages, "No messages received"
+        assert received_messages[0]['name'] == 'global chat'
+        assert received_messages[0]['args'][0]['data'] == 'test'
+    finally:
+        # Disconnect the client
+        socketio_test_client.disconnect() 
 # --------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 
 
@@ -463,7 +493,7 @@ class Test_Text_Generator():
         Result: True if the average length is calculated correctly
         """
         assert Text_Generator.get_avg_txt_len(["apple","banana","pear"])==5
-    
+        
     def test_score_word_typing_difficutly(self):
         """
         Test: Ensure that the typing difficulty of words is scored correctly

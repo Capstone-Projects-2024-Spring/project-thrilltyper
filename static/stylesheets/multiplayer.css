@@ -1,0 +1,81 @@
+/* Multiplayer page styles */
+#multiplayer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+    width: 100%;
+
+    /* padding: 1rem 2rem; */
+}
+
+/* Chat styles */
+#multiplayer #chat {
+    flex-grow: 1; /* This will allow it to fill the available space */
+    display: flex;
+    flex-direction: column;
+
+    border: 1px lightgrey solid;
+    border-radius: 1rem;
+
+    width: 100%;
+    height: 100%
+}
+
+#multiplayer #chat #chatTitle {
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+
+    background-color: #007BFF;
+    border-radius: 1rem 1rem 0 0;
+}
+
+#multiplayer #chat #message {
+    height: calc(70% - 2rem);
+    width: calc(100% - 2rem);
+
+    margin: 1rem;
+
+    border: 2px solid lightgrey;
+    border-radius: 1rem;
+
+    padding: 0.2rem 0.5rem;
+}
+
+#multiplayer #chat form {
+    height: 20%;
+    width: 100%;
+    padding: 0 1rem 0;
+}
+
+#multiplayer #chat form input:nth-child(2) {
+    height: 2rem;
+    width: 75%;
+
+    border: 1px solid lightgrey;
+
+    padding-left: 1rem;
+    border-radius: 1rem;
+    margin-top: 0.5rem;
+}
+
+#multiplayer #chat form input:last-child {
+    margin: 0 0.25rem;
+    height: 2rem;
+    width: calc(25% - 0.5rem);
+}
+
+
+/* Typing Interface Style for Multiplayer */
+#multiplayer #game-container{
+    padding: 0;
+}
+
+
+/* Styles for chat and other subelements of multiplayer page */
+#multiplayer .sideComponent {
+    height: 100%;
+    flex: 0 0 20%;
+}
