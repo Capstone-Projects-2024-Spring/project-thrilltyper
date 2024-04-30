@@ -45,7 +45,7 @@ function Dashboard({ userSession }) {
                     {/* Winnings & Losses */}
                     <section className="dashItem userOverview">
                         <p className="center flexEven">
-                            Total Playing Time: {userData.totalTime} minutes
+                            Total Playing Time: {Math.floor(userData.totalTime)} minutes
                         </p>
                         <p className="center flexEven">
                             Common Error: {userData.frequentMisTypedWord}
