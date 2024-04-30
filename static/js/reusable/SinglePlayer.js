@@ -47,7 +47,7 @@ function ThrillTyperGame() {
 
     async function postUserMetrics(wpm, accuracy, elapsedTime){
         try{
-            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent","elapsedTime":elapsedTime/60,"date":date.toISOString()}
+            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Single Player","elapsedTime":elapsedTime/60,"date":date.toISOString()}
             const response = await fetch('/update_db',{
             method: 'POST',
             headers: {
