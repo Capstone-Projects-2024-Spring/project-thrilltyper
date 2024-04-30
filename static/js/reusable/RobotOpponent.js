@@ -1,4 +1,5 @@
 function RobotOpponent() {
+    const date = new Date();
     let text = "Choose difficulty and click to start.";
     let words = text.split(" ");
     let avgEasyWordTxtLen;
@@ -155,7 +156,7 @@ function RobotOpponent() {
 
     async function postUserMetrics(wpm, accuracy, elapsedTime){
         try{
-            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent","elapsedTime":elapsedTime/60}
+            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent","elapsedTime":elapsedTime/60,"date":date.toISOString()}
             const response = await fetch('/update_db',{
             method: 'POST',
             headers: {
