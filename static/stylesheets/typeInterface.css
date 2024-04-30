@@ -5,7 +5,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
     padding: 20%;
 }
 
@@ -39,7 +38,6 @@
 .typed-word {
     color: green;
 }
-
 
 .dropdown {
     position: relative;
@@ -76,4 +74,10 @@
 
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
+}
+
+#holder {
+    width: 500px !important;
+    height: 500px !important;
+    padding: 50px;
 }

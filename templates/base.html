@@ -25,12 +25,15 @@
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/typeInterface.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/robotOpponent.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/multiplayer.css')}}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/leaderboard.css') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/leaderboard.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/about.css')}}">
 
 
     <!-- added by Hu -->
     <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/HomePage.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/StarAnimation.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/MakePlayerProgress.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/MultiplayerGamePage.css')}}">
     {% block head %} {% endblock %}
 </head>
 
@@ -55,9 +58,11 @@
 
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/ImportTextPlay.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/content/Leaderboard.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/content/About.js')}}"></script>
 
     <!-- added by Hu -->
     <script type="text/babel" src="{{url_for('static', filename='js/content/HomePage.js')}}"></script>
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/MakePlayerProgress.js')}}"></script>
 
     <!-- Pure JS code -->
     <script>
@@ -87,7 +92,7 @@
                         <Link to="/menu">Play</Link>
                         <Link to="/leaderboard">Leaderboards</Link>
                         <Link to="/dashboard">Dashboard</Link>
-                        <Link to="/">About</Link>
+                        <Link to="/about">About</Link>
                     </nav>
                     <Profile userSession={userSession} />
                 </header>
@@ -99,6 +104,7 @@
                     <Route path="/multiplayer" component={(props) => <Multiplayer {...props} userSession={userSession} />} />
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
                     <Route path="/leaderboard" component={Leaderboard} />
+                    <Route path="/about" component={About}/>
                     <Route path="/importText" component={ImportText} />
                 </div>
             </ReactRouterDOM.HashRouter>

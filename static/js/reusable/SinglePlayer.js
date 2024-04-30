@@ -199,6 +199,7 @@ function ThrillTyperGame() {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
+
     
     function changeBackground(season) {
         const body = document.body;
@@ -223,30 +224,46 @@ function ThrillTyperGame() {
 
 
 
-    return (
-        <div id="game-container">
-            <h1>Thrill Typer Game</h1>
-            <div id="text-display">{text}</div>
-    
-            <input type="text" id="input-box" onInput={checkInput} disabled />
-            <div id="result"></div>
-            <div className="button-container">
-                <button onClick={startTimer}>Start</button>
-                <button onClick={stopTimer}>Reset</button>
-                <button onClick={fillText}>Fill Text</button>
-    
-                {/* Dropdown menu */}
-                <div className="dropdown">
-                    <button className="dropbtn">Cosmetic</button>
-                    <div className="dropdown-content">
-                        <button onClick={() => changeBackground('spring')}>Spring</button>
-                        <button onClick={() => changeBackground('summer')}>Summer</button>
-                        <button onClick={() => changeBackground('autumn')}>Autumn</button>
-                        <button onClick={() => changeBackground('winter')}>Winter</button>
-                    </div>
+    var percentage = 10;
+    function updateProgressBar(){
+        percentage += 10;
+        document.getElementById("hello").style.width = percentage + "%";
+        document.getElementById("hello2").innerHTML = percentage + "%";
+    }
+
+    function insertPlayerStatus(){
+        document.getElementById("holder").appendChild(makePlayerStatus());
+        document.getElementById("holder").appendChild(makePlayerStatus());
+    }
+return (
+    <div id="game-container">
+        <h1>Thrill Typer Game</h1>
+        <div id="text-display">{text}</div>
+
+        <input type="text" id="input-box" onInput={checkInput} disabled />
+        <div id="result"></div>
+        <div id="holder"></div>
+        <div className="button-container">
+            <button onClick={startTimer}>Start</button>
+            <button onClick={stopTimer}>Reset</button>
+            <button onClick={fillText}>Fill Text</button>
+            
+            {/* Dropdown menu */}
+            <div className="dropdown">
+                <button className="dropbtn">Cosmetic</button>
+                <div className="dropdown-content">
+                    <button onClick={() => changeBackground('spring')}>Spring</button>
+                    <button onClick={() => changeBackground('summer')}>Summer</button>
+                    <button onClick={() => changeBackground('autumn')}>Autumn</button>
+                    <button onClick={() => changeBackground('winter')}>Winter</button>
                 </div>
             </div>
+
+            <button onClick={updateProgressBar}>Update Progress Bar</button>
+            <button onClick={insertPlayerStatus}>Insert Player Status</button>
         </div>
-    );
+    </div>
+);
+
     
 }

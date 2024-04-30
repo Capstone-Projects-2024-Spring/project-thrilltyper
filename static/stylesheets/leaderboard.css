@@ -81,14 +81,14 @@
 
 /* Style for the title "Leaderboard" */
 #leaderboardTitle {
-  color: #3498db; /* Blue color */
+  color: #FFC72E;
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* Style for the title "Top 10 Highest WPM" */
+/* Style for the title "Top 50 Highest WPM" */
 #leaderboard h2 {
-  color: #2c3e50; /* Dark gray color for title */
+  color: #294E95; /* Dark gray color for title */
   text-align: center;
 }
 
