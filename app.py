@@ -336,7 +336,7 @@ class App:
                 user_data = Database.query(usr, "UserData")
                 game_data = request.json
                 num_races = int(user_data._num_races)
-                Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1))
+                Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1),_num_races=num_races+1)
             return "Successful"
         return "Not successful"
 
