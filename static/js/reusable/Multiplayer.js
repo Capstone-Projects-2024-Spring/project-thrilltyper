@@ -1,4 +1,42 @@
 function Multiplayer({userSession}) {
+    const [gameStatus, setGameStatus] = React.useState('Game not started');
+    const [socket, setSocket] = React.useState(null);
+
+    React.useEffect(() => {
+        // Connect to the WebSocket server
+        const newSocket = io(`${window.location.protocol}//${window.location.hostname}:${window.location.port}`);
+        setSocket(newSocket);
+
+        newSocket.on('start game', (data) => {
+            console.log(data.message);
+            startGame();
+        });
+
+        newSocket.on('stop game', (data) => {
+            console.log(data.message);
+            stopGame();
+        });
+
+        return () => newSocket.disconnect();
+    }, []);
+
+
+    function startGameMultiplayer(){
+        socket.emit('start game', { message: 'Host started the game' });
+        //startGame();
+    }
+
+    function stopGameMultiplayer(){
+        console.log("stopGameMultiplayer: "+intervalRef.current);   //DEBUG
+        socket.emit('stop game', { message: 'Host stopped the game' });
+        stopGame();
+    }
+
+    /*
+
+        Divide Line for original code
+
+    */
     let text = "Click start button to start!";
     let words = text.split(" ");
     let startTime;
@@ -180,6 +218,7 @@ function Multiplayer({userSession}) {
 
     function stopGame(){
         //resetVariables();
+        console.log("stop game interval: "+intervalRef.current);   //DEBUG
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
         stopTimer();
@@ -198,9 +237,10 @@ function Multiplayer({userSession}) {
     function updateTimer(){
         const currentTime = new Date().getTime();
         const elapsedTime = (currentTime - startTime) / 1000;
-        console.log("updateTimer: elapsedTime: " + elapsedTime);
+        // console.log("updateTimer: elapsedTime: " + elapsedTime);
         document.getElementById("timer-display").innerHTML = `${elapsedTime.toFixed(2)} s`;
         updateStatusContainer();    //should placed somewhere else but put here for convenience
+        console.log("update timer: executed");
     }
 
 
@@ -317,8 +357,8 @@ function Multiplayer({userSession}) {
 
                 <div id="result-display"></div>
                 <div id="button-holder">
-                    <button onClick={startGame}>Start</button>
-                    <button onClick={stopGame}>Stop</button>
+                    <button onClick={startGameMultiplayer}>Start</button>
+                    <button onClick={stopGameMultiplayer}>Stop</button>
                     <button onClick={fillText}>Fill Text</button>
                 </div>
             </div>

@@ -88,6 +88,20 @@ class App:
         global socketio
         print('received my event: ' + str(json))
         App.socketio.emit('global chat', json)
+    
+
+    """
+    added by Hu
+    """    
+    @socketio.on('start game')
+    def handle_start_game(data):
+        print('Received start game signal:', data)
+        App.socketio.emit('start game', {'message': 'Start the game!'})
+
+    @socketio.on('stop game')
+    def handle_stop_game(data):
+        print('Received stop game signal:', data)
+        App.socketio.emit('stop game', {'message': 'Stop the game!'})
 
 
     @_app.route("/login", methods=["GET", "POST"])
@@ -900,4 +914,4 @@ if __name__=="__main__":
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
 
-    app.socketio.run(app._app, host="localhost", debug=True)
+    app.socketio.run(app._app, host="0.0.0.0", debug=True)
