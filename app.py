@@ -1,5 +1,6 @@
 # permanent import
 import os
+import sentence_generator
 import uuid
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
@@ -147,10 +148,9 @@ class App:
 
                 # Insert user info into the database if doesn"t exists yet
                 if Database.query(uname, "UserInfo") is None:
-                    Database.insert(UserInfo, _username=uname,
-                                    _password=token["access_token"], _email=uname)
-                    Database.insert(UserData, _username=uname, _email=uname, _accuracy=0, _wins=0, _losses=0, _freq_mistyped_words=0,
-                                    _total_playing_time=0, _top_wpm=0, _num_races=0, _user_in_game_picture=picture, _last_login_time=datetime.now(timezone.utc))
+
+                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=uname, _profile_photo=picture)
+                    Database.insert(UserData, _username=uname,_email=uname,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=picture,_last_login_time=datetime.now(timezone.utc))
                     user_letter_data = {
                         "_username": uname,
                         "_email": uname,
@@ -394,6 +394,28 @@ class App:
                         return "Not successful"
             return "Successful"
         return "Not successful"
+    
+    @_app.route("/generate_text/",methods=["GET"])
+    def generate_text():
+        """
+        Sends back text for the requestor to use
+        :param difficulty
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
+        """
+        difficulty = request.args.get("difficulty")
+        wpm = request.args.get("wpm")
+        if wpm:
+            wpm = int(wpm)
+            if wpm>=0 and wpm<=45:
+                difficulty="easy"
+            elif wpm>=46 and wpm<=80:
+                difficulty="medium"
+            else:
+                difficulty="hard"
+            return sentence_generator.generate_sentences(difficulty)
+        if not difficulty:
+            difficulty=""
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
 
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
     def getUserRaceData(username):
@@ -414,7 +436,6 @@ class App:
             return jsonify(raceData)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-
 
 class Database:
     """
@@ -457,7 +478,7 @@ class Database:
     @staticmethod
     def populate_sample_date(num_rows):
         """
-        no need for documentation
+        Responsible for auto populating 
         """
         try:
             current_datetime = datetime.now(timezone.utc)
@@ -514,6 +535,88 @@ class Database:
             print(f"{num_rows} sample users added successfully")
         except Exception as e:
             print(f"Error while populating sample rows: {e}")
+
+    #used for generating mock data with unique wpm
+    used_top_wpm_values = set()
+    @staticmethod
+    def generate_unique_wpm():
+        """
+        Generate a unique random WPM value that has not been used before.
+        """
+        while True:
+            wpm_value = random.randint(50, 150)  # Adjust the range as needed
+            if wpm_value not in Database.used_wpm_values:
+                return wpm_value
+
+    #this method is used to populate a specific user's data in all tables
+    @staticmethod
+    def populate_sample_data_for_user(user_name:str):
+        """
+        Responsible for auto populating sample data for a specific user
+        """
+        try:
+            current_datetime = datetime.now(timezone.utc)
+
+            sample_google_id = "".join(random.choices(string.ascii_letters + string.digits, k=10))  # set length of id to ten
+            user_info_data = {
+                "_username": f"{user_name}",
+                "_password": f"password{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                "_profile_photo": f'./static/pics/terraria_player.png',
+                "_google_id": sample_google_id
+            }
+
+            # Generate unique top WPM value
+            top_wpm_value = random.randint(0, 100)
+            while top_wpm_value in Database.used_top_wpm_values:
+                top_wpm_value = random.randint(0, 100)
+
+            user_data_data = {
+                "_username": f"{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                "_top_wpm": top_wpm_value,
+                "_accuracy": 20 + (random.randint(0, 100) * 0.5),
+                "_wins": random.randint(0, 100),
+                "_losses": random.randint(0, 100),
+                "_freq_mistyped_words": f"word{user_name}|mistake{user_name}",
+                "_total_playing_time": random.randint(0, 100),
+            }
+
+            # Add the generated top WPM value to the set of used values
+            Database.used_top_wpm_values.add(top_wpm_value)
+
+            user_letter_data = {
+                "_username": f"{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                **{f"_{letter}": random.randint(0, 100) for letter in string.ascii_lowercase},
+                "_comma": random.randint(0, 100),
+                "_period": random.randint(0, 100),
+                "_exclamation": random.randint(0, 100),
+                "_question": random.randint(0, 100),
+                "_hyphen": random.randint(0, 100),
+                "_semicolon": random.randint(0, 100),
+                "_single_quote": random.randint(0, 100),
+                "_double_quote": random.randint(0, 100),
+            }
+
+            user_race_data = {
+                "_username": f"{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                "_average_wpm": random.randint(40, 100),
+                "_selected_mode": random.choice(["Practice", "Robot Opponent", "MultiPlayer"]),
+                "_time_limit": random.choice([None, 30, 60, 90]),
+                "_date_played": current_datetime - timedelta(days=random.randint(0, 5))
+            }
+
+            Database.insert(UserInfo, **user_info_data)
+            Database.insert(UserData, **user_data_data)
+            Database.insert(UserLetter, **user_letter_data)
+            Database.insert(UserRace, **user_race_data)
+            
+            print(f"Sample data added successfully for user{user_name}")
+        except Exception as e:
+            print(f"Error while populating sample data: {e}")
+
 
     @staticmethod
     def insert(db_table, **kwargs):

@@ -42,7 +42,7 @@ function Leaderboard() {
                         {leaderboardData.map((player, index) => (
                             <tr key={player.username} className={index === 0 ? 'rank-one' : index === 1 ? 'rank-two' : index === 2 ? 'rank-three' : ''}>
                                 <td>
-                                    <img src={player.profile_photo} alt="Profile" />
+                                    <img src={player.profile_photo} alt="Profile" referrerPolicy="no-referrer"/>
                                 </td>
                                 <td className="username">
                                     <strong>{player.username}</strong>

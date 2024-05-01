@@ -9,16 +9,9 @@ if openai.api_key is None:
 
 
 def main():
-    sentences = generate_sentences()
+    sentences = generate_sentences("hard")
     
-    #File names for each difficulty level
-    file_names = ['easy_sentences.txt', 'medium_sentences.txt', 'hard_sentences.txt']
-    
-    #Write sentences to their respective files
-    for i, difficulty_level in enumerate(sentences):
-        with open(file_names[i], 'w') as file:
-            for sentence in difficulty_level:
-                file.write(sentence + '\n')
+    print(sentences)
 
 def is_valid_characters(sentence):
     allowed_characters = set(string.ascii_letters + string.punctuation + " ")
@@ -40,47 +33,47 @@ def is_similar(new_sentence, existing_sentences, first_three_words_set):
 
     return False
 
-def generate_sentences():
-    sentences_per_difficulty = 10
-    sentences = [[], [], []]
-    unique_checks = set()  #Using a set to track unique sentences
-    first_three_words_set = set()  #Set to track first three words of each sentence
+def generate_sentences(difficulty):
+    difficulty_mapping = {"easy": 1, "medium": 2, "hard": 3}
+    if difficulty not in difficulty_mapping:
+        return "Invalid difficulty level"
 
-    for i in range(sentences_per_difficulty):
-        for difficulty in range(1, 4):
-            prompt = "Create a sentence that has "
-            if difficulty == 1:
-                prompt += "short and simple words that have letters that are easy to type in sequence."
-            elif difficulty == 2:
-                prompt += "of medium length, with moderate vocabulary and one comma that have letters that are moderately difficult to type in sequence."
-            elif difficulty == 3:
-                prompt += "long and complex, using advanced vocabulary, including commas, semicolons, and at least one capitalized proper noun with words that have letters that are difficult to type in sequence."
-            
-            attempts = 0
-            while attempts < 5:
-                try:
-                    response = openai.Completion.create(
-                        engine="gpt-3.5-turbo-instruct",
-                        prompt=prompt,
-                        temperature=1.0,
-                        max_tokens=100,
-                        top_p=1,
-                        frequency_penalty=2.0,
-                        presence_penalty=2.0
-                    )
-                    generated_sentence = response.choices[0].text.strip()
-                    
-                    #Check if the sentence is valid based on characters and if it is similar
-                    if is_valid_characters(generated_sentence) and not is_similar(generated_sentence, unique_checks, first_three_words_set):
-                        unique_checks.add(generated_sentence)
-                        sentences[difficulty - 1].append(generated_sentence)
-                        first_three_words_set.add(' '.join(generated_sentence.lower().translate(str.maketrans('', '', string.punctuation)).split()[:3]))
-                        break
-                except Exception as e:
-                    print(f"An error occurred: {e}")
-                attempts += 1
+    difficulty_index = difficulty_mapping[difficulty] - 1
+    num_sentences = 10
+    sentences = []
+    unique_checks = set()
+    first_three_words_set = set()
 
-    return sentences  
+    prompt = "Create a sentence that has "
+    if difficulty_index == 0:
+        prompt += "short and simple words that have letters that are easy to type in sequence."
+    elif difficulty_index == 1:
+        prompt += "of medium length, with moderate vocabulary and one comma that have letters that are moderately difficult to type in sequence."
+    elif difficulty_index == 2:
+        prompt += "long and complex, using advanced vocabulary, including commas, semicolons, and at least one capitalized proper noun with words that have letters that are difficult to type in sequence."
+
+    attempts = 0
+    while len(sentences) < num_sentences and attempts < 50:
+        try:
+            response = openai.Completion.create(
+                engine="gpt-3.5-turbo-instruct",
+                prompt=prompt,
+                temperature=1.0,
+                max_tokens=100,
+                top_p=1,
+                frequency_penalty=2.0,
+                presence_penalty=2.0
+            )
+            generated_sentence = response.choices[0].text.strip()
+            if is_valid_characters(generated_sentence) and not is_similar(generated_sentence, unique_checks, first_three_words_set):
+                unique_checks.add(generated_sentence)
+                sentences.append(generated_sentence)
+                first_three_words_set.add(' '.join(generated_sentence.lower().translate(str.maketrans('', '', string.punctuation)).split()[:3]))
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        attempts += 1
+
+    return ' '.join(sentences) 
 
 if __name__ == "__main__":
     main()
