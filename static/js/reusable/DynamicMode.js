@@ -11,6 +11,7 @@ function DynamicMode() {
     //let timerInterval;
     let userInputCorrectText = "";
     let correctCharsTyped = 0; // Track correct characters typed
+    let correctLettersTyped = 0;
     let totalCharsTyped = 0; // Track total characters typed
 
     const intervalRef = React.useRef(null);
@@ -129,12 +130,14 @@ function DynamicMode() {
     async function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
+        correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
+        totalCharsTyped = 0;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        text = await fetchRandomWordList("easy",35);
+        text = await fetchRandomWordList("",35);
         words = text.split(" ");
 
         displayText();
@@ -181,6 +184,9 @@ function DynamicMode() {
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
             currentCharIndex++;
             correctCharsTyped++;
+            if(text[currentCharIndex]!=' '){
+                correctLettersTyped++;
+            }
         }
         totalCharsTyped++;
 
@@ -195,7 +201,8 @@ function DynamicMode() {
         stopTimerInterval();
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
-        const wordsPerMinute = Math.round((correctCharsTyped / 5.0) / (elapsedTime / 60.0));
+        const wordsPerMinute = Math.round((correctLettersTyped / 5.0) / (elapsedTime / 60.0));
+        console.log(correctCharsTyped);
         const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";

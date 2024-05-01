@@ -11,6 +11,7 @@ function ThrillTyperGame() {
     //let timerInterval;
     let userInputCorrectText = "";
     let correctCharsTyped = 0; // Track correct characters typed
+    let correctLettersTyped = 0;
     let totalCharsTyped = 0; // Track total characters typed
 
     const intervalRef = React.useRef(null);
@@ -129,6 +130,8 @@ function ThrillTyperGame() {
     async function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
+        correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
+        totalCharsTyped = 0;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
         document.getElementById("result").innerHTML = "";
@@ -184,6 +187,9 @@ function ThrillTyperGame() {
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
             currentCharIndex++;
             correctCharsTyped++;
+            if(text[currentCharIndex]!=' '){
+                correctLettersTyped++;
+            }
         }
         totalCharsTyped++;
 
@@ -200,7 +206,7 @@ function ThrillTyperGame() {
         const elapsedTime = (endTime - startTime) / 1000;
         console.log(elapsedTime);
         console.log(correctCharsTyped);
-        const wordsPerMinute = Math.round((correctCharsTyped / 5.0) / (elapsedTime / 60.0));
+        const wordsPerMinute = Math.round((correctLettersTyped / 5.0) / (elapsedTime / 60.0));
         const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
