@@ -203,7 +203,7 @@ class App:
                 # Stores the Player object in the session
                 session["user"] = playerObj.__json__()
                 # Redirects to a desired page when authentication success
-                return redirect("/")
+                return redirect("/#/menu")
             else:
                 # Raises an error for wrong match
                 raise ValueError("Invalid username or password")
@@ -267,7 +267,7 @@ class App:
         session["user"] = playerObj.__json__()
 
         # Redirects to the result page
-        return redirect("/")
+        return redirect("/#/menu")
 
     @_app.route("/logout", methods=["GET", "POST"])
     def logout():
