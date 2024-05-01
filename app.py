@@ -534,7 +534,7 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
-
+    
     @staticmethod
     def update(username: str, db_table_name: str, **kwargs):
         """
