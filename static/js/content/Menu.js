@@ -46,10 +46,10 @@ function Menu({}) {
                         Robot
                     </button>
                 </Link>
-                <Link id="importTextMode" to="/importText" className="menu-item" style={linkStyle}>
+                <Link id="dynamicMode" to="/dynamicMode" className="menu-item" style={linkStyle}>
                     <button style={buttonStyle}>
                         <img src="/static/pics/import_text_mode.png" alt="Import Text Image" style={{ width: '150px', height: 'auto', marginBottom: '20px' }} />
-                        Import Text Mode
+                        Dynamic Mode
                     </button>
                 </Link>
                 <Link id="multiplayerMode" to="/multiplayer" className="menu-item" style={linkStyle}>
