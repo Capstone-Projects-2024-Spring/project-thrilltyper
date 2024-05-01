@@ -1,5 +1,6 @@
 #permanent import
 import os
+import sentence_generator
 import uuid
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
@@ -380,6 +381,28 @@ class App:
                         return "Not successful"
             return "Successful"
         return "Not successful"
+    
+    @_app.route("/generate_text/",methods=["GET"])
+    def generate_text():
+        """
+        Sends back text for the requestor to use
+        :param difficulty
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
+        """
+        difficulty = request.args.get("difficulty")
+        wpm = request.args.get("wpm")
+        if wpm:
+            wpm = int(wpm)
+            if wpm>=0 and wpm<=45:
+                difficulty="easy"
+            elif wpm>=46 and wpm<=80:
+                difficulty="medium"
+            else:
+                difficulty="hard"
+            return sentence_generator.generate_sentences(difficulty)
+        if not difficulty:
+            difficulty=""
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
 
         
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
@@ -401,7 +424,6 @@ class App:
             return jsonify(raceData)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-
 
 class Database:
     """
