@@ -283,21 +283,27 @@ class App:
     def custom_page():
         return render_template("custompage.html")
 
-    @_app.route("/generate_text/", methods=["GET"])
+    @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
         """
         Sends back text for the requestor to use
         :param difficulty
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        :param amount : Specifies the amount of text to generate.
-        :param genre : Specifies the genre of the text. Optional.
         """
-        difficulty = request.args.get("difficulty", "")
-        form = request.args.get("form")
-        amount = request.args.get("amount")
-        # Retrieve genre from request, default to None if not provided
-        genre = request.args.get("genre", None)
-        return Text_Generator.generate_text(difficulty, form, amount, genre)
+        difficulty = request.args.get("difficulty")
+        wpm = request.args.get("wpm")
+        if wpm:
+            wpm = int(wpm)
+            if wpm>=0 and wpm<=45:
+                difficulty="easy"
+            elif wpm>=46 and wpm<=80:
+                difficulty="medium"
+            elif wpm>=81:
+                difficulty="hard"
+            return sentence_generator.generate_sentences(difficulty)
+        if not difficulty:
+            difficulty=""
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"),request.args.get("genre"))
 
     @_app.route("/get_avg_txt_len/", methods=["GET"])
     def get_avg_txt_len():
@@ -394,28 +400,6 @@ class App:
                         return "Not successful"
             return "Successful"
         return "Not successful"
-    
-    @_app.route("/generate_text/",methods=["GET"])
-    def generate_text():
-        """
-        Sends back text for the requestor to use
-        :param difficulty
-        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        """
-        difficulty = request.args.get("difficulty")
-        wpm = request.args.get("wpm")
-        if wpm:
-            wpm = int(wpm)
-            if wpm>=0 and wpm<=45:
-                difficulty="easy"
-            elif wpm>=46 and wpm<=80:
-                difficulty="medium"
-            else:
-                difficulty="hard"
-            return sentence_generator.generate_sentences(difficulty)
-        if not difficulty:
-            difficulty=""
-        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
 
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
     def getUserRaceData(username):
