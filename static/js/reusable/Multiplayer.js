@@ -1,14 +1,48 @@
 function Multiplayer({userSession}) {
+    const playerID = userSession ? userSession.userinfo.given_name : generatePlayerID();
+
     const [gameStatus, setGameStatus] = React.useState('Game not started');
     const [socket, setSocket] = React.useState(null);
+
+    var playerList = [];
 
     React.useEffect(() => {
         // Connect to the WebSocket server
         const newSocket = io(`${window.location.protocol}//${window.location.hostname}:${window.location.port}`);
         setSocket(newSocket);
+        console.log("multiplayer: connected");
+
+        newSocket.on('update players', updatedPlayers => {
+            /*
+            if(isSelfProgress){     //prevent the web page from deteching itself connects and adds a new progress bar
+                isSelfProgress = false;
+            }else{
+                addPlayerProgress();
+            }
+            */
+            const updatePlayersData = JSON.stringify(updatedPlayers);
+            playerList = updatePlayersData;
+            console.log("socket update players: playerList = " + playerList);
+            addPlayerProgress();
+            console.log("new player joined");
+            
+        });
+
+        newSocket.on('client disconnected', (data) => {
+            console.log("a player has disconnected");
+            removePlayerProgress();
+        });
 
         newSocket.on('start game', (data) => {
             console.log(data.message);
+            console.log("dataKey: " + data.textKey);
+            
+            //code for update text display, moved from start game
+            text = data.textKey;
+            document.getElementById("text-display").innerHTML = text;
+            words = text.split(" ");
+            
+            console.log("socket start game: playerProgressList = " + playerProgressList);
             startGame();
         });
 
@@ -17,13 +51,31 @@ function Multiplayer({userSession}) {
             stopGame();
         });
 
+
         return () => newSocket.disconnect();
     }, []);
 
+    function generatePlayerID(){
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomString = 'guest';
+        for (let i = 0; i < 10; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomString += characters.charAt(randomIndex);
+        }
 
-    function startGameMultiplayer(){
-        socket.emit('start game', { message: 'Host started the game' });
-        //startGame();
+        return randomString;
+    }
+
+    async function startGameMultiplayer(){
+        let newText = await fetchRandomWordList();
+
+        // text = newText;
+        // document.getElementById("text-display").innerHTML = text;
+        // words = text.split(" ");
+
+        socket.emit('start game', { message: 'Host started the game', textKey: newText});
+
+        //startGame(); do not start game because the host also calls startGame() on receiving the signal it sneds
     }
 
     function stopGameMultiplayer(){
@@ -37,6 +89,34 @@ function Multiplayer({userSession}) {
         Divide Line for original code
 
     */
+    function startGame(){
+        /* code moved to startMultiplayer for synchornization 
+        let newText = await fetchRandomWordList();
+        text = newText;
+        document.getElementById("text-display").innerHTML = text;
+        words = text.split(" ");
+        */
+
+        resetVariables();
+        resetPlayerProgress();
+        startTimer();
+        
+        document.getElementById("input-box").disabled = false;
+        console.log("start game");
+    }
+
+
+
+    function stopGame(){
+        //resetVariables();
+        console.log("stop game interval: "+intervalRef.current);   //DEBUG
+        document.getElementById("input-box").value = "";
+        document.getElementById("input-box").disabled = true;
+        stopTimer();
+        console.log("stop game");
+    }
+
+
     let text = "Click start button to start!";
     let words = text.split(" ");
     let startTime;
@@ -45,6 +125,8 @@ function Multiplayer({userSession}) {
     let currentWordIndex = 0;
     let wrongCharCount = 0;
     let userInputCorrectText = "";
+
+    const playerProgressList = [];
 
     const intervalRef = React.useRef(null);
 
@@ -200,30 +282,7 @@ function Multiplayer({userSession}) {
         document.getElementById("result-display").innerHTML = "";
     }
 
-    async function startGame(){
-        let newText = await fetchRandomWordList();
-        text = newText;
-        document.getElementById("text-display").innerHTML = text;
-        words = text.split(" ");
-        
-        resetVariables();
-        resetPlayerProgress();
-        startTimer();
-        
-        document.getElementById("input-box").disabled = false;
-        console.log("start game");
-    }
 
-
-
-    function stopGame(){
-        //resetVariables();
-        console.log("stop game interval: "+intervalRef.current);   //DEBUG
-        document.getElementById("input-box").value = "";
-        document.getElementById("input-box").disabled = true;
-        stopTimer();
-        console.log("stop game");
-    }
 
     function startTimer(){
         startTime = new Date().getTime();
@@ -244,8 +303,6 @@ function Multiplayer({userSession}) {
     }
 
 
-    const playerProgressList = ["player0"];
-
     function addPlayerProgress(){
         const newProgressID = "player" + playerProgressList.length;
         playerProgressList.push(newProgressID);
@@ -263,6 +320,7 @@ function Multiplayer({userSession}) {
     }
     
     function updatePlayerProgress(id, newWidth){
+        console.log("updatePlayerProgress: id = "+id);
         const progressBarContainer = document.getElementById(id);
         const progressBar = progressBarContainer.querySelector(".progressbar");
         const progressBarText = progressBarContainer.querySelector(".progressbar-text");
@@ -329,7 +387,7 @@ function Multiplayer({userSession}) {
 
             <div class="window-container" id="chat-window">
                 <div id="multiplayer">
-                    <ChatRoom userSession={userSession}/>
+                    {/* <ChatRoom userSession={userSession}/> */}
                 </div>
             </div>
 
@@ -368,6 +426,7 @@ function Multiplayer({userSession}) {
                 <div className="window-header">
                     <span className="header-title">Player Window</span>
                 </div>
+                {/*
                 <div id="host-player-progress">
                     <div class="grid-container" id="player0">
                         <div class="grid-item1">
@@ -381,13 +440,15 @@ function Multiplayer({userSession}) {
                                 </div>
                             </div>
                         </div>
-                        <div class="grid-item3"> {/* checkmark placeholder */}</div>  
+                        <div class="grid-item3"> {/* checkmark placeholder */}{/* </div> 
                         <div class="grid-item4">
                             WPM: 0
                         </div>
                         <div class="grid-item5"></div>  
                     </div>  
                 </div>
+                */}
+
                 <div id="player-progress-list-container">
                 </div>
                 <button onClick={addPlayerProgress}>Test Adding</button>

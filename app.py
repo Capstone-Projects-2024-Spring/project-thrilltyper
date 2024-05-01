@@ -58,7 +58,7 @@ class App:
     )
 
     socketio = SocketIO(_app) 
-
+    players = {}
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
@@ -93,15 +93,39 @@ class App:
     """
     added by Hu
     """    
+    @socketio.on('connect')
+    def handle_connect():
+        player_id = request.sid
+        # player_id = 'player' + str(len(App.players)+1)
+        App.players[player_id] = {'id': player_id, 'currentCharIndex': 0}
+
+        print('a new player has connected')
+        # emit('client connected', {'message': 'You are connected'}, room=request.sid)
+        emit('update players', list(App.players.values()), broadcast=True)
+        print(f'User connected: {player_id}, players list updated')
+        print(f'Current players list: {App.players}')  # Print the entire list of players
+
+
+    @socketio.on('disconnect')
+    def handle_disconnect():
+        if request.sid in App.players:
+            del App.players[request.sid]
+            emit('client disconnected', {}, broadcast=True)
+            print('a player has disconnected')
+            print(f'Current players list: {App.players}')  # Print the entire list of players
+
     @socketio.on('start game')
     def handle_start_game(data):
         print('Received start game signal:', data)
-        App.socketio.emit('start game', {'message': 'Start the game!'})
+        # App.socketio.emit('start game', {'message': 'Start the game!', 'textKey': data['text']})
+        emit('start game', {'message': 'Start the game!', 'textKey': data['textKey']}, broadcast=True)
 
     @socketio.on('stop game')
     def handle_stop_game(data):
         print('Received stop game signal:', data)
-        App.socketio.emit('stop game', {'message': 'Stop the game!'})
+        # App.socketio.emit('stop game', {'message': 'Stop the game!'})
+        emit('stop game', {'message': 'Stop the game!'}, broadcast=True)
+
 
 
     @_app.route("/login", methods=["GET", "POST"])
