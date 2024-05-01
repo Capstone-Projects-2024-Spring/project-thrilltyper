@@ -3,28 +3,28 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Align items to the center of the page */
+    justify-content: center;
     align-items: center;
-    padding: 4rem 20% 4rem; /* Increase top and bottom padding */
-    row-gap: 2rem; /* Increase the gap between rows */
+    padding: 4vh 20vw;
+    row-gap: 2rem;
 }
 
-#menu-ctn h1 {
-    width: calc(100% - 20px);
-    text-align: center;
-    border-bottom: 1px solid #294E95; /* Change border color and decrease thickness */
-    max-width: 900px; /* Increase maximum width */
+#title-container {
+    width: 100%; /* Ensure the container takes full width */
+    text-align: center; /* Center the text */
+    max-width: 900px; /* Limit the maximum width */
+    margin-bottom: 20px; /* Add some space between the title and other elements */
 }
 
-#menu-ctn #menu {
+#menu {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-template-rows: auto auto;
-    row-gap: 2rem; /* Increase the gap between rows */
-    column-gap: 4rem; /* Increase the gap between columns */
-    justify-content: center; /* Align buttons to the center of the page */
+    row-gap: 2rem;
+    column-gap: 4rem;
+    justify-content: center;
 }
 
 .menu-item button img {
-    margin-bottom: 20px; /* Increase space between image and text */
+    margin-bottom: 20px;
 }
