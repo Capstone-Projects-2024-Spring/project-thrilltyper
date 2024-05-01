@@ -8,7 +8,7 @@ function DynamicMode() {
     getAvgTxtLen("","words").then(avgLen=>{avgTxtLen=avgLen});
     let currBlurbIndex = 0;
     let currBlurb;
-    let newBlurb;
+    let blurbStartTime;
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
@@ -158,6 +158,7 @@ function DynamicMode() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
+        blurbStartTime = startTime;
         text = await fetchTxt(0);
         currBlurb = text;
         words = text.split(" ");
@@ -216,14 +217,13 @@ function DynamicMode() {
         }
         totalCharsTyped++;
         //Add more input once last letter of current blurb is typed
-        if (currBlurbIndex >= currBlurb.length*0.75) {
-
-            newBlurb= await fetchTxt(55);
-            text+=newBlurb;
-        }
-        if (currentCharIndex >= text.length){
-            currBlurb = newBlurb;
-            currBlurbIndex=0;
+        if (currBlurbIndex >= currBlurb.length-1) {
+            const endTime = new Date().getTime();
+            const elapsedTime = (endTime - blurbStartTime) / 1000;
+            const wpm = Math.round(((currBlurbIndex/5.0)/(elapsedTime/60)));
+            currBlurb = await fetchTxt(wpm);
+            text+=currBlurb;
+            currBlurbIndex=0
         }
     }
 
