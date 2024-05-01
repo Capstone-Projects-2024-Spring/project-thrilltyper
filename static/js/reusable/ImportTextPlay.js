@@ -197,6 +197,36 @@ function ImportText() {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
+   
+    function changeBackground(season) {
+        const body = document.body;
+        switch(season) {
+            case 'spring':
+                body.style.backgroundImage = "url('/static/pics/spring.jpg')";
+                break;
+    
+            case 'winter':
+                body.style.backgroundImage = "url('/static/pics/winter.jpg')";
+                break;
+    
+            case 'summer':
+                body.style.backgroundImage = "url('/static/pics/summer.jpg')";
+                break;
+    
+            case 'autumn':
+                body.style.backgroundImage = "url('/static/pics/autumn.jpg')";
+                break;
+    
+            case 'original':
+                body.style.backgroundImage = "none";
+                break;
+    
+            default:
+                body.style.backgroundImage = "none";
+        }
+    }
+
+
     return (
         <div id="game-container">
             <h1>Thrill Typer Game Input Mode</h1>
@@ -207,7 +237,21 @@ function ImportText() {
                 <button onClick={startTimer}>Start</button>
                 <button onClick={stopTimer}>Reset</button>
                 <button onClick={fillText}>Fill Text</button>
+    
+                {/* Dropdown menu */}
+                <div className="dropdown">
+                    <button className="dropbtn">Cosmetic</button>
+                    <div className="dropdown-content">
+                        <button onClick={() => changeBackground('spring')}>Spring</button>
+                        <button onClick={() => changeBackground('summer')}>Summer</button>
+                        <button onClick={() => changeBackground('autumn')}>Autumn</button>
+                        <button onClick={() => changeBackground('winter')}>Winter</button>
+                        <button onClick={() => changeBackground('original')}>Original</button>
+
+                    </div>
+                </div>
             </div>
         </div>
     );
+    
 }

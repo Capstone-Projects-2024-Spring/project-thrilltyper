@@ -61,10 +61,13 @@ function Dashboard({ userSession }) {
                     {/* Winnings & Losses */}
                     <section className="dashItem userOverview">
                         <p className="center flexEven">
-                            Total Playing Time: {userData.totalTime} minutes
+                            Total Playing Time: {Math.floor(userData.totalTime)} minutes
                         </p>
                         <p className="center flexEven">
-                            Accuracy: {userData.accuracy}%
+                            Highest WPM: {userData.highestWPM} WPM
+                        </p>
+                        <p className="center flexEven">
+                            Accuracy: {Number(userData.accuracy).toFixed(2)}%
                         </p>
                     </section>
                     {/* Specific Data, i.e. WPM and Accuracy */}

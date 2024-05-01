@@ -33,6 +33,15 @@
                     <input type="password" id="confirm_password" name="confirm_password" class="text-input" required>
                 </div>
 
+                <div class="form-group agreements">
+                    <input type="checkbox" name="TOS" required/>
+                    &nbsp;
+                    <label for="TOS">
+                        By clicking, you agree to our 
+                        <a href="{{ url_for('static', filename='termsOfService.html') }}">Terms of Service</a>
+                    </label>
+                </div>
+
                 <div class="register-ops form-ops">
                     <button type="submit" class="signUp">Signup</button>
                 </div>
