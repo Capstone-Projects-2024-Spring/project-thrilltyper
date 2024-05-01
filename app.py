@@ -195,6 +195,7 @@ class App:
 
             # Performs validation 
             if user is not None and user._password == password:
+                Database.update(user._username,"UserData",_last_login_time=datetime.now(timezone.utc))
                 # Gets avatar
                 playerObj = player(username, user._profile_photo)
                 # Stores the Player object in the session
@@ -214,26 +215,10 @@ class App:
     def signup():
         """
         A route path for signup page layout
-        :return: Response page for signup layout 
+        :return: str html page for signup layout
         """
         error = session.pop("error", None)
         return render_template("signup.html", error=error)
-    
-    @_app.route("/login-guest", methods=["GET", "POST"])
-    def loginGuest():
-        """
-        A route path for guest login
-        :return: Response page for the main view of the website
-        """ 
-        # Generates a randon id
-        guest_id = uuid.uuid4()
-        # Instantiates a player object
-        playerObj = player(username=guest_id, avatar=url_for("static", filename="pics/anonymous.png"))
-        # Establishes session
-        session["user"] = playerObj.__json__()
-
-        # Redirects to a desired page
-        return redirect("/")
 
     @_app.route("/register", methods=["POST"])
     def register():
