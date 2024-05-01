@@ -279,10 +279,6 @@ class App:
         session.pop("user", None)
         return redirect("/")
 
-    @_app.route("/custom-page")
-    def custom_page():
-        return render_template("custompage.html")
-
     @_app.route("/get_avg_txt_len/", methods=["GET"])
     def get_avg_txt_len():
         """
