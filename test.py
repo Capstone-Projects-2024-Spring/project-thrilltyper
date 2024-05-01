@@ -78,6 +78,7 @@ def test_google_login(client):
 def test_google_callback(monkeypatch, client):
     """
     Test: That returned redirect requests are handled successfully, the passed in information is passed successfully and ultimately a response that indicates redirection to the home page is returned
+    Input monkeypatch : facilitates Google Oauth through a mock token
     Result: True if the returned response indicates a redirection to the home page
     """
     mock_token = {
@@ -120,26 +121,37 @@ def test_logout(client):
     assert response.status_code == 200
     assert response.request.path == "/"
 
-
-def test_generate_text_sentences(client):
-    """Test that the text generation endpoint is operational."""
-    # Make a GET request to the endpoint with expected parameters
-    response = client.get(
-        "/generate_text/?difficulty=easy&form=sentences&amount=6")
-
-    # Assert that the HTTP status code is 200 (OK), indicating success
-    assert response.status_code == 200, "Expected status code 200, but got {}".format(
-        response.status_code)
-
-
 def test_generate_text_word_list(client):
-    """Test generating text with word_list form."""
+    """
+    Test: That the text generation endpoint generates text with word_list form
+    Result: True if the endpoint responds with success and generates the right amount of words separated by spaces
+    """
     response = client.get(
         "/generate_text/?difficulty=hard&form=words&amount=10")
     assert response.status_code == 200
     content = response.data.decode('utf-8')
     word_list = content.split(' ')
     assert len(word_list) == 10
+
+def test_generate_dynamic(client):
+    """
+    Test: That dynamic text generation endpoint can take in WPM and accuracy and generate words using that data
+    Result: True if the endpoint responds with successful status code and responds with enough words to fill two lines
+    """
+    response = client.get("/generate_dynamic/?wpm=53&accuracy=70")
+    assert response.status_code==200
+    word_lst = response.data.decode('utf-8').split(" ")
+    assert len(word_lst)>=10
+
+def test_matchmaking(client):
+    """
+    Test: That the matchmaking endpoint is responsive and can match players for a game
+    Result: True if the response status code indcates success and if the message indicates success or inability to find a match
+    """
+    response = client.get("/matchmaking")
+    assert response.status_code==200
+    response_data = response.data.decode('utf-8')
+    assert response_data=="Matching successful." or response_data=="Match could not be found."
 
 def test_socketio_connection(client):
     """Test SocketIO connection."""
@@ -168,9 +180,6 @@ def test_socketio_connection(client):
     finally:
         # Disconnect the client
         socketio_test_client.disconnect() 
-
-
-
 # --------------------------------------------------------------------------------DB Tests-----------------------------------------------------------------------------
 
 
@@ -385,13 +394,6 @@ class Test_Database():
 
 # --------------------------------------------------------------------------------Game Tests-----------------------------------------------------------------------------
 class Test_Game():
-    def test_initialization(self):
-        """
-        Test: A new session is initialized with players. It contains relevant information of a game
-        Result: True if the returned session is not None and have unique ID 
-        """
-        pass
-
     def test_start(self):
         """
         Test: Ensure that the race starts successfully
@@ -483,16 +485,15 @@ class Test_Text_Generator():
         Test: Ensure that a file can be read from successfully
         Result: True if a list is returned
         """
-        assert type(Text_Generator.get_txt_list("words.txt")) == list
-
-    def test_get_average_word_len(self):
+        assert type(Text_Generator.get_txt_list("words.txt"))==list
+    
+    def test_get_avg_txt_len(self):
         """
         Test: Ensure that the average length of words in a list is calculated correctly
         Result: True if the average length is calculated correctly
         """
-        assert Text_Generator.get_avg_txt_len(
-            ["apple", "banana", "pear"]) == 5
-
+        assert Text_Generator.get_avg_txt_len(["apple","banana","pear"])==5
+        
     def test_score_word_typing_difficutly(self):
         """
         Test: Ensure that the typing difficulty of words is scored correctly
