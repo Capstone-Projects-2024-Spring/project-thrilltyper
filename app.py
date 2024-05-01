@@ -280,10 +280,9 @@ class App:
     @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
         """
-        Handles request from the games to generate text
+        Sends back text for the requestor to use
         :param difficulty
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        Sends back text for the requestor to use
         """
         difficulty = request.args.get("difficulty")
         if not difficulty:
@@ -310,14 +309,12 @@ class App:
     @_app.route('/user/<username>')
     def get_user_data(username):
         userData = Database.query(str(username), "UserData")
-        print(userData)
-        print(Database.query("user1", "UserData"))
         if userData is None:
             return jsonify({'error': 'User not found'}), 404
         else:
             return jsonify({
                 "username": userData._username,
-                "highestWPM" : userData._history_highest_race_wpm,
+                "highestWPM" : userData._top_wpm,
                 "wins": userData._wins,
                 "losses": userData._losses,
                 "accuracy" : userData._accuracy,
@@ -331,15 +328,15 @@ class App:
     def get_top_n_highest_wpm_leaderboard(n):
         try:
             top_scores = UserData.query \
-                .with_entities(UserData._username, UserData._history_highest_race_wpm, UserData._accuracy, UserInfo._profile_photo) \
+                .with_entities(UserData._username, UserData._top_wpm, UserData._accuracy, UserInfo._profile_photo) \
                 .join(UserInfo, UserData._username == UserInfo._username) \
-                .order_by(UserData._history_highest_race_wpm.desc()) \
+                .order_by(UserData._top_wpm.desc()) \
                 .limit(n) \
                 .all()
 
             leaderboard_info = [{
                 'username': player._username,
-                'highest_wpm': player._history_highest_race_wpm,
+                'highest_wpm': player._top_wpm,
                 'accuracy': player._accuracy,
                 'profile_photo': player._profile_photo
             } for player in top_scores]
@@ -428,7 +425,7 @@ class Database:
                 user_data_data = {
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_history_highest_race_wpm": 10+i,
+                    "_top_wpm": 10+i,
                     "_accuracy": 20 + (i*0.5),
                     "_wins": 10+i,
                     "_losses": 1+i,
@@ -758,7 +755,7 @@ class UserData(App.db.Model):
     Representation of user(for user dashboard) in game data stored in the database under the UserData table
     _username : non-nullable and unique identifier of a user, act as the primary key and foreign key referencing UserInfo table
     _email : unique email address of user
-    _history_highest_race_wpm : words per minute
+    _top_wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
     _losses : number of multiplayer matches lost
@@ -782,7 +779,7 @@ class UserData(App.db.Model):
     _play_date = App.db.Column(App.db.DateTime) #this column could be removed
 
     #newly added
-    _history_highest_race_wpm = App.db.Column(App.db.SmallInteger, default=0)
+    _top_wpm = App.db.Column(App.db.SmallInteger, default=0)
     _user_in_game_picture = App.db.Column(App.db.String(100)) #should be different from login profile photo
     _last_login_time = App.db.Column(App.db.DateTime) #need configuration later to log user's lastest login time
     _num_race_played = App.db.Column(App.db.Integer, default=0)
