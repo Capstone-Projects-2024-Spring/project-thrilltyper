@@ -315,6 +315,13 @@ return (
 
             <button onClick={updateProgressBar}>Update Progress Bar</button>
             <button onClick={insertPlayerStatus}>Insert Player Status</button>
+            <div id="emptyDivider"></div>
+            <input type="radio" id="thirtySecBtn" value="30" name="timeLimit" defaultChecked></input>
+            <label htmlFor="thirtySecBtn">30 seconds</label>
+            <input type="radio" id="minuteBtn" value="60" name="timeLimit"></input>
+            <label htmlFor="minuteBtn">1 minute</label>
+            <input type="radio" id="minuteAndHalfBtn" value="90" name="timeLimit"></input>
+            <label htmlFor="minuteAndHalfBtn">1.5 minutes</label>
         </div>
     </div>
 );
