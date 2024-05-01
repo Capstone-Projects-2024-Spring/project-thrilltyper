@@ -1,4 +1,5 @@
 function RobotOpponent() {
+    const date = new Date();
     let text = "Choose difficulty and click to start.";
     let words = text.split(" ");
     let avgEasyWordTxtLen;
@@ -123,22 +124,26 @@ function RobotOpponent() {
         }
     }
 
-    async function fetchRandomWordList(difficulty,msPerChar) {
-        let newText = "";
+    function getNumWords(difficulty,msPerChar){
         let avgWordLen;
+        switch(difficulty){
+            case "Easy":
+                avgWordLen=avgEasyWordTxtLen;
+                break;
+            case "Medium":
+                avgWordLen=avgMedWordTxtLen;
+                break;
+            case "Hard":
+                avgWordLen=avgHardWordTxtLen;
+                break;
+        }
+        return Math.floor((60/(msPerChar*avgWordLen/1000)));
+    }
+
+    async function fetchRandomWordList(difficulty,numWords) {
+        let newText = "";
         try {
-            switch(difficulty){
-                case "Easy":
-                    avgWordLen=avgEasyWordTxtLen;
-                    break;
-                case "Medium":
-                    avgWordLen=avgMedWordTxtLen;
-                    break;
-                case "Hard":
-                    avgWordLen=avgHardWordTxtLen;
-                    break;
-            }
-            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+Math.floor((60/(msPerChar*avgWordLen/1000))));
+            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+numWords);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -147,6 +152,24 @@ function RobotOpponent() {
             text=newText
             document.getElementById("text-display").innerHTML = text;
         } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
+    async function postUserMetrics(wpm, accuracy, elapsedTime){
+        try{
+            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent","elapsedTime":elapsedTime/60,"date":date.toISOString()}
+            const response = await fetch('/update_db',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)});
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+        }
+        catch(error){
             console.error('There was a problem with the fetch operation:', error);
         }
     }
@@ -168,10 +191,11 @@ function RobotOpponent() {
 
     function startGame(){
         var difficulty = getDifficulty();
-        var robotMsPerChar = getRobotMsPerChar(difficulty)
-        fetchRandomWordList(difficulty,robotMsPerChar);
-        robotType(robotMsPerChar);
+        var robotMsPerChar = getRobotMsPerChar(difficulty);
+        var numWords = getNumWords(difficulty,robotMsPerChar);
+        fetchRandomWordList(difficulty,numWords);
         startTimer();
+        robotType(robotMsPerChar);
     }
 
     function getDifficulty(){
@@ -278,6 +302,7 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
+        postUserMetrics(wordsPerMinute,accuracy,elapsedTime);
     }
 
 
@@ -289,7 +314,32 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Sadly, Robot finished the game first in ${elapsedTime.toFixed(2)} seconds. Robot speed: ${wordsPerMinute} WPM.`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
+        postUserMetrics(Math.round((currentCharIndex/5 / elapsedTime) * 60),(correctCharsTyped / totalCharsTyped) * 100, elapsedTime);
     }
+
+
+
+    function changeBackground(season) {
+        const body = document.body;
+        switch(season) {
+            case 'spring':
+                body.style.backgroundImage = "url('/static/pics/spring.jpg')";
+                break;
+
+            case 'winter':
+                body.style.backgroundImage = "url('/static/pics/winter.jpg')";
+                break;
+            case 'summer':
+                body.style.backgroundImage = "url('/static/pics/summer.jpg')";
+                break;
+            case 'autumn':
+                body.style.backgroundImage = "url('/static/pics/autumn.jpg')";
+                break;
+            default:
+                body.style.backgroundImage = "none";
+        }
+    }
+
 
     React.useEffect(() => {
         const inputBox = document.getElementById("input-box");
@@ -308,7 +358,6 @@ function RobotOpponent() {
         };
     }, []);
 
-
     return (
         <div id="game-container">
             <h1>Robot</h1>
@@ -319,15 +368,27 @@ function RobotOpponent() {
             <div id="stats"></div>
             <button id="startBtn">Start</button>
             <input type="radio" id="easyBtn" value="Easy" name="difficulty" defaultChecked></input>
-            <label for="easyBtn">Easy</label>
+            <label htmlFor="easyBtn">Easy</label>
             <input type="radio" id="medBtn" value="Medium" name="difficulty"></input>
-            <label for="medBtn">Medium</label>
+            <label htmlFor="medBtn">Medium</label>
             <input type="radio" id="hardBtn" value="Hard" name="difficulty"></input>
-            <label for="hardBtn">Hard</label>
+            <label htmlFor="hardBtn">Hard</label>
             <svg id="progressCircle" width="100" height="100">
-                <circle cx="50" cy="50" r="52" fill="none" stroke="#ccc" stroke-width="4"></circle>
+                <circle cx="50" cy="50" r="52" fill="none" stroke="#ccc" strokeWidth="4"></circle>
             </svg>
             <div id="progressText"></div>
+    
+            {/* Dropdown menu */}
+            <div className="dropdown">
+                <button className="dropbtn">Cosmetic</button>
+                <div className="dropdown-content">
+                    <button onClick={() => changeBackground('spring')}>Spring</button>
+                    <button onClick={() => changeBackground('summer')}>Summer</button>
+                    <button onClick={() => changeBackground('autumn')}>Autumn</button>
+                    <button onClick={() => changeBackground('winter')}>Winter</button>
+                </div>
+            </div>
         </div>
     );
+    
 }
