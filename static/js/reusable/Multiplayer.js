@@ -41,8 +41,9 @@ function Multiplayer({userSession}) {
             console.log("dataKey: " + data.textKey);
             
             //code for update text display, moved from start game
-            text = data.textKey;
-            document.getElementById("text-display").innerHTML = text;
+            // text = data.textKey;
+            setText(data.textKey);
+            // document.getElementById("text-display").innerHTML = text;
             words = text.split(" ");
             
             console.log("socket start game: playerProgressList = " + playerProgressList);
@@ -134,7 +135,8 @@ function Multiplayer({userSession}) {
     }
 
 
-    let text = "Click start button to start!";
+    const[text, setText] = React.useState("Click start button to start!");
+    // let text = "Click start button to start!";
     let words = text.split(" ");
     let startTime;
 
