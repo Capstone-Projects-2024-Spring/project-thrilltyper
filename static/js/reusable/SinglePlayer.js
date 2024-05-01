@@ -133,7 +133,9 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        text = await fetchRandomWordList();
+        if(text=="Click start button to start!"){
+            text = await fetchRandomWordList();
+        }
 
         words = text.split(" ");
 
@@ -216,6 +218,19 @@ function ThrillTyperGame() {
 
     }
 
+    async function fetchUserInput() {
+        let newText = "";
+        try {
+            newText = prompt("Please enter your words:", "");
+            if (newText == null || newText == "") {
+                console.log("User cancelled the prompt.");
+            }
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        text = newText;
+    }
+
     function fillText(){
         userInputCorrectText = text.substring(0, text.length-1);
         currentCharIndex = text.length-1;
@@ -270,6 +285,7 @@ return (
         <div id="holder"></div>
         <div className="button-container">
             <button onClick={startTimer}>Start</button>
+            <button onClick={fetchUserInput}>Input Text</button>
             <button onClick={stopTimer}>Reset</button>
             <button onClick={fillText}>Fill Text</button>
             
