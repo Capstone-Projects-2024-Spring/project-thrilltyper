@@ -1,4 +1,5 @@
 function ThrillTyperGame() {
+    const date = new Date();
     let text = "Click start button to start!";
     let words = text.split(" ");
 
