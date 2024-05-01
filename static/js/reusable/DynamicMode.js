@@ -16,7 +16,7 @@ function DynamicMode() {
 
 
     function startTimerInterval(){
-        intervalRef.current = setInterval(updateTimer, 10);
+        intervalRef.current = setInterval(updateTimer, 1000);
     }
 
     function stopTimerInterval(){
@@ -149,7 +149,7 @@ function DynamicMode() {
     function updateTimer() {
         const currentTime = new Date().getTime();
         const elapsedTime = (currentTime - startTime) / 1000;
-        document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(2)} seconds`;
+        document.getElementById("result").innerHTML = `Timer: ${elapsedTime.toFixed(0)} seconds`;
     }
 
     function displayText() {
