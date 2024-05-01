@@ -73,6 +73,24 @@ function Multiplayer({userSession}) {
         });
     }
 
+    function updateHostPlayerProgress(newWidth){
+
+        const progressBarContainer = document.getElementById("host-player-progress");
+        const progressBar = progressBarContainer.querySelector(".progressbar");
+        const progressBarText = progressBarContainer.querySelector(".progressbar-text");
+        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
+
+        progressBar.style.width = newWidth + "%";
+        progressBarText.innerHTML = newWidth + "%";
+
+        if(newWidth === 100){
+            var checkmarkIcon = document.createElement('img');
+            checkmarkIcon.src = '../static/pics/checkmark.png';
+            progressBarIconContainer.appendChild(checkmarkIcon);
+        }
+        console.log("updatePlayerProgress: progressWidth = "+newWidth);
+    }
+
     function generatePlayerID(){
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let randomString = 'guest';
@@ -138,12 +156,20 @@ function Multiplayer({userSession}) {
     const[text, setText] = React.useState("Click start button to start!");
     // let text = "Click start button to start!";
     let words = text.split(" ");
-    let startTime;
+    // let startTime;
+    const [startTime, setStartTime] = React.useState(() => new Date().getTime()); // Initializes startTime on first render
 
-    let currentCharIndex = 0;   //only increment when user has typed correct letter
-    let currentWordIndex = 0;
+    // let currentCharIndex = 0;   //only increment when user has typed correct letter
+    const[currentCharIndex, setCurrentCharIndex] = React.useState(0);
+
+    // let currentWordIndex = 0;
+
+    const[currentWordIndex, setCurrentWordIndex] = React.useState(0);
+
     let wrongCharCount = 0;
-    let userInputCorrectText = "";
+    // let userInputCorrectText = "";
+
+    const[userInputCorrectText, setUserInputCorrectText] = React.useState("");
 
     const playerProgressList = [];
 
@@ -156,7 +182,11 @@ function Multiplayer({userSession}) {
     }, []);
 
     //updates typed display, wpm display, and accuracy display
+    /*
     function updateStatusContainer(){
+        
+        console.log("updated Status Container: text"+text);
+        console.log("updated status container: currentCharIndex = "+currentCharIndex);
         const currentTime = new Date().getTime();
         const elapsedTime = (currentTime - startTime) / 1000;
 
@@ -168,51 +198,87 @@ function Multiplayer({userSession}) {
         document.querySelector(".wpm-display").innerHTML = "WPM: " + wpm;
         document.querySelector(".accuracy-display").innerHTML = "Accuracy:" + accuracy.toFixed(1) + "%"; 
 
-        const progressBarContainer = document.getElementById(playerProgressList[0]);
+        const progressBarContainer = document.getElementById("host-player-progress");
         const progressBarWPM = progressBarContainer.querySelector(".grid-item4");
         progressBarWPM.innerHTML = "WPM: " + wpm;
         
-
-         
-/*  
-        <div class="progress-display">Typed: 344/1766</div>
-        <div class="wpm-display">WPM: 60</div>
-        <div class="accuracy-display">Accuracy: 94%</div>
-*/
+        console.log("update status container: text.length = "+text.length);
     }
+    */
+
+    const[wpmValue, setwpmValue] = React.useState(0);
+
+    React.useEffect(() => {
+        const updateStatusContainer = () => {
+            const currentTime = new Date().getTime();
+            const elapsedTime = (currentTime - startTime) / 1000;
+    
+            // const typed = `${currentCharIndex}/${text.length}`;
+            const wpm = Math.round((currentCharIndex / 5 / elapsedTime) * 60);
+
+            const value = currentCharIndex / 5 / elapsedTime * 60;
+
+            console.log("updateStatusContainer: value = "+value);
+            console.log("updateStatusContainer: currentTime = "+ startTime);
+
+            if(elapsedTime != 0){
+                setwpmValue(Math.round((currentCharIndex / 5 / elapsedTime) * 60));
+            }
+            const accuracy = ((text.length - wrongCharCount) / text.length * 100).toFixed(1);
+    
+
+        };
+        /*
+        <div class="progress-display">Typed: 0</div>
+        <div class="wpm-display">WPM: 0</div>
+        <div class="accuracy-display">Accuracy: 100%</div>
+        */
+    
+        updateStatusContainer();  // Call the internal function
+    }, [currentCharIndex, text, startTime, wrongCharCount]);  // Include all dependencies that affect the calculations
+    
+    
+    
 
     function checkInput() {
         console.log("checkInput: text = "+text);
+        console.log("checkInput: userInputCorrectText = "+ userInputCorrectText);
+        console.log("checkInput: currentWordIndex = "+ currentWordIndex);
+
         var userInputText = document.getElementById("input-box").value;
         var userInputLastChar = userInputText[userInputText.length - 1];
 
-        console.log("executed");
         
         //updates text color
+        var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
         updateText();
-
         
 
         //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
         if (userInputText.substring(0, userInputText.length - 1) == words[currentWordIndex] && userInputLastChar == ' ') {
-            currentWordIndex++;
-            userInputCorrectText += userInputText;  //saves correct text
+            // currentWordIndex++;
+            setCurrentWordIndex(currentWordIndex+1)
+            // userInputCorrectText += userInputText;  //saves correct text
+            setUserInputCorrectText(userInputCorrectText + userInputText);
             document.getElementById("input-box").value = "";
         }
 
         if (userInputLastChar == text[currentCharIndex]) {
-            currentCharIndex++;
+            // currentCharIndex++;
+            setCurrentCharIndex(currentCharIndex+1);
         }else{
             wrongCharCount++;
         }
 
         //update player progress bar
-        updatePlayerProgress(playerProgressList[0], Math.ceil(currentCharIndex/text.length*100));
+        // updatePlayerProgress(playerProgressList[0], Math.ceil(currentCharIndex/text.length*100));
+        updateHostPlayerProgress(Math.ceil(currentCharIndex/text.length*100));
        
         //submit input if last letter is typed
         if (currentCharIndex >= text.length) {
             updateStatusContainer();
             submitInput();
+            console.log("checkInput: split one 1 executed = "+text);
         }
         
     }
@@ -230,9 +296,12 @@ function Multiplayer({userSession}) {
         correct text | incorrect text | untyped text
     */
     //if you don't get what is going on here, open a type racer game and type some wrong text
+
     function updateText() {
         var str = text;
         var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
+        console.log("updateText: userInputCorrectText" + userInputCorrectText);
+        console.log("updateText: userInputFullText = "+userInputFullText);
 
         var greenText = "";          //correct text
         var redText = "";           //incorrect text
@@ -274,6 +343,7 @@ function Multiplayer({userSession}) {
 
         document.getElementById("text-display").innerHTML = updatedText;
         
+        // return updateText;
     }
 
     async function fetchRandomWordList() {
@@ -293,34 +363,67 @@ function Multiplayer({userSession}) {
     }
 
     function resetVariables(){
-        currentWordIndex = 0;   //initializes value for play again
-        currentCharIndex = 0;
-        userInputCorrectText = "";
+        // currentWordIndex = 0;   //initializes value for play again
+        setCurrentWordIndex(0);
+        // currentCharIndex = 0;
+        setCurrentCharIndex(0);
+        // userInputCorrectText = "";
+        setUserInputCorrectText("");
         document.getElementById("input-box").value = "";
-        document.getElementById("timer-display").innerHTML = "";
+        // document.getElementById("timer-display").innerHTML = "";
         document.getElementById("result-display").innerHTML = "";
     }
 
 
-
+/*
     function startTimer(){
-        startTime = new Date().getTime();
+        //startTime = new Date().getTime();
+        setStartTime(new Date().getTime());
         intervalRef.current = setInterval(updateTimer, 10);
+    }
+*/
+
+    // rewrite timer
+    function startTimer(){
+        const start = new Date().getTime();
+        setStartTime(start);  // Set the start time when timer starts
+        intervalRef.current = setInterval(updateTimer, 10, start);  // Pass start time to ensure consistency
     }
 
     function stopTimer(){
         clearInterval(intervalRef.current);
     }
 
+    const[elapsedTime, setElapsedTime] = React.useState(0);
+
+    /*
     function updateTimer(){
         const currentTime = new Date().getTime();
-        const elapsedTime = (currentTime - startTime) / 1000;
+        const elapsedTimeValue = (currentTime - startTime) / 1000;
+        
+        console.log("updateTimer: currentTime = "+currentTime);
+        console.log("updateTimer: elapsedTime = "+elapsedTimeValue);
+        setElapsedTime((currentTime - startTime) / 1000);
+
         // console.log("updateTimer: elapsedTime: " + elapsedTime);
         document.getElementById("timer-display").innerHTML = `${elapsedTime.toFixed(2)} s`;
-        updateStatusContainer();    //should placed somewhere else but put here for convenience
+        // updateStatusContainer();    //should placed somewhere else but put here for convenience
         console.log("update timer: executed");
     }
+    */
 
+    function updateTimer(start){
+        const currentTime = new Date().getTime();
+        const elapsedTimeValue = (currentTime - start) / 1000;
+        
+        //console.log("updateTimer: currentTime = " + currentTime);
+        //console.log("updateTimer: elapsedTime = " + elapsedTimeValue);
+        setElapsedTime(elapsedTimeValue);
+    
+        // Logging here is fine but avoid direct DOM manipulation
+        //console.log("update timer: executed");
+    }
+    
 
     function addPlayerProgress(id){
         // const newProgressID = "player" + playerProgressList.length;
@@ -380,14 +483,16 @@ function Multiplayer({userSession}) {
     }
 
     function fillText(){
-        userInputCorrectText = text.substring(0, text.length-1);
-        currentCharIndex = text.length-1;
+        // userInputCorrectText = text.substring(0, text.length-1);
+        setUserInputCorrectText(text.substring(0, text.length-1));
+        // currentCharIndex = text.length-1;
+        setCurrentCharIndex(text.length-1);
         updateText();
         //console.log("text: " + text);
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
-    //magic code added by gao from 3308
+    // magic code added by gao from 3308
     if (socket == null) {
         return <div>Is Loading...</div>;
     }
@@ -426,7 +531,7 @@ function Multiplayer({userSession}) {
             </div>
 
             <div class="window-container" id="timer-window">
-                <div id="timer-display"></div>
+                <div id="timer-display">Time {elapsedTime.toFixed(2)}s</div>
             </div>
 
             <div class="window-container" id="text-window">
@@ -435,9 +540,9 @@ function Multiplayer({userSession}) {
                 </div>
             
                 <div class="stats-container">
-                    <div class="progress-display">Typed: 0</div>
-                    <div class="wpm-display">WPM: 0</div>
-                    <div class="accuracy-display">Accuracy: 100%</div>
+                    <div class="progress-display">Typed: {currentCharIndex}/{text.length}</div>
+                    <div class="wpm-display">WPM: {wpmValue}</div>
+                    {/* <div class="accuracy-display">Accuracy: 100%</div> */}
                 </div>
             
                 <div class="text-display-container">
