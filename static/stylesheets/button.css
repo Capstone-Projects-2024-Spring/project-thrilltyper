@@ -1,0 +1,82 @@
+.start-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #48bb78; /* bg-green-500 */
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s; /* transition-colors */
+  outline: none;
+}
+
+.start-button:hover {
+  background-color: #38a169; /* hover:bg-green-600 */
+}
+
+.start-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #f0fff4, 0 0 0 4px #48bb78; /* focus:ring-2 focus:ring-green-500 focus:ring-offset-2 */
+}
+
+.start-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5; /* disabled:cursor-not-allowed disabled:opacity-50 */
+}
+.custom-mode-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; /* Equivalent to whitespace-nowrap in Tailwind */
+  font-size: 0.875rem; /* text-sm */
+  background-color: #4299e1; /* bg-blue-500 */
+  color: white;
+  font-weight: 500; /* font-medium */
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  transition: background-color 0.2s; /* transition-colors */
+  outline: none;
+}
+
+.custom-mode-button:hover {
+  background-color: #3182ce; /* hover:bg-blue-600 */
+}
+
+.custom-mode-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px transparent, 0 0 0 4px #4299e1; /* focus-visible:ring-2 focus-visible:ring-blue-500 */
+}
+
+.custom-mode-button:disabled {
+  pointer-events: none;
+  opacity: 0.5; /* disabled:pointer-events-none disabled:opacity-50 */
+}
+.reset-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f56565; /* bg-red-500 */
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow */
+  transition: background-color 0.2s; /* transition-colors */
+  outline: none;
+}
+
+.reset-button:hover {
+  background-color: #c53030; /* hover:bg-red-600 */
+}
+
+.reset-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px #c53030; /* focus-visible:ring-1 focus-visible:ring-red-700 */
+}
+
+.reset-button:disabled {
+  pointer-events: none;
+  opacity: 0.5; /* disabled:pointer-events-none disabled:opacity-50 */
+}
+
