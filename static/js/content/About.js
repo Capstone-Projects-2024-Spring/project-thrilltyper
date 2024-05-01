@@ -53,6 +53,7 @@ function About() {
               <p><strong>Overall</strong> leaderboard is now available for both guests and authenticated users, showing the top 50 ranked fastest typers recorded on the website.</p>
               <p><strong>Multiplayer</strong> chat rooms are now available for guest and authenticated users to chat.</p>
               <p><strong>Import text</strong> mode under single player is now available for users to enter self-determined text content for practice mode.</p>
+              <p><strong>Cosmetics Background</strong> Pre-configured cosmetics are now added to the single player game mode.</p>
             </div>
           </div>
         </section>
@@ -72,7 +73,7 @@ function About() {
             </div>
             <div className="contributor">
               <img src="../static/pics/contributors/unicorn.gif" alt="Profile Photo" />
-              <p>Bochi</p>
+              <p>TU-Wenjie-Gao</p>
             </div>
             <div className="contributor">
               <img src="../static/pics/contributors/disappointed.gif" alt="Profile Photo" />

@@ -324,28 +324,34 @@ function RobotOpponent() {
     }
 
 
-
+   
     function changeBackground(season) {
         const body = document.body;
         switch(season) {
             case 'spring':
                 body.style.backgroundImage = "url('/static/pics/spring.jpg')";
                 break;
-
+    
             case 'winter':
                 body.style.backgroundImage = "url('/static/pics/winter.jpg')";
                 break;
+    
             case 'summer':
                 body.style.backgroundImage = "url('/static/pics/summer.jpg')";
                 break;
+    
             case 'autumn':
                 body.style.backgroundImage = "url('/static/pics/autumn.jpg')";
                 break;
+    
+            case 'original':
+                body.style.backgroundImage = "none";
+                break;
+    
             default:
                 body.style.backgroundImage = "none";
         }
     }
-
 
     React.useEffect(() => {
         const inputBox = document.getElementById("input-box");
@@ -392,6 +398,8 @@ function RobotOpponent() {
                     <button onClick={() => changeBackground('summer')}>Summer</button>
                     <button onClick={() => changeBackground('autumn')}>Autumn</button>
                     <button onClick={() => changeBackground('winter')}>Winter</button>
+                    <button onClick={() => changeBackground('original')}>Original</button>
+
                 </div>
             </div>
         </div>

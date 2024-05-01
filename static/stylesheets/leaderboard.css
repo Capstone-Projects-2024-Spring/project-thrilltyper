@@ -13,6 +13,11 @@
   background-position: center; /* Center the background */
 }
 
+#leaderboard table tbody img {
+  display: inline-block;
+  width: 20%;
+}
+
 #leaderboard th {
   padding: 12px 20px; /* Adjust padding to reduce space around the text and icon */
   text-align: center;
