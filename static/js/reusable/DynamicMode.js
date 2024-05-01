@@ -158,7 +158,8 @@ function DynamicMode() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        text = await fetchRandomWordList("",35);
+        text = await fetchTxt(0);
+        currBlurb = text;
         words = text.split(" ");
 
         displayText();
@@ -214,10 +215,14 @@ function DynamicMode() {
             }
         }
         totalCharsTyped++;
-
-        //submit input if last letter is typed
+        if(currBlurbIndex==charsPerLine){
+            newBlurb= await fetchTxt(55);
+        }
+        //Add more input once last letter of current blurb is typed
         if (currentCharIndex >= text.length) {
-            submitInput();
+            text+=newBlurb;
+            currBlurb=newBlurb;
+            currBlurbIndex=0
         }
     }
 
