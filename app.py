@@ -371,7 +371,7 @@ class App:
                 Database.update(usr, "UserData", _accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1), _num_races=num_races+1,
                                 _total_playing_time=user_data._total_playing_time+game_data["elapsedTime"], _top_wpm=game_wpm if game_wpm > int(user_data._top_wpm) else int(user_data._top_wpm))
                 last_user_race = UserRace.query.filter_by(
-                    _username=usr).order_by(UserRace._date_played.desc()).first()
+                    _username=usr).order_by(UserRace._game_num.desc()).first()
                 if last_user_race:
                     Database.insert(UserRace, _game_num=int(last_user_race._game_num)+1, _username=usr, _email=str(user_data._email), _average_wpm=game_wpm,
                                     _selected_mode=game_data["mode"], _time_limit=game_data.get("timeLimit"), _date_played=parser.parse(game_data["date"]))
@@ -395,27 +395,27 @@ class App:
             return "Successful"
         return "Not successful"
     
-    @_app.route("/generate_text/",methods=["GET"])
-    def generate_text():
-        """
-        Sends back text for the requestor to use
-        :param difficulty
-        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        """
-        difficulty = request.args.get("difficulty")
-        wpm = request.args.get("wpm")
-        if wpm:
-            wpm = int(wpm)
-            if wpm>=0 and wpm<=45:
-                difficulty="easy"
-            elif wpm>=46 and wpm<=80:
-                difficulty="medium"
-            else:
-                difficulty="hard"
-            return sentence_generator.generate_sentences(difficulty)
-        if not difficulty:
-            difficulty=""
-        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
+    # @_app.route("/generate_text/",methods=["GET"])
+    # def generate_text():
+    #     """
+    #     Sends back text for the requestor to use
+    #     :param difficulty
+    #     :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
+    #     """
+    #     difficulty = request.args.get("difficulty")
+    #     wpm = request.args.get("wpm")
+    #     if wpm:
+    #         wpm = int(wpm)
+    #         if wpm>=0 and wpm<=45:
+    #             difficulty="easy"
+    #         elif wpm>=46 and wpm<=80:
+    #             difficulty="medium"
+    #         else:
+    #             difficulty="hard"
+    #         return sentence_generator.generate_sentences(difficulty)
+    #     if not difficulty:
+    #         difficulty=""
+    #     return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
 
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
     def getUserRaceData(username):
