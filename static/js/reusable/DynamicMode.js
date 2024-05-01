@@ -133,10 +133,7 @@ function DynamicMode() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        if(text=="Click start button to start!"){
-            text = await fetchRandomWordList("easy",35);
-        }
-
+        text = await fetchRandomWordList("easy",35);
         words = text.split(" ");
 
         displayText();
@@ -197,7 +194,7 @@ function DynamicMode() {
         stopTimerInterval();
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
-        const wordsPerMinute = Math.round((correctCharsTyped / 5 / elapsedTime) * 60);
+        const wordsPerMinute = Math.round((correctCharsTyped / 5.0) / (elapsedTime / 60.0));
         const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
@@ -276,6 +273,5 @@ return (
         </div>
     </div>
 );
-
-    
+ 
 }
