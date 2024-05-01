@@ -1,7 +1,9 @@
 import openai
 import string
-
+import os
+from dotenv import load_dotenv
 #OpenAI Key
+load_dotenv()
 openai.api_key = os.getenv('CHAT_API_KEY')
 
 if openai.api_key is None:
@@ -74,6 +76,3 @@ def generate_sentences(difficulty):
         attempts += 1
 
     return ' '.join(sentences) 
-
-if __name__ == "__main__":
-    main()
