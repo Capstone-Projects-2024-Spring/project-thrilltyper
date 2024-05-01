@@ -2,7 +2,7 @@ function DynamicMode() {
     const date = new Date();
     let text = "Click start button to start!";
     let words = text.split(" ");
-    const timeToType = 2000;
+    const timeToType = 90000;
 
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
@@ -206,7 +206,10 @@ function DynamicMode() {
         const elapsedTime = (endTime - startTime) / 1000;
         const wordsPerMinute = Math.round((correctLettersTyped / 5.0) / (elapsedTime / 60.0));
         console.log(correctCharsTyped);
-        const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
+        let accuracy = 0;
+        if (totalCharsTyped!=0){
+            accuracy =  (correctCharsTyped / totalCharsTyped) * 100 ;
+        }
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
