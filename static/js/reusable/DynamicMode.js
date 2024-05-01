@@ -3,7 +3,12 @@ function DynamicMode() {
     let text = "Click start button to start!";
     let words = text.split(" ");
     const timeToType = 90000;
-
+    const charsPerLine = 120;
+    let avgTxtLen;
+    getAvgTxtLen("","words").then(avgLen=>{avgTxtLen=avgLen});
+    let currBlurbIndex = 0;
+    let currBlurb;
+    let newBlurb;
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
     let currentWordIndex = 0;
@@ -16,6 +21,21 @@ function DynamicMode() {
 
     const intervalRef = React.useRef(null);
 
+
+    async function getAvgTxtLen(difficulty,form){
+        let avgTxtLen;
+        try {
+            const response = await fetch('/get_avg_txt_len/?difficulty='+difficulty+'&form='+form);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const avgTxtLenResponseStr = await response.text();
+            avgTxtLen = parseInt(avgTxtLenResponseStr);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+        return avgTxtLen;
+    }
 
     function startTimerInterval(){
         intervalRef.current = setInterval(updateTimer, 1000);
@@ -31,10 +51,10 @@ function DynamicMode() {
         };
     }, []);
 
-    async function fetchRandomWordList(difficulty,numWords) {
+    async function fetchTxt(wpm) {
         let newText = "";
         try {
-            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+numWords);
+            const response = await fetch('/generate_text/?wpm='+wpm+'&form=words&amount='+charsPerLine/avgTxtLen);
 
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -132,6 +152,7 @@ function DynamicMode() {
         currentCharIndex = 0;
         correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
         totalCharsTyped = 0;
+        currBlurbIndex = 0;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
         document.getElementById("result").innerHTML = "";
@@ -169,7 +190,7 @@ function DynamicMode() {
         document.getElementById("input-box").focus();
     }
 
-    function checkInput() {
+    async function checkInput() {
         var userInputText = document.getElementById("input-box").value;
         var userInputLastChar = userInputText[userInputText.length - 1];
 
@@ -186,6 +207,7 @@ function DynamicMode() {
 
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
             currentCharIndex++;
+            currBlurbIndex++;
             correctCharsTyped++;
             if(text[currentCharIndex]!=' '){
                 correctLettersTyped++;
