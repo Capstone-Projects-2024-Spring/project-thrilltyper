@@ -218,18 +218,6 @@ function DynamicMode() {
 
     }
 
-    async function fetchUserInput() {
-        let newText = "";
-        try {
-            newText = prompt("Please enter your words:", "");
-            if (newText == null || newText == "") {
-                console.log("User cancelled the prompt.");
-            }
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
-        text = newText;
-    }
 
     function fillText(){
         userInputCorrectText = text.substring(0, text.length-1);
