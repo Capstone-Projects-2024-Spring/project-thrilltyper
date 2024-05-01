@@ -2,7 +2,7 @@ function DynamicMode() {
     const date = new Date();
     let text = "Click start button to start!";
     let words = text.split(" ");
-    const timeToType = 90000;
+    const timeToType = 2000;
 
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
@@ -154,6 +154,9 @@ function DynamicMode() {
         const currentTime = new Date().getTime();
         const timeLeft = (timeToType-(currentTime - startTime)) / 1000;
         document.getElementById("result").innerHTML = `Timer: ${timeLeft.toFixed(0)} seconds`;
+        if(timeLeft<=0){
+            submitInput();
+        }
     }
 
     function displayText() {
