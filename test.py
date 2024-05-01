@@ -78,7 +78,7 @@ def test_google_login(client):
 def test_google_callback(monkeypatch, client):
     """
     Test: That returned redirect requests are handled successfully, the passed in information is passed successfully and ultimately a response that indicates redirection to the home page is returned
-    Input monkeypatch : facilitates Google Oauth through a mock token
+    Input monkeypatch : facilitates Google OAuth through mock token
     Result: True if the returned response indicates a redirection to the home page
     """
     mock_token = {
@@ -485,11 +485,11 @@ class Test_Text_Generator():
         Test: Ensure that a file can be read from successfully
         Result: True if a list is returned
         """
-        assert type(Text_Generator.get_txt_list("words.txt"))==list
-    
-    def test_get_avg_txt_len(self):
+        assert type(Text_Generator.get_txt_list("words.txt")) == list
+
+    def test_get_average_txt_len(self):
         """
-        Test: Ensure that the average length of words in a list is calculated correctly
+        Test: Ensure that the average length of txt in a list is calculated correctly
         Result: True if the average length is calculated correctly
         """
         assert Text_Generator.get_avg_txt_len(["apple","banana","pear"])==5

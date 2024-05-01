@@ -181,6 +181,7 @@ function ThrillTyperGame() {
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
             correctCharsTyped++;
             currentCharIndex++;
+            correctCharsTyped++;
         }
         totalCharsTyped++;
 

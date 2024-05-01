@@ -33,7 +33,7 @@ class App:
 
     # Explicitly load env
     load_dotenv()
-    _api_key = os.environ.get("API_KEY")
+    _api_key=os.environ.get("API_KEY")
 
     # Configuration of flask app
     appConf = {
@@ -125,9 +125,9 @@ class App:
         """
         Handles the returned redirect requests from google signin
         :postcondition: a new user will be registered with a message saying "Successfully registered" and the database will update with the new user
-        info, the user will be redirected to home page
+        info, the user will be redirected to the home page
         :postcondition: create the user session
-        :return : a str rendering that redirects the user to the home page
+        :return : a str html page that redirects the user to the menu page
         """
         try:
             # Obtain the access token from Google OAuth
@@ -213,7 +213,7 @@ class App:
     def signup():
         """
         A route path for signup page layout
-        :return: str html page for signup layout 
+        :return: str html page for signup layout
         """
         error = session.pop("error", None)
         return render_template("signup.html", error=error)
@@ -327,16 +327,19 @@ class App:
     def get_top_n_highest_wpm_leaderboard(n):
         try:
             top_scores = UserData.query \
-                .with_entities(UserData._username, UserData._history_highest_race_wpm, UserData._accuracy, UserInfo._profile_photo) \
+                .with_entities(UserData._username, UserData._top_wpm, UserData._accuracy, UserInfo._profile_photo) \
                 .join(UserInfo, UserData._username == UserInfo._username) \
-                .order_by(UserData._history_highest_race_wpm.desc()) \
+                .order_by(UserData._top_wpm.desc()) \
                 .limit(n) \
                 .all()
 
             leaderboard_info = [{
-                'username': scores._username,
-                'highest_wpm': scores._top_wpm
-            } for scores in top_scores]
+                'username': player._username,
+                'highest_wpm': player._top_wpm,
+                'accuracy': player._accuracy,
+                'profile_photo': player._profile_photo
+            } for player in top_scores]
+
             return jsonify(leaderboard_info)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
@@ -375,7 +378,8 @@ class App:
                         return "Not successful"
             return "Successful"
         return "Not successful"
-              
+
+        
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
     def getUserRaceData(username):
         try:
@@ -456,11 +460,11 @@ class Database:
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
                     "_top_wpm": 10+i,
-                    "_accuracy": 80 + (i*0.5),
+                    "_accuracy": 20 + (i*0.5),
                     "_wins": 10+i,
                     "_losses": 1+i,
                     "_freq_mistyped_words": f"word{i}|mistake{i}",
-                    "_total_playing_time": 3600*i
+                    "_total_playing_time": 3600*i,
                 }
 
                 user_letter_data = {
@@ -532,7 +536,7 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
-
+    
     @staticmethod
     def update(username: str, db_table_name: str, **kwargs):
         """
@@ -600,7 +604,7 @@ class Database:
         except Exception as e:
             App.db.session.rollback()
             print(f"Error in updating user '{username}' in table '{db_table_name}' : {e}")
-
+    
 
     @staticmethod
     def query(identifier: str, db_table_class: str): 
@@ -894,6 +898,7 @@ class UserRace(App.db.Model):
     """
     Representing the instance of a race initiated by user
     Relative in game data will be recorded
+    _game_num : id for the game played by the user (each user cannot have two games with the same id)
     _username : acts as the primary and foreign key of the table, rooted from UserInfo
     _email : nullable attribute of user's email address
     _average_wpm : the average of words per min in an instance of a race
