@@ -1,5 +1,6 @@
 import openai
 import string
+import os
 
 #OpenAI Key
 openai.api_key = os.getenv('CHAT_API_KEY')
