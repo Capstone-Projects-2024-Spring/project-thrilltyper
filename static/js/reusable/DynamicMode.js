@@ -60,7 +60,7 @@ function DynamicMode() {
                 throw new Error('Network response was not ok');
             }
 
-            newText = await response.text();
+            newText = await response.text() + " ";
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
@@ -215,11 +215,10 @@ function DynamicMode() {
             }
         }
         totalCharsTyped++;
-        if(currBlurbIndex>=currBlurb.length/2){
-            newBlurb= await fetchTxt(55);
-        }
         //Add more input once last letter of current blurb is typed
-        if (currentCharIndex >= text.length*0.75) {
+        if (currBlurbIndex >= currBlurb.length*0.75) {
+
+            newBlurb= await fetchTxt(55);
             text+=newBlurb;
         }
         if (currentCharIndex >= text.length){
