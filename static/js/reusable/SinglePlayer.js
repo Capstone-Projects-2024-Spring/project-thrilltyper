@@ -285,7 +285,7 @@ return (
         <div id="holder"></div>
         <div className="button-container">
             <button onClick={startTimer}>Start</button>
-            <button onClick={fetchUserInput}>Input Text</button>
+            <button onClick={fetchUserInput}>Input Custom Text (Optional)</button>
             <button onClick={stopTimer}>Reset</button>
             <button onClick={fillText}>Fill Text</button>
             
