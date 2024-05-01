@@ -549,7 +549,7 @@ class Database:
         except Exception as e:
             App.db.session.rollback()
             print(f"Error in updating user '{username}' in table '{db_table_name}' : {e}")
-
+    
 
     @staticmethod
     def query(identifier: str, db_table_class: str): 
