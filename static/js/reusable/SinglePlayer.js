@@ -4,6 +4,7 @@ function ThrillTyperGame() {
     let words = text.split(" ");
     let timeLimit;
     var inputGiven = false;
+    const highWPM = 120;
 
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
@@ -32,10 +33,10 @@ function ThrillTyperGame() {
         };
     }, []);
 
-    async function fetchRandomWordList() {
+    async function fetchRandomWordList(num) {
         let newText = "";
         try {
-            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount=30');
+            const response = await fetch('/generate_text/?difficulty=easy&form=words&amount='+highWPM*(num/60));
 
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -147,8 +148,9 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
+        timeLimit = getTimeLimit();
         if(!inputGiven){
-            text = await fetchRandomWordList();
+            text = await fetchRandomWordList(timeLimit/1000);
         }
 
         words = text.split(" ");
@@ -158,7 +160,6 @@ function ThrillTyperGame() {
 
         //clearInterval(timerInterval);
         //timerInterval = setInterval(updateTimer, 10);
-        timeLimit = getTimeLimit();
         stopTimerInterval();
         startTimerInterval();
     }
