@@ -223,8 +223,9 @@ class App:
     @_app.route("/register", methods=["POST"])
     def register():
         """
-        Created and logged a new user account
+        Creates and logs a new user account
         :precondition: form contained valid input
+        :postcondition: new user info will be inserted into the database on success
         """
         # Gets input
         username = request.form["username"]
@@ -234,9 +235,27 @@ class App:
         if Database.query(username, "UserInfo"):
             session["error"] = "Username already used "
             return redirect("/signup")
+        if Database.query(email,"UserInfo"):
+            session["error"] = "Email already used "
+            return redirect("/signup")
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
-        Database.insert(UserInfo, _username=username, _email=email, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
+        Database.insert(UserInfo, _username=username, _email=email, _password=password)
+        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_last_login_time=datetime.now(timezone.utc))
+        user_letter_data = {
+        "_username": username,
+        "_email": email,
+        **{f"_{letter}": 0 for letter in string.ascii_lowercase},
+        "_comma": 0,
+        "_period": 0,
+        "_exclamation": 0,
+        "_question": 0,
+        "_hyphen": 0,
+        "_semicolon": 0,
+        "_single_quote": 0,
+        "_double_quote": 0,
+        }
+        Database.insert(UserLetter,**user_letter_data)
         # Store session
         playerObj =  player(username, avatar)
     
