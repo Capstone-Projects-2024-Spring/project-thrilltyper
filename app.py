@@ -467,8 +467,6 @@ class Database:
                     "_losses": 1+i,
                     "_freq_mistyped_words": f"word{i}|mistake{i}",
                     "_total_playing_time": 3600*i,
-                    "_play_date": current_datetime
-
                 }
 
                 user_letter_data = {
@@ -630,7 +628,7 @@ class Database:
         """
         try:
             #a list of valid table names
-            valid_table_list = ["UserInfo","UserData","UserLetter"]
+            valid_table_list = ["UserInfo","UserData","UserLetter","UserRace"]
             #validates if the given string is in the list
             if db_table_class in valid_table_list:
                 #find the table class object by the given string
@@ -797,10 +795,9 @@ class UserData(App.db.Model):
     _losses : number of multiplayer matches lost
     _freq_mistyped_words : string of words/phrases frequently mistyped separated by the "|" character
     _total_playing_time : record the total number of time the user is playing the game
-    _play_date : record the date and time user log on and plays the game
     _user_in_game_picture : the in game picture representing an user
     _last_login_time : records the last login time of an user
-    _num_race_played : records the total number of races played by user
+    _num_races : records the total number of races played by user
     """
     #_user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
     _username = App.db.Column(App.db.String(30),App.db.ForeignKey("user_info._username"), primary_key=True) #foreign key referencing UserInfo table
@@ -812,13 +809,12 @@ class UserData(App.db.Model):
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
-    _play_date = App.db.Column(App.db.DateTime) #this column could be removed
 
     #newly added
     _top_wpm = App.db.Column(App.db.SmallInteger, default=0)
     _user_in_game_picture = App.db.Column(App.db.String(100)) #should be different from login profile photo
     _last_login_time = App.db.Column(App.db.DateTime) #need configuration later to log user's lastest login time
-    _num_race_played = App.db.Column(App.db.Integer, default=0)
+    _num_races = App.db.Column(App.db.Integer, default=0)
 
     #validation of whether the username exists in table "user_info" when adding to user_data table
     #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
@@ -905,16 +901,18 @@ class UserRace(App.db.Model):
     """
     Representing the instance of a race initiated by user
     Relative in game data will be recorded
+    _game_num : id for the game played by the user (each user cannot have two games with the same id)
     _username : acts as the primary and foreign key of the table, rooted from UserInfo
-    _email : unique and nullable attribute of user's email address
+    _email : nullable attribute of user's email address
     _average_wpm : the average of words per min in an instance of a race
     _selected_mode : the selected mode of a typing race/practice
     _time_limit : optional recording of time limit of a certain game mode
     _date_played : the date/time the race/practice is initiated
     """
+    _game_num = App.db.Column(App.db.Integer, default=0, primary_key=True)
     _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True)
     #email is in every table for query purposes
-    _email = App.db.Column(App.db.String(60), unique=True)
+    _email = App.db.Column(App.db.String(60))
     #different from highest wpm, this is a record of per game/race
     _average_wpm = App.db.Column(App.db.Integer, default=0) #a method might be needed to calculate the averagee wpm for each user
     #representing the mode selected by user at that game/race instance
