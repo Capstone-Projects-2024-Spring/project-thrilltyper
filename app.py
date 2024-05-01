@@ -1,4 +1,4 @@
-#permanent import
+# permanent import
 import os
 import sentence_generator
 import uuid
@@ -10,15 +10,16 @@ from flask_socketio import SocketIO, disconnect, emit
 from authlib.integrations.flask_client import OAuth
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
-from sqlalchemy.orm import validates #for validation of data in tables
-from sqlalchemy import Column, or_ #used for reference to tables' column name
+from sqlalchemy.orm import validates  # for validation of data in tables
+from sqlalchemy import Column, or_  # used for reference to tables' column name
 from player import player
 import string
 from text_generator import Text_Generator
 
-#temporary imports, which will be deleted later
+# temporary imports, which will be deleted later
 import random
-#STR_MAX_SIZE = 65535
+# STR_MAX_SIZE = 65535
+
 
 class App:
     """
@@ -35,15 +36,15 @@ class App:
 
     # Explicitly load env
     load_dotenv()
-    _api_key=os.environ.get("API_KEY")
+    _api_key = os.environ.get("API_KEY")
 
     # Configuration of flask app
     appConf = {
-    "OAUTH2_CLIENT_ID": os.environ.get("CLIENT_ID"),
-    "OAUTH2_CLIENT_SECRET": os.environ.get("CLIENT_SECRET"),
-    "OAUTH2_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
-    "FLASK_SECRET": os.environ.get("FLASK_SECRET"),
-    "FLASK_PORT": 5000
+        "OAUTH2_CLIENT_ID": os.environ.get("CLIENT_ID"),
+        "OAUTH2_CLIENT_SECRET": os.environ.get("CLIENT_SECRET"),
+        "OAUTH2_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
+        "FLASK_SECRET": os.environ.get("FLASK_SECRET"),
+        "FLASK_PORT": 5000
     }
     _app.secret_key = appConf.get("FLASK_SECRET")
 
@@ -60,10 +61,9 @@ class App:
         server_metadata_url=f"{appConf.get('OAUTH2_META_URL')}",
     )
 
-    socketio = SocketIO(_app) 
+    socketio = SocketIO(_app)
 
-
-    def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
+    def run(self, host: str | None = None, port: int | None = None, debug: bool | None = None, load_dotenv: bool = True, **options):
         """
         Calls Flask's run function with the specified parameters to run the backend for the web application.\n
         Preconditions: host is a valid IP address and port is a valid and open port\n
@@ -83,15 +83,13 @@ class App:
             server. See :func:`werkzeug.serving.run_simple` for more
             information.
         """
-        self._app.run(host,port,debug,load_dotenv)
-
+        self._app.run(host, port, debug, load_dotenv)
 
     @socketio.on('event')
     def handle_chat_global(json):
         global socketio
         print('received my event: ' + str(json))
         App.socketio.emit('global chat', json)
-
 
     @_app.route("/login", methods=["GET", "POST"])
     def login():
@@ -103,11 +101,10 @@ class App:
         if request.method == "POST":
             # Authenticate the user Close Session when done
             pass
-        
 
         return render_template("login.html", error=error)
-    
-    @_app.route("/",methods=["POST","GET"])
+
+    @_app.route("/", methods=["POST", "GET"])
     def home():
         """
         Handles the requests made to the home page.
@@ -115,7 +112,7 @@ class App:
         """
         return render_template("base.html", userSession=session.get("user"))
 
-    @_app.route("/google-signin", methods=["GET","POST"])
+    @_app.route("/google-signin", methods=["GET", "POST"])
     def google_login():
         """
         Handles the requests made to the website where users can log in to google
@@ -136,7 +133,7 @@ class App:
         try:
             # Obtain the access token from Google OAuth
             token = App.oauth.ttyper.authorize_access_token()
-            
+
             # Check if the "id_token" is present in the token
             if "id_token" in token:
                 # If the "id_token" is present, indicating a successful login
@@ -151,34 +148,36 @@ class App:
 
                 # Insert user info into the database if doesn"t exists yet
                 if Database.query(uname, "UserInfo") is None:
+
                     Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=uname, _profile_photo=picture)
                     Database.insert(UserData, _username=uname,_email=uname,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=picture,_last_login_time=datetime.now(timezone.utc))
                     user_letter_data = {
-                    "_username": uname,
-                    "_email": uname,
-                    **{f"_{letter}": 0 for letter in string.ascii_lowercase},
-                    "_comma": 0,
-                    "_period": 0,
-                    "_exclamation": 0,
-                    "_question": 0,
-                    "_hyphen": 0,
-                    "_semicolon": 0,
-                    "_single_quote": 0,
-                    "_double_quote": 0,
+                        "_username": uname,
+                        "_email": uname,
+                        **{f"_{letter}": 0 for letter in string.ascii_lowercase},
+                        "_comma": 0,
+                        "_period": 0,
+                        "_exclamation": 0,
+                        "_question": 0,
+                        "_hyphen": 0,
+                        "_semicolon": 0,
+                        "_single_quote": 0,
+                        "_double_quote": 0,
                     }
-                    Database.insert(UserLetter,**user_letter_data)
+                    Database.insert(UserLetter, **user_letter_data)
                 else:
-                    Database.update(uname,"UserData",_last_login_time=datetime.now(timezone.utc))
+                    Database.update(uname, "UserData",
+                                    _last_login_time=datetime.now(timezone.utc))
             else:
                 # Handle the case where access is denied (user cancelled the login)
                 return "Access denied: Google login was canceled or failed."
-            
+
             # Redirect to the desired page after successful authentication
             return redirect("/")
         except Exception as e:
             # For if user cancels the login
             return redirect("/login")
-        
+
     @_app.route("/authentication", methods=["POST"])
     def authenticate():
         """
@@ -195,9 +194,10 @@ class App:
             # Exist if returned value of query is not None
             user = Database.query(username, "UserInfo")
 
-            # Performs validation 
+            # Performs validation
             if user is not None and user._password == password:
-                Database.update(user._username,"UserData",_last_login_time=datetime.now(timezone.utc))
+                Database.update(user._username, "UserData",
+                                _last_login_time=datetime.now(timezone.utc))
                 # Gets avatar
                 playerObj = player(username, user._profile_photo)
                 # Stores the Player object in the session
@@ -205,14 +205,14 @@ class App:
                 # Redirects to a desired page when authentication success
                 return redirect("/")
             else:
-               # Raises an error for wrong match
-               raise ValueError("Invalid username or password")
+                # Raises an error for wrong match
+                raise ValueError("Invalid username or password")
         except Exception as e:
             # Handles errors
             error = f"{e}"
             session["error"] = error
             return redirect("login")
-    
+
     @_app.route("/signup", methods=["GET", "POST"])
     def signup():
         """
@@ -237,37 +237,38 @@ class App:
         if Database.query(username, "UserInfo"):
             session["error"] = "Username already used "
             return redirect("/signup")
-        if Database.query(email,"UserInfo"):
+        if Database.query(email, "UserInfo"):
             session["error"] = "Email already used "
             return redirect("/signup")
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
-        Database.insert(UserInfo, _username=username, _email=email, _password=password,  _profile_photo=avatar)
-        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_last_login_time=datetime.now(timezone.utc))
+        Database.insert(UserInfo, _username=username, _email=email,
+                        _password=password,  _profile_photo=avatar)
+        Database.insert(UserData, _username=username, _email=email, _accuracy=0, _wins=0, _losses=0, _freq_mistyped_words=0,
+                        _total_playing_time=0, _top_wpm=0, _num_races=0, _last_login_time=datetime.now(timezone.utc))
         user_letter_data = {
-        "_username": username,
-        "_email": email,
-        **{f"_{letter}": 0 for letter in string.ascii_lowercase},
-        "_comma": 0,
-        "_period": 0,
-        "_exclamation": 0,
-        "_question": 0,
-        "_hyphen": 0,
-        "_semicolon": 0,
-        "_single_quote": 0,
-        "_double_quote": 0,
+            "_username": username,
+            "_email": email,
+            **{f"_{letter}": 0 for letter in string.ascii_lowercase},
+            "_comma": 0,
+            "_period": 0,
+            "_exclamation": 0,
+            "_question": 0,
+            "_hyphen": 0,
+            "_semicolon": 0,
+            "_single_quote": 0,
+            "_double_quote": 0,
         }
-        Database.insert(UserLetter,**user_letter_data)
+        Database.insert(UserLetter, **user_letter_data)
         # Store session
-        playerObj =  player(username, avatar)
-    
+        playerObj = player(username, avatar)
+
         # Stores the Player object in the session
         session["user"] = playerObj.__json__()
 
         # Redirects to the result page
         return redirect("/")
-    
-       
+
     @_app.route("/logout", methods=["GET", "POST"])
     def logout():
         """
@@ -277,21 +278,28 @@ class App:
         # Pop out the user session
         session.pop("user", None)
         return redirect("/")
-    
-    
-    @_app.route("/generate_text/",methods=["GET"])
+
+    @_app.route("/custom-page")
+    def custom_page():
+        return render_template("custompage.html")
+
+    @_app.route("/generate_text/", methods=["GET"])
     def generate_text():
         """
         Sends back text for the requestor to use
         :param difficulty
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
+        :param amount : Specifies the amount of text to generate.
+        :param genre : Specifies the genre of the text. Optional.
         """
-        difficulty = request.args.get("difficulty")
-        if not difficulty:
-            difficulty=""
-        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
+        difficulty = request.args.get("difficulty", "")
+        form = request.args.get("form")
+        amount = request.args.get("amount")
+        # Retrieve genre from request, default to None if not provided
+        genre = request.args.get("genre", None)
+        return Text_Generator.generate_text(difficulty, form, amount, genre)
 
-    @_app.route("/get_avg_txt_len/",methods=["GET"])
+    @_app.route("/get_avg_txt_len/", methods=["GET"])
     def get_avg_txt_len():
         """
         Handles requests to get the average length of a word/sentence from a list
@@ -300,14 +308,14 @@ class App:
         """
         difficulty = request.args.get("difficulty")
         if not difficulty:
-            difficulty=""
+            difficulty = ""
         else:
-            difficulty+="_"
+            difficulty += "_"
         return str(Text_Generator.get_avg_txt_len(Text_Generator.get_txt_list(difficulty+request.args.get("form")+".txt")))
 
     def get_test_client(self):
         return self._app.test_client()
-    
+
     @_app.route('/user/<username>')
     def get_user_data(username):
         userData = Database.query(str(username), "UserData")
@@ -316,15 +324,14 @@ class App:
         else:
             return jsonify({
                 "username": userData._username,
-                "highestWPM" : userData._top_wpm,
+                "highestWPM": userData._top_wpm,
                 "wins": userData._wins,
                 "losses": userData._losses,
-                "accuracy" : userData._accuracy,
-                "frequentMisTypedWord" : userData._freq_mistyped_words,
-                "totalTime" : userData._total_playing_time,
-                "frequentMisTypedWord" : userData._freq_mistyped_words
+                "accuracy": userData._accuracy,
+                "frequentMisTypedWord": userData._freq_mistyped_words,
+                "totalTime": userData._total_playing_time,
+                "frequentMisTypedWord": userData._freq_mistyped_words
             })
-        
 
     @_app.route('/leaderboard/top_n_highest_wpm/<int:n>', methods=['GET'])
     def get_top_n_highest_wpm_leaderboard(n):
@@ -346,13 +353,13 @@ class App:
             return jsonify(leaderboard_info)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-    
-    @_app.route("/update_db",methods=["POST"])
+
+    @_app.route("/update_db", methods=["POST"])
     def update_db():
         """
         Endpoint called to update user stats post-game
         """
-        #TODO: need to secure data transfer and verify origin
+        # TODO: need to secure data transfer and verify origin
         if request.is_json:
             usr_session = session.get("user")
             if usr_session:
@@ -361,19 +368,25 @@ class App:
                 game_data = request.json
                 num_races = int(user_data._num_races)
                 game_wpm = game_data["wpm"]
-                Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1),_num_races=num_races+1,_total_playing_time=user_data._total_playing_time+game_data["elapsedTime"],_top_wpm=game_wpm if game_wpm>int(user_data._top_wpm) else int(user_data._top_wpm))
-                last_user_race = UserRace.query.filter_by(_username=usr).order_by(UserRace._date_played.desc()).first()
+                Database.update(usr, "UserData", _accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1), _num_races=num_races+1,
+                                _total_playing_time=user_data._total_playing_time+game_data["elapsedTime"], _top_wpm=game_wpm if game_wpm > int(user_data._top_wpm) else int(user_data._top_wpm))
+                last_user_race = UserRace.query.filter_by(
+                    _username=usr).order_by(UserRace._date_played.desc()).first()
                 if last_user_race:
-                    Database.insert(UserRace,_game_num=int(last_user_race._game_num)+1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=parser.parse(game_data["date"]))
+                    Database.insert(UserRace, _game_num=int(last_user_race._game_num)+1, _username=usr, _email=str(user_data._email), _average_wpm=game_wpm,
+                                    _selected_mode=game_data["mode"], _time_limit=game_data.get("timeLimit"), _date_played=parser.parse(game_data["date"]))
                 else:
-                    Database.insert(UserRace,_game_num=1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=parser.parse(game_data["date"])) #messed this up, so adding this line for testing
-                mistyped_chars = game_data.get("mistypedChars") #expect a dict for this {"_char":mistyped_count}
+                    Database.insert(UserRace, _game_num=1, _username=usr, _email=str(user_data._email), _average_wpm=game_wpm, _selected_mode=game_data["mode"], _time_limit=game_data.get(
+                        "timeLimit"), _date_played=parser.parse(game_data["date"]))  # messed this up, so adding this line for testing
+                # expect a dict for this {"_char":mistyped_count}
+                mistyped_chars = game_data.get("mistypedChars")
                 if mistyped_chars:
-                    user_letter = Database.query(usr,"UserLetter")
+                    user_letter = Database.query(usr, "UserLetter")
                     try:
                         for char, num in mistyped_chars.items():
-                            #frontend args for the returned json must match those of the db
-                            setattr(user_letter,f"{char}",getattr(user_letter,f"{char}")+num)
+                            # frontend args for the returned json must match those of the db
+                            setattr(user_letter, f"{char}", getattr(
+                                user_letter, f"{char}")+num)
                         App.db.session.commit()
                     except Exception as e:
                         print(e)
@@ -404,7 +417,6 @@ class App:
             difficulty=""
         return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
 
-        
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
     def getUserRaceData(username):
         try:
@@ -443,8 +455,8 @@ class Database:
         query(username: str)
             Queries a user record from the database.
     """
-    
-    def __init__(self,app:App, **models):
+
+    def __init__(self, app: App, **models):
         """
         Initializes a Database instance with the provided Flask application and model classes.
 
@@ -461,18 +473,19 @@ class Database:
         self._app = app
         self._models = models
 
-    #temporary auto populate and inserting method for anyone want to test the database
-    #which will be deleted later
+    # temporary auto populate and inserting method for anyone want to test the database
+    # which will be deleted later
     @staticmethod
     def populate_sample_date(num_rows):
         """
         Responsible for auto populating 
         """
         try:
-            current_datetime =datetime.now(timezone.utc)
+            current_datetime = datetime.now(timezone.utc)
             for i in range(1, num_rows + 1):
 
-                sample_google_id = "".join(random.choices(string.ascii_letters + string.digits, k=10)) #set length of id to ten
+                sample_google_id = "".join(random.choices(
+                    string.ascii_letters + string.digits, k=10))  # set length of id to ten
                 user_info_data = {
                     "_username": f"user{i}",
                     "_password": f"password{i}",
@@ -495,21 +508,21 @@ class Database:
                 user_letter_data = {
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
-                    **{f"_{letter}": random.randint(0,100) for letter in string.ascii_lowercase},
-                    "_comma": random.randint(0,100),
-                    "_period": random.randint(0,100),
-                    "_exclamation": random.randint(0,100),
-                    "_question": random.randint(0,100),
-                    "_hyphen": random.randint(0,100),
-                    "_semicolon": random.randint(0,100),
-                    "_single_quote": random.randint(0,100),
-                    "_double_quote": random.randint(0,100),
+                    **{f"_{letter}": random.randint(0, 100) for letter in string.ascii_lowercase},
+                    "_comma": random.randint(0, 100),
+                    "_period": random.randint(0, 100),
+                    "_exclamation": random.randint(0, 100),
+                    "_question": random.randint(0, 100),
+                    "_hyphen": random.randint(0, 100),
+                    "_semicolon": random.randint(0, 100),
+                    "_single_quote": random.randint(0, 100),
+                    "_double_quote": random.randint(0, 100),
                 }
 
                 user_race_data = {
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_average_wpm": random.randint(40,100),
+                    "_average_wpm": random.randint(40, 100),
                     "_selected_mode": random.choice(["Practice", "Robot Opponent", "MultiPlayer"]),
                     "_time_limit": random.choice([None, 30, 60, 90]),
                     "_date_played": current_datetime - timedelta(days=i)
@@ -619,31 +632,35 @@ class Database:
         :precondition: If provided, `wpm`, `accuracy`, `wins`, `losses`, and `freq_mistyped_words` must be of the correct data types and within acceptable ranges.
         :postcondition: If successful, a new user record is inserted into the database with password hashed. 
         """
-        
-        #check the provided key arguments based on valid column names 
-        #raise ValueError if invalid column names are found
-        valid_columns = db_table.__table__.columns.keys() #retrieve all columns" name in the table
-        #this is the required columns that must have a value entered (nullable=False)
-        required_columns = set(Column.name for Column in db_table.__table__.columns if not Column.nullable)
-        #invliad columns are the set of argument keys minus the set of valid columns and non-required columns
-        #this required column is need to find all non-required columns
-        #this is needed to prevent crash when a valid column is not present in the insert, and viewed as an invliad column
-        invalid_columns = set(kwargs.keys()) - set(valid_columns) - (set(valid_columns) - required_columns)
+
+        # check the provided key arguments based on valid column names
+        # raise ValueError if invalid column names are found
+        # retrieve all columns" name in the table
+        valid_columns = db_table.__table__.columns.keys()
+        # this is the required columns that must have a value entered (nullable=False)
+        required_columns = set(
+            Column.name for Column in db_table.__table__.columns if not Column.nullable)
+        # invliad columns are the set of argument keys minus the set of valid columns and non-required columns
+        # this required column is need to find all non-required columns
+        # this is needed to prevent crash when a valid column is not present in the insert, and viewed as an invliad column
+        invalid_columns = set(kwargs.keys()) - set(valid_columns) - \
+            (set(valid_columns) - required_columns)
         if invalid_columns:
-            raise ValueError(f"Invalid column(s) provided: {','.join(invalid_columns)}") #list of the invalid columns
-        
-        #instance of the model with specified column names in parameter
+            # list of the invalid columns
+            raise ValueError(
+                f"Invalid column(s) provided: {','.join(invalid_columns)}")
+
+        # instance of the model with specified column names in parameter
         new_row = db_table(**kwargs)
 
         try:
-            App.db.session.add(new_row) #add the new row to database table
-            App.db.session.commit() #commit the transaction/changes
+            App.db.session.add(new_row)  # add the new row to database table
+            App.db.session.commit()  # commit the transaction/changes
             return new_row
         except Exception as e:
-            App.db.session.rollback() #rollback the change made
-            raise e 
+            App.db.session.rollback()  # rollback the change made
+            raise e
 
-    
     @staticmethod
     def update(username: str, db_table_name: str, **kwargs):
         """
@@ -662,60 +679,69 @@ class Database:
         :postcondition: If successful, the user record is updated with the provided values.
         """
         try:
-            #first validate the table name given in string
-            valid_table_list = ["UserInfo","UserData","UserLetter", "UserRace"]
+            # first validate the table name given in string
+            valid_table_list = ["UserInfo",
+                                "UserData", "UserLetter", "UserRace"]
             if db_table_name not in valid_table_list:
                 raise ValueError(f"Invalid table name: {db_table_name}")
-            
-            #get the table class obj by given table name in string
+
+            # get the table class obj by given table name in string
             table_obj = globals().get(db_table_name)
             if table_obj is None:
-                raise ValueError(f"Table Class Object not found for table name: {db_table_name}")
-            
-            #query for user information
-            user_information = table_obj.query.filter_by(_username=username).first()
-            if user_information is None:
-                raise ValueError(f"User '{username}' does not exist in the Database")
-            
+                raise ValueError(
+                    f"Table Class Object not found for table name: {db_table_name}")
 
-            #after user information is query, perform a check of if user is trying to update their _username
-            #check if the updating username is unique in the database
-            new_username = kwargs.get("_username") #get the value based on the key
-            if new_username and new_username != username: #unique
-                existing_user = table_obj.query.filter_by(_username=new_username).first()
+            # query for user information
+            user_information = table_obj.query.filter_by(
+                _username=username).first()
+            if user_information is None:
+                raise ValueError(
+                    f"User '{username}' does not exist in the Database")
+
+            # after user information is query, perform a check of if user is trying to update their _username
+            # check if the updating username is unique in the database
+            # get the value based on the key
+            new_username = kwargs.get("_username")
+            if new_username and new_username != username:  # unique
+                existing_user = table_obj.query.filter_by(
+                    _username=new_username).first()
                 if existing_user:
-                    raise ValueError(f"Username '{new_username}' already exists in the Database")
-            #does the same check for email address
+                    raise ValueError(
+                        f"Username '{new_username}' already exists in the Database")
+            # does the same check for email address
             new_email = kwargs.get("_email")
             if new_email and new_email != user_information._email:
-                existing_email = table_obj.query.filter_by(_email=new_email).first()
+                existing_email = table_obj.query.filter_by(
+                    _email=new_email).first()
                 if existing_email:
-                    raise ValueError(f"Email '{new_email}' already exists in the Database")
-            
-            #validates and update the provided fields
-            #key is the column name, value is the updating data
+                    raise ValueError(
+                        f"Email '{new_email}' already exists in the Database")
+
+            # validates and update the provided fields
+            # key is the column name, value is the updating data
             for key, value in kwargs.items():
-                #ensuring the fields/columns exist in the according table
-                if hasattr(table_obj, key): #table_obj is referring to the table class object
+                # ensuring the fields/columns exist in the according table
+                if hasattr(table_obj, key):  # table_obj is referring to the table class object
                     setattr(user_information, key, value)
                 else:
-                    raise AttributeError(f"Attribute '{key}' does not exist in the '{db_table_name}' table")
-                
+                    raise AttributeError(
+                        f"Attribute '{key}' does not exist in the '{db_table_name}' table")
 
-            #if new_username and new_username != username:
-                #Database.update_username(username, new_username)
+            # if new_username and new_username != username:
+                # Database.update_username(username, new_username)
 
-            #commit the updated values and fields
+            # commit the updated values and fields
             App.db.session.commit()
-            print(f"User '{username}' record updated successfully in table '{db_table_name}'")
+            print(
+                f"User '{username}' record updated successfully in table '{db_table_name}'")
         except Exception as e:
             App.db.session.rollback()
-            print(f"Error in updating user '{username}' in table '{db_table_name}' : {e}")
-    
+            print(
+                f"Error in updating user '{username}' in table '{db_table_name}' : {e}")
 
     @staticmethod
-    def query(identifier: str, db_table_class: str): 
-        #changes made: being able to query by  either _username or _email using or_ operator provided by sqlalchemy
+    def query(identifier: str, db_table_class: str):
+        # changes made: being able to query by  either _username or _email using or_ operator provided by sqlalchemy
         """
         Query a user record from the database using either username or email address.
 
@@ -732,28 +758,31 @@ class Database:
         :postcondition: If a user with the provided username/email exists in the database, returns the corresponding User Data object; otherwise, returns None.
         """
         try:
-            #a list of valid table names
-            valid_table_list = ["UserInfo","UserData","UserLetter","UserRace"]
-            #validates if the given string is in the list
+            # a list of valid table names
+            valid_table_list = ["UserInfo",
+                                "UserData", "UserLetter", "UserRace"]
+            # validates if the given string is in the list
             if db_table_class in valid_table_list:
-                #find the table class object by the given string
+                # find the table class object by the given string
                 table_name_obj = globals().get(db_table_class)
-                #retriving data by sqlalchemy"s query and filter
-                retrieved_data = table_name_obj.query.filter(or_(table_name_obj._username == identifier, table_name_obj._email == identifier)).first()
-                #filter_by takes kwargs, not positional arguments
-                #if user does not exist, return nothing
+                # retriving data by sqlalchemy"s query and filter
+                retrieved_data = table_name_obj.query.filter(or_(
+                    table_name_obj._username == identifier, table_name_obj._email == identifier)).first()
+                # filter_by takes kwargs, not positional arguments
+                # if user does not exist, return nothing
                 if retrieved_data is None:
                     print(f"Invalid username/email entered: {identifier}")
                     return None
-                #user information object returned
+                # user information object returned
                 return retrieved_data
             else:
-                raise ValueError(f"Invalid table name: {db_table_class}") #handles invalid table name string
+                # handles invalid table name string
+                raise ValueError(f"Invalid table name: {db_table_class}")
         except Exception as e:
-            
-            print(f"Error in querying user information from {db_table_class}: {e}")
-            return None
 
+            print(
+                f"Error in querying user information from {db_table_class}: {e}")
+            return None
 
     @staticmethod
     def delete(username: str):
@@ -769,26 +798,26 @@ class Database:
         :precondition: `username` must be a valid user identifier.
         :postcondition: If a user with the provided username exists in the database, the corresponding user record is deleted.
         """
-        
+
         try:
 
-            #the first index/result filtered by the username
+            # the first index/result filtered by the username
             delete_user = UserInfo.query.filter_by(_username=username).first()
-            #print("the user is: ", delete_user)
+            # print("the user is: ", delete_user)
             if delete_user:
-                #if username exists delete it and return True
+                # if username exists delete it and return True
                 App.db.session.delete(delete_user)
                 App.db.session.commit()
                 return True
-            #else username does not exist
+            # else username does not exist
             else:
                 return False
         except Exception as e:
-            #roll back transaction if error occurred
+            # roll back transaction if error occurred
             App.db.session.rollback()
             return False
-        
-    @staticmethod    
+
+    @staticmethod
     def get_top_n_letters(username: str, n: int):
         """
         Return a (sorted in DESC)list of letters according to the Top-N largest corresponding values(mistyped letter times) in UserLetter Table
@@ -801,32 +830,34 @@ class Database:
         :return: List containing the Top-N letters in DESC order
         :rtype: list
         """
-        try: 
-            #validate if user exist in UserInfo
+        try:
+            # validate if user exist in UserInfo
             user_info = UserInfo.query.filter_by(_username=username).first()
             if not user_info:
                 print(f"User '{username}' does not exist")
-                return []    
-            #validate n
-            max_n = 26 + 8 #eight punctuations added
+                return []
+            # validate n
+            max_n = 26 + 8  # eight punctuations added
             if n < 1 or n > max_n:
                 print("Invalid value for 'n', Only 26 Letters and 8 Punctuations")
                 return []
-            #query using username the user letter data
-            user_letter_data = UserLetter.query.filter_by(_username=username).first()
-            #return empty list if user letter data is None
+            # query using username the user letter data
+            user_letter_data = UserLetter.query.filter_by(
+                _username=username).first()
+            # return empty list if user letter data is None
             if not user_letter_data:
                 print(f"No Data Found For User '{username}'")
                 return []
-            #a dictionary with letters as keys and mistyped letter times as the number value
-            #loop through each letter in the alaphbets
+            # a dictionary with letters as keys and mistyped letter times as the number value
+            # loop through each letter in the alaphbets
             letter_number_dict = {}
             for letter in string.ascii_lowercase:
                 column_name = f"_{letter}"
-                letter_number_dict[letter] = getattr(user_letter_data, column_name)
+                letter_number_dict[letter] = getattr(
+                    user_letter_data, column_name)
 
-            #added punctuations
-            #list of added punctuations
+            # added punctuations
+            # list of added punctuations
             punctuation_marks = [",", ".", "!", "?", "-", ";", "'", '"']
             punct_names = {
                 ",": "_comma",
@@ -842,21 +873,26 @@ class Database:
             for mark in punctuation_marks:
                 get_punct = punct_names.get(mark)
                 if get_punct:
-                    letter_number_dict[mark] = getattr(user_letter_data, get_punct)
-            
-            #sort the dict by top-n values in desc order, returning a list
-            sorted_values = sorted(letter_number_dict, key=letter_number_dict.get, reverse=True)[:n] #n here is not inclusive
-            #since there is a _ as the first index, it needs to be removed, starting each string with [1:] 
-            #rm_underscore = [letter[1:] for letter in sorted_values]
+                    letter_number_dict[mark] = getattr(
+                        user_letter_data, get_punct)
+
+            # sort the dict by top-n values in desc order, returning a list
+            sorted_values = sorted(letter_number_dict, key=letter_number_dict.get, reverse=True)[
+                :n]  # n here is not inclusive
+            # since there is a _ as the first index, it needs to be removed, starting each string with [1:]
+            # rm_underscore = [letter[1:] for letter in sorted_values]
             return sorted_values
         except Exception as e:
-            print(f"Error while retrieving top {n} largest values for corresponding letters for user '{username}' : {e}")
+            print(
+                f"Error while retrieving top {n} largest values for corresponding letters for user '{username}' : {e}")
             return []
 
-#these two tables/classes are not limited to parent/child relationship
-#they"re bidirectional, you can retrieve the relative data of the other table by calling either table
-#UserData table will have the foreign key
-#responsible for storing user"s personal information
+# these two tables/classes are not limited to parent/child relationship
+# they"re bidirectional, you can retrieve the relative data of the other table by calling either table
+# UserData table will have the foreign key
+# responsible for storing user"s personal information
+
+
 class UserInfo(App.db.Model):
 
     """
@@ -868,25 +904,32 @@ class UserInfo(App.db.Model):
     _registered_date : record of the date and time in UTC when user registered 
     _google_id : identification for third party user(sign in via email)
     """
-    _username =App.db.Column(App.db.String(30), primary_key=True) #primary_key makes username not null and unique
-    _password =App.db.Column(App.db.String(30)) #password can be null for login with email
-    _email = App.db.Column(App.db.String(60), unique=True) #this will be kept nullable for now, if required later, this will be changed, along with the other tables
+    _username = App.db.Column(App.db.String(
+        30), primary_key=True)  # primary_key makes username not null and unique
+    # password can be null for login with email
+    _password = App.db.Column(App.db.String(30))
+    # this will be kept nullable for now, if required later, this will be changed, along with the other tables
+    _email = App.db.Column(App.db.String(60), unique=True)
     _profile_photo = App.db.Column(App.db.String(255))
-    #record the time the user account is created
-    _registered_date = App.db.Column(App.db.DateTime, default=App.db.func.current_timestamp()) #still in UTC timezone
-    _google_id = App.db.Column(App.db.String(100)) 
+    # record the time the user account is created
+    _registered_date = App.db.Column(
+        App.db.DateTime, default=App.db.func.current_timestamp())  # still in UTC timezone
+    _google_id = App.db.Column(App.db.String(100))
 
-    #user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
-    #uselist set to False meaning one-to-one relationship between the two table
-    #one instance of the user_info is related to one and only one user_data instance (1:1))
-    user_data_ref = App.db.relationship("UserData", backref=App.db.backref("user_info_ref_data", uselist=False), cascade="all, delete-orphan", single_parent=True)
-    #cascade = "all, delete-orphan" when userinfo/data row is deleted, the parent/child row will also be deleted in one-to-one relationship
-    #since cascade default to be many-to-one relationship(1 userinfo - Many userdata rows), single_parent flag need to set to be True(ensures 1:1)
+    # user_info_ref/user_data_ref are accessors to navigate the relationship between UserData and UserInfo objects
+    # uselist set to False meaning one-to-one relationship between the two table
+    # one instance of the user_info is related to one and only one user_data instance (1:1))
+    user_data_ref = App.db.relationship("UserData", backref=App.db.backref(
+        "user_info_ref_data", uselist=False), cascade="all, delete-orphan", single_parent=True)
+    # cascade = "all, delete-orphan" when userinfo/data row is deleted, the parent/child row will also be deleted in one-to-one relationship
+    # since cascade default to be many-to-one relationship(1 userinfo - Many userdata rows), single_parent flag need to set to be True(ensures 1:1)
 
-    #another backref relationship for UserLetter class (for delete)
-    user_letter_ref = App.db.relationship("UserLetter", backref=App.db.backref("user_info_ref_letter", uselist=False), cascade="all, delete-orphan", single_parent=True)
-    #backref to UserRace accesssing from UserInfo
-    user_race_ref = App.db.relationship("UserRace", backref=App.db.backref("user_info_ref_race", uselist=False), cascade="all, delete-orphan", single_parent=True)
+    # another backref relationship for UserLetter class (for delete)
+    user_letter_ref = App.db.relationship("UserLetter", backref=App.db.backref(
+        "user_info_ref_letter", uselist=False), cascade="all, delete-orphan", single_parent=True)
+    # backref to UserRace accesssing from UserInfo
+    user_race_ref = App.db.relationship("UserRace", backref=App.db.backref(
+        "user_info_ref_race", uselist=False), cascade="all, delete-orphan", single_parent=True)
 
 
 class UserData(App.db.Model):
@@ -904,37 +947,40 @@ class UserData(App.db.Model):
     _last_login_time : records the last login time of an user
     _num_races : records the total number of races played by user
     """
-    #_user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
-    _username = App.db.Column(App.db.String(30),App.db.ForeignKey("user_info._username"), primary_key=True) #foreign key referencing UserInfo table
+    # _user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey(
+        "user_info._username"), primary_key=True)  # foreign key referencing UserInfo table
     _email = App.db.Column(App.db.String(60), unique=True)
-    #this "user_info" from the above line is mentioning the table name of UserInfo
-    #this underscore and the lower case is automated by the system
+    # this "user_info" from the above line is mentioning the table name of UserInfo
+    # this underscore and the lower case is automated by the system
     _accuracy = App.db.Column(App.db.Float)
     _wins = App.db.Column(App.db.Integer, default=0)
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
 
-    #newly added
+    # newly added
     _top_wpm = App.db.Column(App.db.SmallInteger, default=0)
-    _user_in_game_picture = App.db.Column(App.db.String(100)) #should be different from login profile photo
-    _last_login_time = App.db.Column(App.db.DateTime) #need configuration later to log user's lastest login time
+    # should be different from login profile photo
+    _user_in_game_picture = App.db.Column(App.db.String(100))
+    # need configuration later to log user's lastest login time
+    _last_login_time = App.db.Column(App.db.DateTime)
     _num_races = App.db.Column(App.db.Integer, default=0)
 
-    #validation of whether the username exists in table "user_info" when adding to user_data table
-    #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
-    #when inserting/update a row into user_data
-    #try/except should be used to catch ValueError exception to avoid crash of system
-    #mainly used for update/query/delete method, insert cannot be checked by this validation
+    # validation of whether the username exists in table "user_info" when adding to user_data table
+    # this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
+    # when inserting/update a row into user_data
+    # try/except should be used to catch ValueError exception to avoid crash of system
+    # mainly used for update/query/delete method, insert cannot be checked by this validation
     @validates("_username")
     def validate_username(self, key, _username):
 
         try:
-            #selects the first result filtered using username by sqlalchemy 
+            # selects the first result filtered using username by sqlalchemy
             user_info = UserInfo.query.filter_by(_username=_username).first()
-            if user_info is None: # user_info is None if user does not exist
+            if user_info is None:  # user_info is None if user does not exist
                 raise ValueError(f"User '{_username}' does not exist")
-        except ValueError as e: #handled within the method
+        except ValueError as e:  # handled within the method
             print(f"Error: {e}")
             return None
         return _username
@@ -950,8 +996,9 @@ class UserLetter(App.db.Model):
     _punctuation : punctuations are stored in English words
     """
 
-    #_user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
-    _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True) #onupdate="CASCADE"
+    # _user_letter_id = App.db.Column(App.db.Integer, primary_key=True)
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey(
+        "user_info._username"), primary_key=True)  # onupdate="CASCADE"
     _email = App.db.Column(App.db.String(60), unique=True)
     _a = App.db.Column(App.db.Integer, default=0)
     _b = App.db.Column(App.db.Integer, default=0)
@@ -979,28 +1026,29 @@ class UserLetter(App.db.Model):
     _x = App.db.Column(App.db.Integer, default=0)
     _y = App.db.Column(App.db.Integer, default=0)
     _z = App.db.Column(App.db.Integer, default=0)
-    _comma = App.db.Column(App.db.Integer, default=0) # ,
-    _period = App.db.Column(App.db.Integer, default=0) # .
-    _exclamation = App.db.Column(App.db.Integer, default=0) # !
-    _question = App.db.Column(App.db.Integer, default=0) # ?
-    _hyphen = App.db.Column(App.db.Integer, default=0) # -
-    _semicolon = App.db.Column(App.db.Integer, default=0) # ;
-    _single_quote = App.db.Column(App.db.Integer, default=0) # '
-    _double_quote = App.db.Column(App.db.Integer, default=0) # "
+    _comma = App.db.Column(App.db.Integer, default=0)  # ,
+    _period = App.db.Column(App.db.Integer, default=0)  # .
+    _exclamation = App.db.Column(App.db.Integer, default=0)  # !
+    _question = App.db.Column(App.db.Integer, default=0)  # ?
+    _hyphen = App.db.Column(App.db.Integer, default=0)  # -
+    _semicolon = App.db.Column(App.db.Integer, default=0)  # ;
+    _single_quote = App.db.Column(App.db.Integer, default=0)  # '
+    _double_quote = App.db.Column(App.db.Integer, default=0)  # "
 
+    # auto checks(by sqlalchemy) whether user exist in the user info table whenever data is inserting/updating
 
-    #auto checks(by sqlalchemy) whether user exist in the user info table whenever data is inserting/updating
     @validates("_username")
     def validate_username(self, key, _username):
         try:
-            user_info_uname = UserInfo.query.filter_by(_username=_username).first()
+            user_info_uname = UserInfo.query.filter_by(
+                _username=_username).first()
             if user_info_uname is None:
                 raise ValueError(f"User '{_username}' does not exist")
         except ValueError as e:
             print(f"Error: {e}")
             return None
         return _username
-    
+
 
 class UserRace(App.db.Model):
     """
@@ -1015,23 +1063,26 @@ class UserRace(App.db.Model):
     _date_played : the date/time the race/practice is initiated
     """
     _game_num = App.db.Column(App.db.Integer, default=0, primary_key=True)
-    _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True)
-    #email is in every table for query purposes
+    _username = App.db.Column(App.db.String(30), App.db.ForeignKey(
+        "user_info._username"), primary_key=True)
+    # email is in every table for query purposes
     _email = App.db.Column(App.db.String(60))
-    #different from highest wpm, this is a record of per game/race
-    _average_wpm = App.db.Column(App.db.Integer, default=0) #a method might be needed to calculate the averagee wpm for each user
-    #representing the mode selected by user at that game/race instance
+    # different from highest wpm, this is a record of per game/race
+    # a method might be needed to calculate the averagee wpm for each user
+    _average_wpm = App.db.Column(App.db.Integer, default=0)
+    # representing the mode selected by user at that game/race instance
     _selected_mode = App.db.Column(App.db.String(20))
-    #optional input when user selected a mode with time limit
+    # optional input when user selected a mode with time limit
     _time_limit = App.db.Column(App.db.Float)
-    #records the date user played that race
+    # records the date user played that race
     _date_played = App.db.Column(App.db.DateTime)
 
-    #regular check of user info username when entering data in UserRace
+    # regular check of user info username when entering data in UserRace
     @validates("_username")
     def validate_username(self, key, _username):
         try:
-            user_info_uname = UserInfo.query.filter_by(_username=_username).first()
+            user_info_uname = UserInfo.query.filter_by(
+                _username=_username).first()
             if user_info_uname is None:
                 raise ValueError(f"User '{_username}' does not exist")
         except ValueError as e:
@@ -1040,26 +1091,25 @@ class UserRace(App.db.Model):
         return _username
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     app = App()
 
-
-    #creates database tables and used for testing purposes(insert/update/query/delete)
+    # creates database tables and used for testing purposes(insert/update/query/delete)
     with app._app.app_context():
 
         # app.db.drop_all()
 
         app.db.create_all()
 
-        #sample insert
-        #there is limitation and constraints in the Columns
-        #for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
-        #if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
-        #after testing, you can repeat the number, but preferrably not to do that
+        # sample insert
+        # there is limitation and constraints in the Columns
+        # for example, do not repeat the same number in the num_row as it might have repeated _username and _email (which is suppose to be unique)
+        # if you want to re-populate with the same num_rows, you must run app.db.dropall() before this method
+        # after testing, you can repeat the number, but preferrably not to do that
         # Database.populate_sample_date(100)
 
-        #this method returns a list represention of top-n largest mistyped letters
+        # this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
 
-    app.socketio.run(app._app, host="localhost",debug=True)
+    app.socketio.run(app._app, host="localhost", debug=True)
