@@ -33,6 +33,7 @@ class App:
 
     # Explicitly load env
     load_dotenv()
+    _api_key=os.environ.get("API_KEY")
 
     # Configuration of flask app
     appConf = {
@@ -62,12 +63,12 @@ class App:
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
-        Calls Flask"s run function with the specified parameters to run the backend for the web application.\n
+        Calls Flask's run function with the specified parameters to run the backend for the web application.\n
         Preconditions: host is a valid IP address and port is a valid and open port\n
         Flask"s descriptions of the parameters:
-        :param host: the hostname to listen on. Set this to ``"0.0.0.0"`` to
+        :param host: the hostname to listen on. Set this to ``'0.0.0.0'`` to
             have the server available externally as well. Defaults to
-            ``"127.0.0.1"`` or the host in the ``SERVER_NAME`` config variable
+            ``'127.0.0.1'`` or the host in the ``SERVER_NAME`` config variable
             if present.
         :param port: the port of the webserver. Defaults to ``5000`` or the
             port defined in the ``SERVER_NAME`` config variable if present.
@@ -94,7 +95,7 @@ class App:
     def login():
         """
         Handles the requests made to the login page where users can log in
-        :return : a Response object that redirects the user to the login page
+        :return : a str html page that redirects the user to the login page
         """
         error = session.pop("error", None)
         if request.method == "POST":
@@ -108,7 +109,7 @@ class App:
     def home():
         """
         Handles the requests made to the home page.
-        :return : a Response object that redirects the user to the home page
+        :return : a str html page that redirects the user to the home page
         """
         return render_template("base.html", userSession=session.get("user"))
 
@@ -117,7 +118,7 @@ class App:
         """
         Handles the requests made to the website where users can log in to google
         :postcondition: a google user login successfully
-        :return : a Response object that redirects the user to the callback method on success
+        :return : a str html page that redirects the user to the callback method on success
         """
         return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
 
@@ -126,9 +127,9 @@ class App:
         """
         Handles the returned redirect requests from google signin
         :postcondition: a new user will be registered with a message saying "Successfully registered" and the database will update with the new user
-        info, the user will be redirected to /menu
+        info, the user will be redirected to the home page
         :postcondition: create the user session
-        :return : a Response object that redirects the user to the menu page
+        :return : a str html page that redirects the user to the menu page
         """
         try:
             # Obtain the access token from Google OAuth
@@ -148,7 +149,24 @@ class App:
 
                 # Insert user info into the database if doesn"t exists yet
                 if Database.query(uname, "UserInfo") is None:
-                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=token["userinfo"]["email"], _profile_photo=picture)
+                    Database.insert(UserInfo, _username=uname, _password=token["access_token"], _email=uname)
+                    Database.insert(UserData, _username=uname,_email=uname,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_user_in_game_picture=picture,_last_login_time=datetime.now(timezone.utc))
+                    user_letter_data = {
+                    "_username": uname,
+                    "_email": uname,
+                    **{f"_{letter}": 0 for letter in string.ascii_lowercase},
+                    "_comma": 0,
+                    "_period": 0,
+                    "_exclamation": 0,
+                    "_question": 0,
+                    "_hyphen": 0,
+                    "_semicolon": 0,
+                    "_single_quote": 0,
+                    "_double_quote": 0,
+                    }
+                    Database.insert(UserLetter,**user_letter_data)
+                else:
+                    Database.update(uname,"UserData",_last_login_time=datetime.now(timezone.utc))
             else:
                 # Handle the case where access is denied (user cancelled the login)
                 return "Access denied: Google login was canceled or failed."
@@ -161,6 +179,10 @@ class App:
         
     @_app.route("/authentication", methods=["POST"])
     def authenticate():
+        """
+        Endpoint called to authenticate users attempting to login. Session is created on successful login.
+        :pre-condition: The request form will have a username and password field
+        """
         try:
             # Retrieves data from the requests
             # The keys must exist
@@ -173,6 +195,7 @@ class App:
 
             # Performs validation 
             if user is not None and user._password == password:
+                Database.update(user._username,"UserData",_last_login_time=datetime.now(timezone.utc))
                 # Gets avatar
                 playerObj = player(username, user._profile_photo)
                 # Stores the Player object in the session
@@ -192,32 +215,17 @@ class App:
     def signup():
         """
         A route path for signup page layout
-        :return: Response page for signup layout 
+        :return: str html page for signup layout
         """
         error = session.pop("error", None)
         return render_template("signup.html", error=error)
-    
-    @_app.route("/login-guest", methods=["GET", "POST"])
-    def loginGuest():
-        """
-        A route path for guest login
-        :return: Response page for the main view of the website
-        """ 
-        # Generates a randon id
-        guest_id = uuid.uuid4()
-        # Instantiates a player object
-        playerObj = player(username=guest_id, avatar=url_for("static", filename="pics/anonymous.png"))
-        # Establishes session
-        session["user"] = playerObj.__json__()
-
-        # Redirects to a desired page
-        return redirect("/")
 
     @_app.route("/register", methods=["POST"])
     def register():
         """
-        Created and logged a new user account
+        Creates and logs a new user account
         :precondition: form contained valid input
+        :postcondition: new user info will be inserted into the database on success
         """
         # Gets input
         username = request.form["username"]
@@ -227,9 +235,27 @@ class App:
         if Database.query(username, "UserInfo"):
             session["error"] = "Username already used "
             return redirect("/signup")
+        if Database.query(email,"UserInfo"):
+            session["error"] = "Email already used "
+            return redirect("/signup")
         # Stores into database
         avatar = url_for("static", filename="pics/anonymous.png")
-        Database.insert(UserInfo, _username=username, _email=email, _password=password, _profile_photo=url_for("static", filename="pics/anonymous.png"))
+        Database.insert(UserInfo, _username=username, _email=email, _password=password)
+        Database.insert(UserData, _username=username,_email=email,_accuracy=0,_wins=0,_losses=0,_freq_mistyped_words=0,_total_playing_time=0,_top_wpm=0,_num_races=0,_last_login_time=datetime.now(timezone.utc))
+        user_letter_data = {
+        "_username": username,
+        "_email": email,
+        **{f"_{letter}": 0 for letter in string.ascii_lowercase},
+        "_comma": 0,
+        "_period": 0,
+        "_exclamation": 0,
+        "_question": 0,
+        "_hyphen": 0,
+        "_semicolon": 0,
+        "_single_quote": 0,
+        "_double_quote": 0,
+        }
+        Database.insert(UserLetter,**user_letter_data)
         # Store session
         playerObj =  player(username, avatar)
     
@@ -254,10 +280,9 @@ class App:
     @_app.route("/generate_text/",methods=["GET"])
     def generate_text():
         """
-        Handles request from the games to generate text
+        Sends back text for the requestor to use
         :param difficulty
         :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        Sends back text for the requestor to use
         """
         difficulty = request.args.get("difficulty")
         if not difficulty:
@@ -284,14 +309,12 @@ class App:
     @_app.route('/user/<username>')
     def get_user_data(username):
         userData = Database.query(str(username), "UserData")
-        print(userData)
-        print(Database.query("user1", "UserData"))
         if userData is None:
             return jsonify({'error': 'User not found'}), 404
         else:
             return jsonify({
                 "username": userData._username,
-                "highestWPM" : userData._history_highest_race_wpm,
+                "highestWPM" : userData._top_wpm,
                 "wins": userData._wins,
                 "losses": userData._losses,
                 "accuracy" : userData._accuracy,
@@ -305,15 +328,15 @@ class App:
     def get_top_n_highest_wpm_leaderboard(n):
         try:
             top_scores = UserData.query \
-                .with_entities(UserData._username, UserData._history_highest_race_wpm, UserData._accuracy, UserInfo._profile_photo) \
+                .with_entities(UserData._username, UserData._top_wpm, UserData._accuracy, UserInfo._profile_photo) \
                 .join(UserInfo, UserData._username == UserInfo._username) \
-                .order_by(UserData._history_highest_race_wpm.desc()) \
+                .order_by(UserData._top_wpm.desc()) \
                 .limit(n) \
                 .all()
 
             leaderboard_info = [{
                 'username': player._username,
-                'highest_wpm': player._history_highest_race_wpm,
+                'highest_wpm': player._top_wpm,
                 'accuracy': player._accuracy,
                 'profile_photo': player._profile_photo
             } for player in top_scores]
@@ -321,6 +344,42 @@ class App:
             return jsonify(leaderboard_info)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+    
+    @_app.route("/update_db",methods=["POST"])
+    def update_db():
+        """
+        Endpoint called to update user stats post-game
+        """
+        #TODO: need to secure data transfer and verify origin
+        if request.is_json:
+            usr_session = session.get("user")
+            if usr_session:
+                usr = usr_session["userinfo"]["given_name"]
+                user_data = Database.query(usr, "UserData")
+                game_data = request.json
+                num_races = int(user_data._num_races)
+                game_wpm = game_data["wpm"]
+                Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1),_num_races=num_races+1,_total_playing_time=user_data._total_playing_time+game_data["elapsedTime"],_top_wpm=game_wpm if game_wpm>int(user_data._top_wpm) else int(user_data._top_wpm))
+                last_user_race = UserRace.query.filter_by(_username=usr).order_by(UserRace._date_played.desc()).first()
+                if last_user_race:
+                    Database.insert(UserRace,_game_num=int(last_user_race._game_num)+1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=datetime.fromisoformat(game_data["date"]))
+                else:
+                    Database.insert(UserRace,_game_num=1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=datetime.fromisoformat(game_data["date"]))
+                mistyped_chars = game_data.get("mistypedChars") #expect a dict for this {"_char":mistyped_count}
+                if mistyped_chars:
+                    user_letter = Database.query(usr,"UserLetter")
+                    try:
+                        for char, num in mistyped_chars.items():
+                            #frontend args for the returned json must match those of the db
+                            setattr(user_letter,f"{char}",getattr(user_letter,f"{char}")+num)
+                        App.db.session.commit()
+                    except Exception as e:
+                        print(e)
+                        App.db.session.rollback()
+                        return "Not successful"
+            return "Successful"
+        return "Not successful"
+
         
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
     def getUserRaceData(username):
@@ -402,14 +461,12 @@ class Database:
                 user_data_data = {
                     "_username": f"user{i}",
                     "_email": f"user{i}@gmail.com",
-                    "_history_highest_race_wpm": 10+i,
+                    "_top_wpm": 10+i,
                     "_accuracy": 20 + (i*0.5),
                     "_wins": 10+i,
                     "_losses": 1+i,
                     "_freq_mistyped_words": f"word{i}|mistake{i}",
                     "_total_playing_time": 3600*i,
-                    "_play_date": current_datetime
-
                 }
 
                 user_letter_data = {
@@ -481,7 +538,7 @@ class Database:
             App.db.session.rollback() #rollback the change made
             raise e 
 
-
+    
     @staticmethod
     def update(username: str, db_table_name: str, **kwargs):
         """
@@ -549,7 +606,7 @@ class Database:
         except Exception as e:
             App.db.session.rollback()
             print(f"Error in updating user '{username}' in table '{db_table_name}' : {e}")
-
+    
 
     @staticmethod
     def query(identifier: str, db_table_class: str): 
@@ -571,7 +628,7 @@ class Database:
         """
         try:
             #a list of valid table names
-            valid_table_list = ["UserInfo","UserData","UserLetter"]
+            valid_table_list = ["UserInfo","UserData","UserLetter","UserRace"]
             #validates if the given string is in the list
             if db_table_class in valid_table_list:
                 #find the table class object by the given string
@@ -732,16 +789,15 @@ class UserData(App.db.Model):
     Representation of user(for user dashboard) in game data stored in the database under the UserData table
     _username : non-nullable and unique identifier of a user, act as the primary key and foreign key referencing UserInfo table
     _email : unique email address of user
-    _history_highest_race_wpm : words per minute
+    _top_wpm : words per minute
     _accuracy : percent of words typed correctly
     _wins : number of multiplayer matches won
     _losses : number of multiplayer matches lost
     _freq_mistyped_words : string of words/phrases frequently mistyped separated by the "|" character
     _total_playing_time : record the total number of time the user is playing the game
-    _play_date : record the date and time user log on and plays the game
     _user_in_game_picture : the in game picture representing an user
     _last_login_time : records the last login time of an user
-    _num_race_played : records the total number of races played by user
+    _num_races : records the total number of races played by user
     """
     #_user_data_id = App.db.Column(App.db.Integer, primary_key=True) #should not be manually inserted
     _username = App.db.Column(App.db.String(30),App.db.ForeignKey("user_info._username"), primary_key=True) #foreign key referencing UserInfo table
@@ -753,13 +809,12 @@ class UserData(App.db.Model):
     _losses = App.db.Column(App.db.Integer, default=0)
     _freq_mistyped_words = App.db.Column(App.db.Text)
     _total_playing_time = App.db.Column(App.db.Integer, default=0)
-    _play_date = App.db.Column(App.db.DateTime) #this column could be removed
 
     #newly added
-    _history_highest_race_wpm = App.db.Column(App.db.SmallInteger, default=0)
+    _top_wpm = App.db.Column(App.db.SmallInteger, default=0)
     _user_in_game_picture = App.db.Column(App.db.String(100)) #should be different from login profile photo
     _last_login_time = App.db.Column(App.db.DateTime) #need configuration later to log user's lastest login time
-    _num_race_played = App.db.Column(App.db.Integer, default=0)
+    _num_races = App.db.Column(App.db.Integer, default=0)
 
     #validation of whether the username exists in table "user_info" when adding to user_data table
     #this ensures data integrity, sqlalchemy will automatically call this method whenever data is trying to be inserted
@@ -846,16 +901,18 @@ class UserRace(App.db.Model):
     """
     Representing the instance of a race initiated by user
     Relative in game data will be recorded
+    _game_num : id for the game played by the user (each user cannot have two games with the same id)
     _username : acts as the primary and foreign key of the table, rooted from UserInfo
-    _email : unique and nullable attribute of user's email address
+    _email : nullable attribute of user's email address
     _average_wpm : the average of words per min in an instance of a race
     _selected_mode : the selected mode of a typing race/practice
     _time_limit : optional recording of time limit of a certain game mode
     _date_played : the date/time the race/practice is initiated
     """
+    _game_num = App.db.Column(App.db.Integer, default=0, primary_key=True)
     _username = App.db.Column(App.db.String(30), App.db.ForeignKey("user_info._username"), primary_key=True)
     #email is in every table for query purposes
-    _email = App.db.Column(App.db.String(60), unique=True)
+    _email = App.db.Column(App.db.String(60))
     #different from highest wpm, this is a record of per game/race
     _average_wpm = App.db.Column(App.db.Integer, default=0) #a method might be needed to calculate the averagee wpm for each user
     #representing the mode selected by user at that game/race instance
