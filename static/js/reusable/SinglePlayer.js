@@ -165,8 +165,11 @@ function ThrillTyperGame() {
 
     function updateTimer() {
         const currentTime = new Date().getTime();
-        const elapsedTime = (timeLimit-(currentTime - startTime)) / 1000;
-        document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(0)} seconds`;
+        const timeLeft = (timeLimit-(currentTime - startTime)) / 1000;
+        document.getElementById("result").innerHTML = `Time elapsed: ${timeLeft.toFixed(0)} seconds`;
+        if(timeLeft<=0){
+            submitInput();
+        }
     }
 
     function displayText() {
