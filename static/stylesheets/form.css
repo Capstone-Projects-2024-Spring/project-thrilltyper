@@ -1,41 +1,3 @@
-.welcome-ctn {
-  margin: auto;
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Define styles for the welcome message */
-#welcome-message {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  /* Set background color as desired */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 1;
-  transition: opacity 0.5s ease;
-  /* Smooth transition over 0.5 seconds */
-}
-
-/* Define styles for fading out */
-.fade-out {
-  display: none !important;
-  /* opacity: 0 !important; Ensure that this style takes precedence */
-}
-
-#login-ctn .form-group {
-  padding: 0.25rem;
-}
-
 #content {
   display: flex;
   flex-direction: column;
@@ -46,39 +8,72 @@
   height: 100%;
 }
 
-#login-ctn {
+#form-ctn {
   display: inline-block;
+  padding: 2rem;
+   /* Border radius for rounded corners */
+  border-radius: 10px;
+   /* Box shadow with blur effect */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+ 
 }
 
-#login-ctn #login-ops {
-  display: flex;
-  justify-content: space-between;
+#form-ctn .form-group {
   padding: 0.25rem;
 }
 
-#login-ctn {
-  padding: 2rem;
-  border-radius: 10px;
-  /* Border radius for rounded corners */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  /* Box shadow with blur effect */
+#form-ctn .form-ops {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
 }
 
-#login-ctn label, input {
+
+#form-ctn .form-ops .logIn{
+  order: 2;
+}
+
+#form-ctn .form-ops .signup-link{
+  order: 1;
+}
+
+#form-ctn .register-ops {
+  justify-content: space-around;
+}
+
+#form-ctn label, #form-ctn .text-input {
   display: block;
   width: 100%;
 }
 
-#login-ctn form a {
-  display: block;
+#form-ctn label {
+  padding: 0.25rem 0;
 }
 
+#form-ctn .text-input {
+  height: 2rem;
+  border: 2px solid black;
+  border-radius: 20px;
+  padding: 0 0.5rem;
+}
+
+#form-ctn .agreements {
+  display: flex; 
+  align-items: center; 
+  
+  max-width: 225px;
+}
+
+
+/* Google Login Button Styles */
 .gsi-material-button {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   -webkit-appearance: none;
   background-color: WHITE;
+  text-align: center;
+  text-decoration: none;
   background-image: none;
   border: 1px solid #747775;
   -webkit-border-radius: 4px;

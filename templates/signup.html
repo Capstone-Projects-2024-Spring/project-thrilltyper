@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thrill Typer</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/form.css')}}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" hrel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../static/stylesheets/main.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/modal.css')}}">
+</head>
+
+<body>
+    <div id="content">
+        <div id="form-ctn">
+            <form id="main-form" action="{{url_for('register')}}" method="POST">
+                <h2>Register</h2>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" class="text-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="text-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" class="text-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="text-input" required>
+                </div>
+
+                <div class="form-group agreements">
+                    <input type="checkbox" name="TOS" required/>
+                    &nbsp;
+                    <label for="TOS">
+                        By clicking, you agree to our 
+                        <a href="{{ url_for('static', filename='termsOfService.html') }}">Terms of Service</a>
+                    </label>
+                </div>
+
+                <div class="register-ops form-ops">
+                    <button type="submit" class="signUp">Signup</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if error %}
+    <script src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
+    <script>
+        modal.alert('{{ error | string }}');
+    </script>
+    {% endif %}
+</body>
+
+</html>

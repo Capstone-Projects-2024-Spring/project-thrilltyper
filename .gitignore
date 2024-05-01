@@ -1,8 +1,16 @@
 # Generated files
 .docusaurus
+/dist
+/build
 
-# Misc
-.DS_Store
+# Dependency directories
+node_modules/
+
+# Python compiled files
+__pycache__/
+.pytest_cache/
+
+# Environment variables
 .env
 .env.local
 .env.development.local
@@ -11,3 +19,28 @@
 
 # Virtual Environment
 venv/
+
+# Database File
+instance/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Coverage directory
+/coverage
+
+# Cache
+.cache/

@@ -1,0 +1,183 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+#root {
+    height: 100vh;
+    width: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+}
+
+button {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 50px;
+}
+
+/* Universal Styles */
+/* no longer used
+.signUp {
+    color: white;
+    background-color: #005dbb;
+    border: 2px solid white;
+}
+
+.logIn, .logOut {
+    color: #005dbb;
+    background-color: white;
+    border: 2px solid black;
+}
+
+*/
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#main, 
+#main #brand,
+#main #brand .brand-title,
+#main nav {
+    display: flex;
+    align-items: center;
+}
+
+#main {
+    height: 10%;
+    width: 100%;
+    background-color: #084F8E;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+/* Brand of the websites */
+#main #brand, 
+#main #brand a, 
+#main #brand .brand-logo, 
+#main #brand .brand-title {
+    height: 100%;
+}
+
+#main .brand-logo {
+    filter: brightness(0) invert(1);
+}
+
+#main .brand-title {
+    font-size: 1.25rem;
+}
+
+#main #brand a {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+}
+
+
+#main a {
+    color: white;
+    font-size: 1.25rem;
+    text-decoration: none;
+    padding: 6px 12px;
+}
+
+#main nav a:hover {
+    color: yellow;
+}
+
+#main nav ul {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    list-style-type: none;
+}
+
+#main nav ul li {
+    display: inline-block;
+}
+
+/* Content styles */
+#content {
+    height: 90%;
+    width: 100%;
+}
+
+.href-button{
+    font-size: 16px !important;
+    border-radius: 10%/20%;     /* little curve around corner */
+    text-decoration: none;
+    padding: 5px 5px !important;
+    width: 90px;
+    height: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-family:sans-serif;
+
+    cursor: pointer;
+    transition-duration: 0.5s;
+
+    display: flex;              /* temp fix */
+    align-items: center;        /* vertical center */
+    justify-content: center;    /* horizontal center */
+}
+
+#signUpButton{
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    border-color:white;
+    margin-right: 15px;
+}
+
+#signUpButton:hover {
+    /* background-color: #09396a; */
+    color: white !important;
+    background-color: #2782de;
+    box-shadow: 0 0 40px rgba(11, 111, 194, 0.6);
+    border-color: #2782de;
+}
+
+#logInButton{
+    background-color: white;
+    color: #084F8E !important;
+    border: 2px solid white;
+    border-color:white;
+    margin-right: 15px;
+}
+
+#logInButton:hover{
+    color: white !important;
+    background-color: #10bb54;
+    box-shadow: 0 0 20px rgba(25, 231, 125, 0.699);
+    border-color: #10bb54;
+}
+
+#logOutButton{
+    background-color: white;
+    color: #084F8E !important;
+    border: 2px solid white;
+    border-color:white;
+    margin-right: 20px;
+}
+
+#logOutButton:hover{
+    color: white !important;
+    background-color: #10bb54;
+    box-shadow: 0 0 20px rgba(25, 231, 125, 0.699);
+    border-color: #10bb54;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+}

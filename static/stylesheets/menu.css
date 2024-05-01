@@ -1,0 +1,30 @@
+#menu-ctn {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4vh 20vw;
+    row-gap: 2rem;
+}
+
+#title-container {
+    width: 100%; /* Ensure the container takes full width */
+    text-align: center; /* Center the text */
+    max-width: 900px; /* Limit the maximum width */
+    margin-bottom: 20px; /* Add some space between the title and other elements */
+}
+
+#menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-rows: auto auto;
+    row-gap: 2rem;
+    column-gap: 4rem;
+    justify-content: center;
+}
+
+.menu-item button img {
+    margin-bottom: 20px;
+}
