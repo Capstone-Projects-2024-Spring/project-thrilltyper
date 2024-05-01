@@ -19,7 +19,12 @@ def client():
         yield client
 
 # --------------------------------------------------------------------------------App Tests-----------------------------------------------------------------------------
-
+def test_raceData(client):
+    """
+    Test: That the user can retrive race data
+    Result: True if the response with 200 status code
+    """
+    assert client.post("/raceData/user1").status_code == 200
 
 def test_registration(client):
     """
@@ -155,7 +160,10 @@ def test_matchmaking(client):
     assert response_data=="Matching successful." or response_data=="Match could not be found."
 
 def test_socketio_connection(client):
-    """Test SocketIO connection."""
+    """
+    Test SocketIO connection
+    Result: True if the client can receive messages
+    """
     sok = App.socketio
     # Connect the SocketIO client
     socketio_test_client = sok.test_client(App._app)
