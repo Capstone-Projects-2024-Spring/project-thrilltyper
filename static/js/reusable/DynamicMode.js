@@ -217,13 +217,13 @@ function DynamicMode() {
         }
         totalCharsTyped++;
         //Add more input once last letter of current blurb is typed
-        if (currBlurbIndex >= currBlurb.length-1) {
+        if (currentCharIndex >= text.length) {
             const endTime = new Date().getTime();
             const elapsedTime = (endTime - blurbStartTime) / 1000;
             const wpm = Math.round(((currBlurbIndex/5.0)/(elapsedTime/60)));
-            currBlurb = await fetchTxt(wpm);
+            await fetchTxt(wpm).then(fetchedTxt=>{currBlurb=fetchedTxt;});
             text+=currBlurb;
-            currBlurbIndex=0
+            currBlurbIndex=0;
         }
     }
 
@@ -231,7 +231,7 @@ function DynamicMode() {
         //clearInterval(timerInterval);
         stopTimerInterval();
         const endTime = new Date().getTime();
-        const elapsedTime = (endTime - startTime) / 1000;
+        const elapsedTime = timeToType / 1000;
         const wordsPerMinute = Math.round((correctLettersTyped / 5.0) / (elapsedTime / 60.0));
         console.log(correctCharsTyped);
         let accuracy = 0;
