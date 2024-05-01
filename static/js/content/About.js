@@ -73,7 +73,7 @@ function About() {
             </div>
             <div className="contributor">
               <img src="../static/pics/contributors/unicorn.gif" alt="Profile Photo" />
-              <p>Bochi</p>
+              <p>TU-Wenjie-Gao</p>
             </div>
             <div className="contributor">
               <img src="../static/pics/contributors/disappointed.gif" alt="Profile Photo" />

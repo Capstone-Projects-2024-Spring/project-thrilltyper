@@ -64,6 +64,9 @@ function Dashboard({ userSession }) {
                             Total Playing Time: {Math.floor(userData.totalTime)} minutes
                         </p>
                         <p className="center flexEven">
+                            Highest WPM: {userData.highestWPM} WPM
+                        </p>
+                        <p className="center flexEven">
                             Accuracy: {Number(userData.accuracy).toFixed(2)}%
                         </p>
                     </section>
