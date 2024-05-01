@@ -64,7 +64,7 @@ function Dashboard({ userSession }) {
                             Total Playing Time: {Math.floor(userData.totalTime)} minutes
                         </p>
                         <p className="center flexEven">
-                            Accuracy: {userData.accuracy}%
+                            Accuracy: {Number(userData.accuracy).toFixed(2)}%
                         </p>
                     </section>
                     {/* Specific Data, i.e. WPM and Accuracy */}
