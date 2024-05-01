@@ -2,6 +2,7 @@ function ThrillTyperGame() {
     const date = new Date();
     let text = "Click start button to start!";
     let words = text.split(" ");
+    var inputGiven = false;
 
 
     let currentCharIndex = 0;   //only increment when user has typed correct letter
@@ -133,7 +134,7 @@ function ThrillTyperGame() {
         document.getElementById("result").innerHTML = "";
 
         startTime = new Date().getTime();
-        if(text=="Click start button to start!"){
+        if(!inputGiven){
             text = await fetchRandomWordList();
         }
 
@@ -215,7 +216,7 @@ function ThrillTyperGame() {
         currentWordIndex = 0;   //initializes value for play again
         updateText();
         document.getElementById("text-display").innerHTML = "Click start button to start!";
-
+        inputGiven=false;
     }
 
     async function fetchUserInput() {
@@ -224,11 +225,15 @@ function ThrillTyperGame() {
             newText = prompt("Please enter your words:", "");
             if (newText == null || newText == "") {
                 console.log("User cancelled the prompt.");
+                inputGiven=false;
+            }
+            else{
+                text = newText;
+                inputGiven=true;
             }
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
-        text = newText;
     }
 
     function fillText(){
