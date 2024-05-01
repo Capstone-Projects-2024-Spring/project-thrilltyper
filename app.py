@@ -532,9 +532,9 @@ class Database:
             }
 
             # Generate unique top WPM value
-            top_wpm_value = random.randint(0, 100)
+            top_wpm_value = random.randint(0, 110)
             while top_wpm_value in Database.used_top_wpm_values:
-                top_wpm_value = random.randint(0, 100)
+                top_wpm_value = random.randint(0, 110)
 
             user_data_data = {
                 "_username": f"{user_name}",
@@ -564,19 +564,9 @@ class Database:
                 "_double_quote": random.randint(0, 100),
             }
 
-            user_race_data = {
-                "_username": f"{user_name}",
-                "_email": f"{user_name}@gmail.com",
-                "_average_wpm": random.randint(40, 100),
-                "_selected_mode": random.choice(["Practice", "Robot Opponent", "MultiPlayer"]),
-                "_time_limit": random.choice([None, 30, 60, 90]),
-                "_date_played": current_datetime - timedelta(days=random.randint(0, 5))
-            }
-
             Database.insert(UserInfo, **user_info_data)
             Database.insert(UserData, **user_data_data)
             Database.insert(UserLetter, **user_letter_data)
-            Database.insert(UserRace, **user_race_data)
             
             print(f"Sample data added successfully for user{user_name}")
         except Exception as e:
@@ -1039,5 +1029,5 @@ if __name__=="__main__":
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
-
+        
     app.socketio.run(app._app, host="localhost",debug=True)
