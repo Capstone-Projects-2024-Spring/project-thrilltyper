@@ -444,7 +444,7 @@ class Database:
     @staticmethod
     def populate_sample_date(num_rows):
         """
-        no need for documentation
+        Responsible for auto populating 
         """
         try:
             current_datetime =datetime.now(timezone.utc)
@@ -500,6 +500,88 @@ class Database:
             print(f"{num_rows} sample users added successfully")
         except Exception as e:
             print(f"Error while populating sample rows: {e}")
+
+    #used for generating mock data with unique wpm
+    used_top_wpm_values = set()
+    @staticmethod
+    def generate_unique_wpm():
+        """
+        Generate a unique random WPM value that has not been used before.
+        """
+        while True:
+            wpm_value = random.randint(50, 150)  # Adjust the range as needed
+            if wpm_value not in Database.used_wpm_values:
+                return wpm_value
+
+    #this method is used to populate a specific user's data in all tables
+    @staticmethod
+    def populate_sample_data_for_user(user_name:str):
+        """
+        Responsible for auto populating sample data for a specific user
+        """
+        try:
+            current_datetime = datetime.now(timezone.utc)
+
+            sample_google_id = "".join(random.choices(string.ascii_letters + string.digits, k=10))  # set length of id to ten
+            user_info_data = {
+                "_username": f"{user_name}",
+                "_password": f"password{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                "_profile_photo": f'./static/pics/terraria_player.png',
+                "_google_id": sample_google_id
+            }
+
+            # Generate unique top WPM value
+            top_wpm_value = random.randint(0, 100)
+            while top_wpm_value in Database.used_top_wpm_values:
+                top_wpm_value = random.randint(0, 100)
+
+            user_data_data = {
+                "_username": f"{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                "_top_wpm": top_wpm_value,
+                "_accuracy": 20 + (random.randint(0, 100) * 0.5),
+                "_wins": random.randint(0, 100),
+                "_losses": random.randint(0, 100),
+                "_freq_mistyped_words": f"word{user_name}|mistake{user_name}",
+                "_total_playing_time": random.randint(0, 100),
+            }
+
+            # Add the generated top WPM value to the set of used values
+            Database.used_top_wpm_values.add(top_wpm_value)
+
+            user_letter_data = {
+                "_username": f"{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                **{f"_{letter}": random.randint(0, 100) for letter in string.ascii_lowercase},
+                "_comma": random.randint(0, 100),
+                "_period": random.randint(0, 100),
+                "_exclamation": random.randint(0, 100),
+                "_question": random.randint(0, 100),
+                "_hyphen": random.randint(0, 100),
+                "_semicolon": random.randint(0, 100),
+                "_single_quote": random.randint(0, 100),
+                "_double_quote": random.randint(0, 100),
+            }
+
+            user_race_data = {
+                "_username": f"{user_name}",
+                "_email": f"{user_name}@gmail.com",
+                "_average_wpm": random.randint(40, 100),
+                "_selected_mode": random.choice(["Practice", "Robot Opponent", "MultiPlayer"]),
+                "_time_limit": random.choice([None, 30, 60, 90]),
+                "_date_played": current_datetime - timedelta(days=random.randint(0, 5))
+            }
+
+            Database.insert(UserInfo, **user_info_data)
+            Database.insert(UserData, **user_data_data)
+            Database.insert(UserLetter, **user_letter_data)
+            Database.insert(UserRace, **user_race_data)
+            
+            print(f"Sample data added successfully for user{user_name}")
+        except Exception as e:
+            print(f"Error while populating sample data: {e}")
+
 
     @staticmethod
     def insert(db_table, **kwargs):
@@ -957,5 +1039,144 @@ if __name__=="__main__":
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
+        '''
+        Database.populate_sample_data_for_user("Oliver")
+        Database.populate_sample_data_for_user("Olivia")
+        Database.populate_sample_data_for_user("William")
+        Database.populate_sample_data_for_user("Emma")
+        Database.populate_sample_data_for_user("Ava")
+        Database.populate_sample_data_for_user("James")
+        Database.populate_sample_data_for_user("Isabella")
+        Database.populate_sample_data_for_user("Liam")
+        Database.populate_sample_data_for_user("Sophia")
+        Database.populate_sample_data_for_user("Benjamin")
+        Database.populate_sample_data_for_user("Mia")
+        Database.populate_sample_data_for_user("Lucas")
+        Database.populate_sample_data_for_user("Amelia")
+        Database.populate_sample_data_for_user("Mason")
+        Database.populate_sample_data_for_user("Harper")
+        Database.populate_sample_data_for_user("Ethan")
+        Database.populate_sample_data_for_user("Evelyn")
+        Database.populate_sample_data_for_user("Alexander")
+        Database.populate_sample_data_for_user("Abigail")
+        Database.populate_sample_data_for_user("Henry")
+        Database.populate_sample_data_for_user("Charlotte")
+        Database.populate_sample_data_for_user("Michael")
+        Database.populate_sample_data_for_user("Sophia")
+        Database.populate_sample_data_for_user("Daniel")
+        Database.populate_sample_data_for_user("Ellie")
+        Database.populate_sample_data_for_user("Matthew")
+        Database.populate_sample_data_for_user("Aria")
+        Database.populate_sample_data_for_user("Jackson")
+        Database.populate_sample_data_for_user("Luna")
+        Database.populate_sample_data_for_user("Sebastian")
+        Database.populate_sample_data_for_user("Scarlett")
+        Database.populate_sample_data_for_user("David")
+        Database.populate_sample_data_for_user("Grace")
+        Database.populate_sample_data_for_user("Joseph")
+        Database.populate_sample_data_for_user("Chloe")
+        Database.populate_sample_data_for_user("Carter")
+        Database.populate_sample_data_for_user("Penelope")
+        Database.populate_sample_data_for_user("Wyatt")
+        Database.populate_sample_data_for_user("Zoey")
+        Database.populate_sample_data_for_user("John")
+        Database.populate_sample_data_for_user("Layla")
+        Database.populate_sample_data_for_user("Owen")
+        Database.populate_sample_data_for_user("Victoria")
+        Database.populate_sample_data_for_user("Dylan")
+        Database.populate_sample_data_for_user("Madison")
+        Database.populate_sample_data_for_user("Luke")
+        Database.populate_sample_data_for_user("Nova")
+        Database.populate_sample_data_for_user("Gabriel")
+        Database.populate_sample_data_for_user("Nora")
+        Database.populate_sample_data_for_user("Anthony")
+        Database.populate_sample_data_for_user("Hazel")
+        Database.populate_sample_data_for_user("Isaac")
+        Database.populate_sample_data_for_user("Riley")
+        Database.populate_sample_data_for_user("Grayson")
+        Database.populate_sample_data_for_user("Emilia")
+        Database.populate_sample_data_for_user("Jack")
+        Database.populate_sample_data_for_user("Aurora")
+        Database.populate_sample_data_for_user("Julian")
+        Database.populate_sample_data_for_user("Savannah")
+        Database.populate_sample_data_for_user("Levi")
+        Database.populate_sample_data_for_user("Bella")
+        Database.populate_sample_data_for_user("Christopher")
+        Database.populate_sample_data_for_user("Elena")
+        Database.populate_sample_data_for_user("Joshua")
+        Database.populate_sample_data_for_user("Natalie")
+        Database.populate_sample_data_for_user("Andrew")
+        Database.populate_sample_data_for_user("Eleanor")
+        Database.populate_sample_data_for_user("Lincoln")
+        Database.populate_sample_data_for_user("Violet")
+        Database.populate_sample_data_for_user("Mateo")
+        Database.populate_sample_data_for_user("Stella")
+        Database.populate_sample_data_for_user("Ryan")
+        Database.populate_sample_data_for_user("Claire")
+        Database.populate_sample_data_for_user("Jaxon")
+        Database.populate_sample_data_for_user("Lucy")
+        Database.populate_sample_data_for_user("Nathan")
+        Database.populate_sample_data_for_user("Audrey")
+        Database.populate_sample_data_for_user("Aaron")
+        Database.populate_sample_data_for_user("Aaliyah")
+        Database.populate_sample_data_for_user("Isaiah")
+        Database.populate_sample_data_for_user("Skylar")
+        Database.populate_sample_data_for_user("Thomas")
+        Database.populate_sample_data_for_user("Caroline")
+        Database.populate_sample_data_for_user("Charles")
+        Database.populate_sample_data_for_user("Mila")
+        '''
+        '''
+        Database.update("Luna", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1005.png")
+        Database.update("Anthony", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1001.png")
+        Database.update("Layla", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1002.png")
+        Database.update("Lincoln", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1003.png")
+        Database.update("Julian", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1004.png")
+        Database.update("Henry", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1006.png")
+        Database.update("Ryan", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1007.png")
+        Database.update("Natalie", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1008.png")
+        Database.update("Isaiah", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-1009.png")
+        Database.update("Elena", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10010.png")
+        Database.update("Scarlett", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10011.png")
+        Database.update("John", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10012.png")
+        Database.update("Penelope", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10013.png")
+        Database.update("Aaron", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10014.png")
+        Database.update("Michael", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10015.png")
+        Database.update("Benjamin", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10016.png")
+        Database.update("Owen", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10017.png")
+        Database.update("Chloe", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-10018.png")
+        Database.update("Ava", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-animal-100.png")
+        Database.update("Mason", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-ahri-100.png")
+        Database.update("Aaliyah", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-bad-piggies-100.png")
+        Database.update("Caroline", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-badlion-100.png")
+        Database.update("Gabriel", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-bowling-100.png")
+        Database.update("Audrey", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-cat-1001.png")
+        Database.update("Joseph", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-cat-100.png")
+        Database.update("Luke", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-danganronpa-100.png")
+        Database.update("Charlotte", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-dog-1001.png")
+        Database.update("Evelyn", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-dog-100.png")
+        Database.update("Stella", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-dragon-1001.png")
+        Database.update("Oliver", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-dragon-1002.png")
+        Database.update("Lucas", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-dragon-100.png")
+        Database.update("Ethan", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-european-dragon-100.png")
+        Database.update("Savannah", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-five-nights-at-freddys-100.png")
+        Database.update("Jaxon", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-flappy-dunk-100.png")
+        Database.update("Liam", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-game-100.png")
+        Database.update("Victoria", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-gem-100.png")
+        Database.update("Bella", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-genshin-impact-100.png")
+        Database.update("Emma", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-league-of-legends-100.png")
+        Database.update("Sophia", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-meowth-100.png")
+        Database.update("Matthew", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-minecraft-skeleton-100.png")
+        Database.update("Aurora", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-minecraft-zombie-100.png")
+        Database.update("Nora", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-monopoly-100.png")
+        Database.update("Olivia", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-pacman-100.png")
+        Database.update("Sebastian", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-prodigy-100.png")
+        Database.update("Eleanor", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-royal-kingdom-crown-with-jewels-embedded-layout-100.png")
+        Database.update("Nova", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-style-100.png")
+        Database.update("Levi", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-the-binding-of-isaac-100.png")
+        Database.update("Christopher", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-type-100.png")
+        Database.update("Grace", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-ultra-ball-100.png")
+        Database.update("Lucy", "UserInfo", _profile_photo="./static/pics/profile_photos/icons8-unturned-100.png")
+        '''
 
     app.socketio.run(app._app, host="localhost", debug=True)
