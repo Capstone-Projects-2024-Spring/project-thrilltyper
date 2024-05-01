@@ -215,14 +215,16 @@ function DynamicMode() {
             }
         }
         totalCharsTyped++;
-        if(currBlurbIndex==charsPerLine){
+        if(currBlurbIndex>=currBlurb.length/2){
             newBlurb= await fetchTxt(55);
         }
         //Add more input once last letter of current blurb is typed
-        if (currentCharIndex >= text.length) {
+        if (currentCharIndex >= text.length*0.75) {
             text+=newBlurb;
-            currBlurb=newBlurb;
-            currBlurbIndex=0
+        }
+        if (currentCharIndex >= text.length){
+            currBlurb = newBlurb;
+            currBlurbIndex=0;
         }
     }
 
