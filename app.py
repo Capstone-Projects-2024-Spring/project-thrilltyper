@@ -363,7 +363,7 @@ class App:
                 Database.update(usr,"UserData",_accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1),_num_races=num_races+1,_total_playing_time=user_data._total_playing_time+game_data["elapsedTime"],_top_wpm=game_wpm if game_wpm>int(user_data._top_wpm) else int(user_data._top_wpm))
                 last_user_race = UserRace.query.filter_by(_username=usr).order_by(UserRace._date_played.desc()).first()
                 if last_user_race:
-                    Database.insert(UserRace,_game_num=int(last_user_race._game_num)+1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=datetime.fromisoformat(game_data["date"]))
+                    Database.insert(UserRace,_game_num=int(last_user_race._game_num)+1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=parser.parse(game_data["date"]))
                 else:
                     Database.insert(UserRace,_game_num=1,_username=usr,_email=str(user_data._email),_average_wpm=game_wpm,_selected_mode=game_data["mode"],_time_limit=game_data.get("timeLimit"),_date_played=parser.parse(game_data["date"])) #messed this up, so adding this line for testing
                 mistyped_chars = game_data.get("mistypedChars") #expect a dict for this {"_char":mistyped_count}
