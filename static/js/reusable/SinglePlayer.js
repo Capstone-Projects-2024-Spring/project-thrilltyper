@@ -2,6 +2,7 @@ function ThrillTyperGame() {
     const date = new Date();
     let text = "Click start button to start!";
     let words = text.split(" ");
+    let timeLimit;
     var inputGiven = false;
 
 
@@ -18,7 +19,7 @@ function ThrillTyperGame() {
 
 
     function startTimerInterval(){
-        intervalRef.current = setInterval(updateTimer, 10);
+        intervalRef.current = setInterval(updateTimer, 1000);
     }
 
     function stopTimerInterval(){
@@ -126,6 +127,15 @@ function ThrillTyperGame() {
         document.getElementById("text-display").innerHTML = updatedText;
     }
 
+    function getTimeLimit(){
+        var radioBtns = document.getElementsByName('timeLimit');
+        for (var i = 0; i < radioBtns.length; i++) {
+            if (radioBtns[i].checked) {
+                return parseInt(radioBtns[i].value)*1000;
+            }
+        }
+        return null;
+    }
 
     async function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
@@ -148,15 +158,15 @@ function ThrillTyperGame() {
 
         //clearInterval(timerInterval);
         //timerInterval = setInterval(updateTimer, 10);
-
+        timeLimit = getTimeLimit();
         stopTimerInterval();
         startTimerInterval();
     }
 
     function updateTimer() {
         const currentTime = new Date().getTime();
-        const elapsedTime = (currentTime - startTime) / 1000;
-        document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(2)} seconds`;
+        const elapsedTime = (timeLimit-(currentTime - startTime)) / 1000;
+        document.getElementById("result").innerHTML = `Time elapsed: ${elapsedTime.toFixed(0)} seconds`;
     }
 
     function displayText() {
