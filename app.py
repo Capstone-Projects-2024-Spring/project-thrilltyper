@@ -33,6 +33,7 @@ class App:
 
     # Explicitly load env
     load_dotenv()
+    _api_key=os.environ.get("API_KEY")
 
     # Configuration of flask app
     appConf = {
@@ -62,12 +63,12 @@ class App:
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
-        Calls Flask"s run function with the specified parameters to run the backend for the web application.\n
+        Calls Flask's run function with the specified parameters to run the backend for the web application.\n
         Preconditions: host is a valid IP address and port is a valid and open port\n
         Flask"s descriptions of the parameters:
-        :param host: the hostname to listen on. Set this to ``"0.0.0.0"`` to
+        :param host: the hostname to listen on. Set this to ``'0.0.0.0'`` to
             have the server available externally as well. Defaults to
-            ``"127.0.0.1"`` or the host in the ``SERVER_NAME`` config variable
+            ``'127.0.0.1'`` or the host in the ``SERVER_NAME`` config variable
             if present.
         :param port: the port of the webserver. Defaults to ``5000`` or the
             port defined in the ``SERVER_NAME`` config variable if present.
@@ -94,7 +95,7 @@ class App:
     def login():
         """
         Handles the requests made to the login page where users can log in
-        :return : a Response object that redirects the user to the login page
+        :return : a str html page that redirects the user to the login page
         """
         error = session.pop("error", None)
         if request.method == "POST":
@@ -108,7 +109,7 @@ class App:
     def home():
         """
         Handles the requests made to the home page.
-        :return : a Response object that redirects the user to the home page
+        :return : a str html page that redirects the user to the home page
         """
         return render_template("base.html", userSession=session.get("user"))
 
@@ -117,7 +118,7 @@ class App:
         """
         Handles the requests made to the website where users can log in to google
         :postcondition: a google user login successfully
-        :return : a Response object that redirects the user to the callback method on success
+        :return : a str html page that redirects the user to the callback method on success
         """
         return App.oauth.ttyper.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
 
@@ -126,9 +127,9 @@ class App:
         """
         Handles the returned redirect requests from google signin
         :postcondition: a new user will be registered with a message saying "Successfully registered" and the database will update with the new user
-        info, the user will be redirected to /menu
+        info, the user will be redirected to the home page
         :postcondition: create the user session
-        :return : a Response object that redirects the user to the menu page
+        :return : a str html page that redirects the user to the menu page
         """
         try:
             # Obtain the access token from Google OAuth
