@@ -64,7 +64,10 @@ function Dashboard({ userSession }) {
                             Total Playing Time: {Math.floor(userData.totalTime)} minutes
                         </p>
                         <p className="center flexEven">
-                            Accuracy: {userData.accuracy}%
+                            Highest WPM: {userData.highestWPM} WPM
+                        </p>
+                        <p className="center flexEven">
+                            Accuracy: {Number(userData.accuracy).toFixed(2)}%
                         </p>
                     </section>
                     {/* Specific Data, i.e. WPM and Accuracy */}
@@ -82,29 +85,29 @@ function Dashboard({ userSession }) {
                             Losses: {userData.losses} games
                         </p> */}
                         <table>
-                            <tr>
-                                <th>
-                                    Mode
-                                </th>
-                                <th>
-                                    WPM
-                                </th>
-                                <th>
-                                    Time Limit
-                                </th>
-                                <th>
-                                    Date Played
-                                </th>
-                            </tr>
-                            {raceData.map((record, index) => (
-                                <tr key={index}>
-                                    <td>{record.selected_mode}</td>
-                                    <td>{record.average_wpm}</td>
-                                    <td>{record.time_limit}</td>
-                                    <td>{record.date_played}</td>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Mode
+                                    </th>
+                                    <th>
+                                        WPM
+                                    </th>
+                                    <th>
+                                        Date Played
+                                    </th>
                                 </tr>
-                            )
-                            )}
+                            </thead>
+                            <tbody>
+                                {raceData.map((record, index) => (
+                                    <tr key={index}>
+                                        <td>{record.selected_mode}</td>
+                                        <td>{record.average_wpm}</td>
+                                        <td>{record.date_played}</td>
+                                    </tr>
+                                )
+                                )}
+                            </tbody>
                         </table>
                     </section>
                 </div>

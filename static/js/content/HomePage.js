@@ -16,7 +16,7 @@ function HomePage(){
                 Hello World ! <span class="cursor"></span>
                 <br/>
                 <br/>
-                <a href id="homePageButton"><span>Start Here</span></a>
+                <Link to="/menu" id="homePageButton"><span>Start Here</span></Link>
 
                 {/* cloud */}
                 <div id="clouds3" class="clouds"></div>
