@@ -1,5 +1,4 @@
 function RobotOpponent() {
-    const date = new Date();
     let text = "Choose difficulty and click to start.";
     let words = text.split(" ");
     let avgEasyWordTxtLen;
@@ -123,51 +122,31 @@ function RobotOpponent() {
                 return 1000/(Math.random() * (10 - 43.0/6) + 43.0/6);
         }
     }
-    function getNumWords(difficulty,msPerChar){
-        let avgWordLen;
-        switch(difficulty){
-            case "Easy":
-                avgWordLen=avgEasyWordTxtLen;
-                break;
-            case "Medium":
-                avgWordLen=avgMedWordTxtLen;
-                break;
-            case "Hard":
-                avgWordLen=avgHardWordTxtLen;
-                break;
-        }
-        return Math.floor((60/(msPerChar*avgWordLen/1000)));
-    }
 
-    async function fetchRandomWordList(difficulty,numWords) {
+    async function fetchRandomWordList(difficulty,msPerChar) {
         let newText = "";
+        let avgWordLen;
         try {
-            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+numWords);
+            switch(difficulty){
+                case "Easy":
+                    avgWordLen=avgEasyWordTxtLen;
+                    break;
+                case "Medium":
+                    avgWordLen=avgMedWordTxtLen;
+                    break;
+                case "Hard":
+                    avgWordLen=avgHardWordTxtLen;
+                    break;
+            }
+            const response = await fetch('/generate_text/?difficulty='+difficulty+'&form=words&amount='+Math.floor((60/(msPerChar*avgWordLen/1000))));
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
+
             newText = await response.text();
             text=newText
             document.getElementById("text-display").innerHTML = text;
         } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
-    }
-
-    async function postUserMetrics(wpm, accuracy, elapsedTime){
-        try{
-            const postData = {"wpm":wpm,"accuracy":accuracy,"mode":"Robot Opponent","elapsedTime":elapsedTime/60,"date":date.toISOString()}
-            const response = await fetch('/update_db',{
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postData)});
-            if(!response.ok){
-                throw new Error('Network response was not ok');
-            }
-        }
-        catch(error){
             console.error('There was a problem with the fetch operation:', error);
         }
     }
@@ -189,11 +168,10 @@ function RobotOpponent() {
 
     function startGame(){
         var difficulty = getDifficulty();
-        var robotMsPerChar = getRobotMsPerChar(difficulty);
-        var numWords = getNumWords(difficulty,robotMsPerChar);
-        fetchRandomWordList(difficulty,numWords);
-        startTimer();
+        var robotMsPerChar = getRobotMsPerChar(difficulty)
+        fetchRandomWordList(difficulty,robotMsPerChar);
         robotType(robotMsPerChar);
+        startTimer();
     }
 
     function getDifficulty(){
@@ -300,7 +278,6 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
-        postUserMetrics(wordsPerMinute,accuracy,elapsedTime);
     }
 
 
@@ -312,7 +289,6 @@ function RobotOpponent() {
         document.getElementById("result").innerHTML = `Sadly, Robot finished the game first in ${elapsedTime.toFixed(2)} seconds. Robot speed: ${wordsPerMinute} WPM.`;
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
-        postUserMetrics(Math.round((currentCharIndex/5 / elapsedTime) * 60),(correctCharsTyped / totalCharsTyped) * 100, elapsedTime);
     }
 
 

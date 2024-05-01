@@ -57,9 +57,13 @@
   padding: 0 0.5rem;
 }
 
-#form-ctn form a {
-  display: block;
+#form-ctn .agreements {
+  display: flex; 
+  align-items: center; 
+  
+  max-width: 225px;
 }
+
 
 /* Google Login Button Styles */
 .gsi-material-button {
