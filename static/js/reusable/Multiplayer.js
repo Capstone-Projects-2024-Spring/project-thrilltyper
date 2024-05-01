@@ -16,6 +16,7 @@ function Multiplayer({userSession}) {
         console.log("multiplayer: connected");
 
         newSocket.on('update players', updatedPlayers => {
+            console.log("update player now")
             playerList = updatedPlayers;
                     
             console.log("socket update players: playerList = " + JSON.stringify(playerList));
@@ -384,6 +385,11 @@ function Multiplayer({userSession}) {
         //console.log("userInputCorrectText: " + userInputCorrectText);
     }
 
+    //magic code added by gao from 3308
+    if (socket == null) {
+        return <div>Is Loading...</div>;
+    }
+
     return (
 
         <div id="multiplayer-game-container">
@@ -413,7 +419,7 @@ function Multiplayer({userSession}) {
 
             <div class="window-container" id="chat-window">
                 <div id="multiplayer">
-                    {/* <ChatRoom userSession={userSession}/> */}
+                    <ChatRoom userSession={userSession} socketArgument={socket} />
                 </div>
             </div>
 
