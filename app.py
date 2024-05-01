@@ -99,9 +99,11 @@ class App:
         # player_id = 'player' + str(len(App.players)+1)
         App.players[player_id] = {'id': player_id, 'currentCharIndex': 0}
 
-        print('a new player has connected')
-        # emit('client connected', {'message': 'You are connected'}, room=request.sid)
+        emit('your player id', {'player_id': player_id}, room=player_id)
         emit('update players', list(App.players.values()), broadcast=True)
+        
+
+        print('a new player has connected')
         print(f'User connected: {player_id}, players list updated')
         print(f'Current players list: {App.players}')  # Print the entire list of players
 

@@ -5,6 +5,9 @@ function Multiplayer({userSession}) {
     const [socket, setSocket] = React.useState(null);
 
     var playerList = [];
+    var mySocketPlayerID;
+
+    // var isMeAdded = false;
 
     React.useEffect(() => {
         // Connect to the WebSocket server
@@ -13,19 +16,18 @@ function Multiplayer({userSession}) {
         console.log("multiplayer: connected");
 
         newSocket.on('update players', updatedPlayers => {
-            /*
-            if(isSelfProgress){     //prevent the web page from deteching itself connects and adds a new progress bar
-                isSelfProgress = false;
-            }else{
-                addPlayerProgress();
-            }
-            */
-            const updatePlayersData = JSON.stringify(updatedPlayers);
-            playerList = updatePlayersData;
-            console.log("socket update players: playerList = " + playerList);
-            addPlayerProgress();
+            playerList = updatedPlayers;
+                    
+            console.log("socket update players: playerList = " + JSON.stringify(playerList));
             console.log("new player joined");
-            
+            updatePlayerProgressList();
+
+        });
+
+        newSocket.on('your player id', data => {
+            mySocketPlayerID = data.player_id;
+            console.log("socket my player id: "+ mySocketPlayerID);
+            addHostPlayerProgress();
         });
 
         newSocket.on('client disconnected', (data) => {
@@ -54,6 +56,20 @@ function Multiplayer({userSession}) {
 
         return () => newSocket.disconnect();
     }, []);
+
+    function addHostPlayerProgress(){
+        const element = document.getElementById("host-player-progress");
+        element.appendChild(makePlayerProgress(mySocketPlayerID));       
+    }
+
+    function updatePlayerProgressList(){
+        playerList.forEach(item => {
+            // Check if the element with this ID exists in the DOM and if the ID is not mySocketPlayerID
+            if (!document.getElementById(item.id) && item.id !== mySocketPlayerID) {
+                addPlayerProgress(item.id);
+            }
+        });
+    }
 
     function generatePlayerID(){
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -303,12 +319,12 @@ function Multiplayer({userSession}) {
     }
 
 
-    function addPlayerProgress(){
-        const newProgressID = "player" + playerProgressList.length;
-        playerProgressList.push(newProgressID);
+    function addPlayerProgress(id){
+        // const newProgressID = "player" + playerProgressList.length;
+        // playerProgressList.push(newProgressID);
         const element = document.getElementById("player-progress-list-container");
-        element.appendChild(makePlayerProgress(newProgressID));       
-        console.log("addPlayerProgrss: playerProgressList = " + playerProgressList);
+        element.appendChild(makePlayerProgress(id));       
+        console.log("addPlayerProgrss: id = " + id);
     }
 
     function removePlayerProgress(){
@@ -426,8 +442,9 @@ function Multiplayer({userSession}) {
                 <div className="window-header">
                     <span className="header-title">Player Window</span>
                 </div>
-                {/*
+                
                 <div id="host-player-progress">
+                    {/*
                     <div class="grid-container" id="player0">
                         <div class="grid-item1">
                             <img src="../static/pics/defaultUserIcon.jpg"/>
@@ -445,9 +462,10 @@ function Multiplayer({userSession}) {
                             WPM: 0
                         </div>
                         <div class="grid-item5"></div>  
-                    </div>  
+                    </div>
+                    */}  
                 </div>
-                */}
+                
 
                 <div id="player-progress-list-container">
                 </div>
