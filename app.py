@@ -1039,5 +1039,5 @@ if __name__=="__main__":
         #this method returns a list represention of top-n largest mistyped letters
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
-        
+
     app.socketio.run(app._app, host="localhost",debug=True)
