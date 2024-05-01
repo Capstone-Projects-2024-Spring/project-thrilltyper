@@ -203,7 +203,7 @@ class App:
                 # Stores the Player object in the session
                 session["user"] = playerObj.__json__()
                 # Redirects to a desired page when authentication success
-                return redirect("/")
+                return redirect("/#/menu")
             else:
                 # Raises an error for wrong match
                 raise ValueError("Invalid username or password")
@@ -267,7 +267,7 @@ class App:
         session["user"] = playerObj.__json__()
 
         # Redirects to the result page
-        return redirect("/")
+        return redirect("/#/menu")
 
     @_app.route("/logout", methods=["GET", "POST"])
     def logout():
@@ -278,26 +278,6 @@ class App:
         # Pop out the user session
         session.pop("user", None)
         return redirect("/")
-
-    @_app.route("/custom-page")
-    def custom_page():
-        return render_template("custompage.html")
-
-    @_app.route("/generate_text/", methods=["GET"])
-    def generate_text():
-        """
-        Sends back text for the requestor to use
-        :param difficulty
-        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        :param amount : Specifies the amount of text to generate.
-        :param genre : Specifies the genre of the text. Optional.
-        """
-        difficulty = request.args.get("difficulty", "")
-        form = request.args.get("form")
-        amount = request.args.get("amount")
-        # Retrieve genre from request, default to None if not provided
-        genre = request.args.get("genre", None)
-        return Text_Generator.generate_text(difficulty, form, amount, genre)
 
     @_app.route("/get_avg_txt_len/", methods=["GET"])
     def get_avg_txt_len():
@@ -371,7 +351,7 @@ class App:
                 Database.update(usr, "UserData", _accuracy=(game_data["accuracy"]+float(user_data._accuracy)*num_races)/(num_races+1), _num_races=num_races+1,
                                 _total_playing_time=user_data._total_playing_time+game_data["elapsedTime"], _top_wpm=game_wpm if game_wpm > int(user_data._top_wpm) else int(user_data._top_wpm))
                 last_user_race = UserRace.query.filter_by(
-                    _username=usr).order_by(UserRace._date_played.desc()).first()
+                    _username=usr).order_by(UserRace._game_num.desc()).first()
                 if last_user_race:
                     Database.insert(UserRace, _game_num=int(last_user_race._game_num)+1, _username=usr, _email=str(user_data._email), _average_wpm=game_wpm,
                                     _selected_mode=game_data["mode"], _time_limit=game_data.get("timeLimit"), _date_played=parser.parse(game_data["date"]))
