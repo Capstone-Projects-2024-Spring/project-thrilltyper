@@ -283,22 +283,6 @@ class App:
     def custom_page():
         return render_template("custompage.html")
 
-    @_app.route("/generate_text/", methods=["GET"])
-    def generate_text():
-        """
-        Sends back text for the requestor to use
-        :param difficulty
-        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
-        :param amount : Specifies the amount of text to generate.
-        :param genre : Specifies the genre of the text. Optional.
-        """
-        difficulty = request.args.get("difficulty", "")
-        form = request.args.get("form")
-        amount = request.args.get("amount")
-        # Retrieve genre from request, default to None if not provided
-        genre = request.args.get("genre", None)
-        return Text_Generator.generate_text(difficulty, form, amount, genre)
-
     @_app.route("/get_avg_txt_len/", methods=["GET"])
     def get_avg_txt_len():
         """
