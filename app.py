@@ -179,6 +179,10 @@ class App:
         
     @_app.route("/authentication", methods=["POST"])
     def authenticate():
+        """
+        Endpoint called to authenticate users attempting to login. Session is created on successful login.
+        :pre-condition: The request form will have a username and password field
+        """
         try:
             # Retrieves data from the requests
             # The keys must exist
