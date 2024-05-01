@@ -1,5 +1,6 @@
 #permanent import
 import os
+import sentence_generator
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
@@ -200,6 +201,28 @@ class App:
         :return : string indicating the end of the game and the user's wpm and percent of words typed correct
         """
         return ""
+    
+    @_app.route("/generate_text/",methods=["GET"])
+    def generate_text():
+        """
+        Sends back text for the requestor to use
+        :param difficulty
+        :param form : Specifies the form of text generated. Values: 'sentences' or 'word_list'
+        """
+        difficulty = request.args.get("difficulty")
+        wpm = request.args.get("wpm")
+        if wpm:
+            wpm = int(wpm)
+            if wpm>=0 and wpm<=45:
+                difficulty="easy"
+            elif wpm>=46 and wpm<=80:
+                difficulty="medium"
+            else:
+                difficulty="hard"
+            return sentence_generator.generate_sentences(difficulty)
+        if not difficulty:
+            difficulty=""
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
 
 class Database:
     """
