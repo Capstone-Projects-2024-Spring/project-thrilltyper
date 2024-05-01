@@ -111,9 +111,10 @@ class App:
     @socketio.on('disconnect')
     def handle_disconnect():
         if request.sid in App.players:
+            player_id = request.sid  # Store the ID of the disconnecting player
             del App.players[request.sid]
-            emit('client disconnected', {}, broadcast=True)
-            print('a player has disconnected')
+            emit('client disconnected', {'player_id': player_id}, broadcast=True)
+            print('Player has disconnected:', player_id)
             print(f'Current players list: {App.players}')  # Print the entire list of players
 
     @socketio.on('start game')

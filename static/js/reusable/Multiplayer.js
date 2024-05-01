@@ -31,8 +31,8 @@ function Multiplayer({userSession}) {
         });
 
         newSocket.on('client disconnected', (data) => {
-            console.log("a player has disconnected");
-            removePlayerProgress();
+            console.log("a player has disconnected", data.player_id);
+            removePlayerProgress(data.player_id);
         });
 
         newSocket.on('start game', (data) => {
@@ -114,7 +114,7 @@ function Multiplayer({userSession}) {
         */
 
         resetVariables();
-        resetPlayerProgress();
+        // resetPlayerProgress();
         startTimer();
         
         document.getElementById("input-box").disabled = false;
@@ -327,11 +327,21 @@ function Multiplayer({userSession}) {
         console.log("addPlayerProgrss: id = " + id);
     }
 
-    function removePlayerProgress(){
+    function removePlayerProgress(id){
+        // const element = document.getElementById("player-progress-list-container");
+        // if(playerProgressList.length > 1){
+        //     const toRemove = document.getElementById(playerProgressList.pop());
+        //     element.removeChild(toRemove);
+        // }
         const element = document.getElementById("player-progress-list-container");
-        if(playerProgressList.length > 1){
-            const toRemove = document.getElementById(playerProgressList.pop());
-            element.removeChild(toRemove);
+        const toRemove = document.getElementById(id); // Get the element by id directly
+        if (toRemove && element.contains(toRemove)) { // Ensure the element exists and is a child before removing
+            element.removeChild(toRemove); // Remove the specific element
+            // Optionally update the playerProgressList to reflect this change
+            const index = playerProgressList.indexOf(id);
+            if (index > -1) {
+                playerProgressList.splice(index, 1); // Remove the id from the list
+            }
         }
     }
     
