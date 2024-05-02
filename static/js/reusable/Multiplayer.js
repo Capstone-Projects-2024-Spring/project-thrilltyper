@@ -1,23 +1,276 @@
 function Multiplayer({userSession}) {
-    let text = "Click start button to start!";
-    let words = text.split(" ");
-    let startTime;
+    const playerID = userSession ? userSession.userinfo.given_name : generatePlayerID();
 
-    let currentCharIndex = 0;   //only increment when user has typed correct letter
-    let currentWordIndex = 0;
+    const [gameStatus, setGameStatus] = React.useState('Game not started');
+    const [socket, setSocket] = React.useState(null);
+    const[currentCharIndex, setCurrentCharIndex] = React.useState(0);
+    const currentCharIndexRef = React.useRef(currentCharIndex); // Create a ref for currentCharIndex
+
+    const[text, setText] = React.useState("Click start button to start!");
+    const textRef = React.useRef(text); // Create a ref for currentCharIndex
+
+    var playerList = [];
+    var mySocketPlayerID;
+    // const[mySocketPlayerID, setMySocketPlayerID] = React.useState(0);
+
+    // var isMeAdded = false;
+
+    
+    React.useEffect(() => {
+        // Connect to the WebSocket server
+        const newSocket = io(`${window.location.protocol}//${window.location.hostname}:${window.location.port}`);
+        setSocket(newSocket);
+        console.log("multiplayer: connected");
+
+        newSocket.on('update players', updatedPlayers => {
+            console.log("update player now")
+            playerList = updatedPlayers;
+                    
+            console.log("socket update players: playerList = " + JSON.stringify(playerList));
+            console.log("new player joined");
+            updatePlayerProgressList();
+
+        });
+
+        newSocket.on('current player lists', players => {
+            console.log("socket current player lists: Received updated player list");
+            console.log(JSON.stringify(players));
+            updatePlayerListProgressBar(players);
+        });
+
+        newSocket.on('your player id', data => {
+            mySocketPlayerID = data.player_id;
+            // setMySocketPlayerID(mySocketPlayerID);
+            console.log("socket my player id: "+ mySocketPlayerID);
+            addHostPlayerProgress();
+        });
+
+        newSocket.on('client disconnected', (data) => {
+            console.log("a player has disconnected", data.player_id);
+            removePlayerProgress(data.player_id);
+        });
+
+        newSocket.on('start game', (data) => {
+            console.log(data.message);
+            console.log("dataKey: " + data.textKey);
+            
+            //code for update text display, moved from start game
+            // text = data.textKey;
+            setText(data.textKey);
+            // document.getElementById("text-display").innerHTML = text;
+            words = text.split(" ");
+            
+            console.log("socket start game: playerProgressList = " + playerProgressList);
+            startGame();
+            intervalRef2.current = setInterval(broadcastCurrentChar, 500, newSocket);
+        });
+
+        newSocket.on('stop game', (data) => {
+            console.log(data.message);
+            stopGame();
+            clearInterval(intervalRef2.current);
+        });
+
+        // Listen for the 'game rankings' event
+        newSocket.on('game rankings', (receivedRankings) => {
+            console.log("Rankings received:", receivedRankings);
+            console.log(JSON.stringify(receivedRankings));
+            document.getElementById("result-display").innerHTML = JSON.stringify(receivedRankings);
+        });
+
+        function broadcastCurrentChar(socket){
+            console.log("broadcastCurrentChar: socket = "+socket);
+            console.log("broadcastCurrentChar: currentCharIndex = "+ currentCharIndex);
+            socket.emit('update char index', {
+                player_id: socket.id,
+                currentCharIndex: currentCharIndexRef.current
+            });
+            console.log(`Emitting currentCharIndex: ${currentCharIndexRef.current} for player ${mySocketPlayerID}`);
+        }
+
+        return () => newSocket.disconnect();
+    }, []);
+
+    const intervalRef2 = React.useRef(null);
+
+    React.useEffect(() => {
+        console.log("useEffect: currentCharIndex = "+currentCharIndex);
+        currentCharIndexRef.current = currentCharIndex;
+    }, [currentCharIndex]);
+
+    React.useEffect(() => {
+        console.log("useEffect: text = "+ text);
+        textRef.current = text;
+    }, [text]);
+
+    // React.useEffect(() => {
+    //     currentCharIndexRef.current = currentCharIndex; // Update ref whenever currentCharIndex changes
+    // }, [currentCharIndex]);
+
+
+    function addHostPlayerProgress(){
+        const element = document.getElementById("host-player-progress");
+        element.appendChild(makePlayerProgress(mySocketPlayerID));       
+    }
+
+    function updatePlayerProgressList(){
+        playerList.forEach(item => {
+            // Check if the element with this ID exists in the DOM and if the ID is not mySocketPlayerID
+            if (!document.getElementById(item.id) && item.id !== mySocketPlayerID) {
+                addPlayerProgress(item.id);
+            }
+        });
+    }
+
+    
+    function resetPlayerListProgressbar(){  //this function causes bug so don't use it 
+        updateHostPlayerProgress(0);
+        playerList.forEach(player =>{
+            if(player.id != mySocketPlayerID){
+                updatePlayerProgress(player.id, 0);
+            }
+
+        });
+    }
+
+
+    function updatePlayerListProgressBar(players){
+        const textLength = text.length;  // Ensure `text` is defined in the outer scope or passed as a parameter
+        console.log("text = " + textRef.current);
+        console.log("updatePlayerListProgressBar: updating, text.length = " + textRef.current.length);
+        players.forEach(player => {
+            //need if condition because math calcualtion sometimes could not reach 100
+            if(player.id != mySocketPlayerID){
+                if(player.currentCharIndex <= textRef.current.length){ //if player has not completed game
+                    const newWidth = Math.floor((player.currentCharIndex / textRef.current.length) * 100);  // Calculate the percentage of completion
+                    updatePlayerProgress(player.id, newWidth);
+                }else{
+                    updatePlayerProgress(player.id, 100);
+                }
+            }
+            console.log(`updatePlayerListProgressBar for player ${player.id}: index = ${player.currentCharIndex}`);
+        });
+    }
+
+    function updateHostPlayerProgress(newWidth){
+
+        const progressBarContainer = document.getElementById("host-player-progress");
+        const progressBar = progressBarContainer.querySelector(".progressbar");
+        const progressBarText = progressBarContainer.querySelector(".progressbar-text");
+        const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
+
+        progressBar.style.width = newWidth + "%";
+        progressBarText.innerHTML = newWidth + "%";
+
+        if(newWidth === 100){
+            var checkmarkIcon = document.createElement('img');
+            checkmarkIcon.src = '../static/pics/checkmark.png';
+            progressBarIconContainer.appendChild(checkmarkIcon);
+        }
+        console.log("updatePlayerProgress: progressWidth = "+newWidth);
+    }
+
+    function generatePlayerID(){
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomString = 'guest';
+        for (let i = 0; i < 10; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomString += characters.charAt(randomIndex);
+        }
+
+        return randomString;
+    }
+
+    async function startGameMultiplayer(){
+        console.log("startGameMultiplayer: socket = "+socket);
+        let newText = await fetchRandomWordList();
+
+        // text = newText;
+        // document.getElementById("text-display").innerHTML = text;
+        // words = text.split(" ");
+
+        socket.emit('start game', { message: 'Host started the game', textKey: newText});
+        // resetPlayerListProgressbar();
+        //startGame(); do not start game because the host also calls startGame() on receiving the signal it sneds
+    }
+
+    function stopGameMultiplayer(){
+        console.log("stopGameMultiplayer: "+intervalRef.current);   //DEBUG
+        socket.emit('stop game', { message: 'Host stopped the game' });
+        stopGame();
+    }
+
+    /*
+
+        Divide Line for original code
+
+    */
+    function startGame(){
+        /* code moved to startMultiplayer for synchornization 
+        let newText = await fetchRandomWordList();
+        text = newText;
+        document.getElementById("text-display").innerHTML = text;
+        words = text.split(" ");
+        */
+        setIsGameStarted(true);
+        resetVariables();
+        resetPlayerProgress();
+        // resetPlayerProgress();
+        startTimer();
+        
+        document.getElementById("input-box").disabled = false;
+        console.log("start game");
+    }
+
+
+
+    function stopGame(){
+        //resetVariables();
+        setIsGameStarted(false);
+        console.log("stop game interval: "+intervalRef.current);   //DEBUG
+        document.getElementById("input-box").value = "";
+        document.getElementById("input-box").disabled = true;
+        stopTimer();
+        clearInterval(intervalRef2.current);
+        console.log("stop game");
+    }
+
+
+
+    // let text = "Click start button to start!";
+    let words = text.split(" ");
+    // let startTime;
+    const [startTime, setStartTime] = React.useState(() => new Date().getTime()); // Initializes startTime on first render
+
+    // let currentCharIndex = 0;   //only increment when user has typed correct letter
+
+
+    // let currentWordIndex = 0;
+
+    const[currentWordIndex, setCurrentWordIndex] = React.useState(0);
+
     let wrongCharCount = 0;
-    let userInputCorrectText = "";
+    // let userInputCorrectText = "";
+
+    const[userInputCorrectText, setUserInputCorrectText] = React.useState("");
+
+    const playerProgressList = [];
 
     const intervalRef = React.useRef(null);
 
     React.useEffect(() => {
         return () => {
           clearInterval(intervalRef.current);
+          clearInterval(intervalRef2.current);
         };
     }, []);
 
     //updates typed display, wpm display, and accuracy display
+    /*
     function updateStatusContainer(){
+        
+        console.log("updated Status Container: text"+text);
+        console.log("updated status container: currentCharIndex = "+currentCharIndex);
         const currentTime = new Date().getTime();
         const elapsedTime = (currentTime - startTime) / 1000;
 
@@ -29,51 +282,98 @@ function Multiplayer({userSession}) {
         document.querySelector(".wpm-display").innerHTML = "WPM: " + wpm;
         document.querySelector(".accuracy-display").innerHTML = "Accuracy:" + accuracy.toFixed(1) + "%"; 
 
-        const progressBarContainer = document.getElementById(playerProgressList[0]);
+        const progressBarContainer = document.getElementById("host-player-progress");
         const progressBarWPM = progressBarContainer.querySelector(".grid-item4");
         progressBarWPM.innerHTML = "WPM: " + wpm;
         
-
-         
-/*  
-        <div class="progress-display">Typed: 344/1766</div>
-        <div class="wpm-display">WPM: 60</div>
-        <div class="accuracy-display">Accuracy: 94%</div>
-*/
+        console.log("update status container: text.length = "+text.length);
     }
+    */
+
+    const[wpmValue, setwpmValue] = React.useState(0);
+
+    React.useEffect(() => {
+        const updateStatusContainer = () => {
+            const currentTime = new Date().getTime();
+            const elapsedTime = (currentTime - startTime) / 1000;
+    
+            // const typed = `${currentCharIndex}/${text.length}`;
+            const wpm = Math.round((currentCharIndex / 5 / elapsedTime) * 60);
+
+            const value = currentCharIndex / 5 / elapsedTime * 60;
+
+            console.log("updateStatusContainer: value = "+value);
+            console.log("updateStatusContainer: currentTime = "+ startTime);
+
+            if(elapsedTime != 0){
+                setwpmValue(Math.round((currentCharIndex / 5 / elapsedTime) * 60));
+            }
+            const accuracy = ((text.length - wrongCharCount) / text.length * 100).toFixed(1);
+    
+
+        };
+        /*
+        <div class="progress-display">Typed: 0</div>
+        <div class="wpm-display">WPM: 0</div>
+        <div class="accuracy-display">Accuracy: 100%</div>
+        */
+    
+        updateStatusContainer();  // Call the internal function
+    }, [currentCharIndex, text, startTime, wrongCharCount]);  // Include all dependencies that affect the calculations
+    
+    
+    
 
     function checkInput() {
-        console.log("checkInput: text = "+text);
+        console.log("checkInput: tex.lengtht = "+text.length);
+        console.log("checkInput: userInputCorrectText = "+ userInputCorrectText);
+        console.log("checkInput: currentCharIndex = "+ currentCharIndex);
+
         var userInputText = document.getElementById("input-box").value;
         var userInputLastChar = userInputText[userInputText.length - 1];
 
-        console.log("executed");
         
         //updates text color
+        var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
         updateText();
-
         
 
         //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
         if (userInputText.substring(0, userInputText.length - 1) == words[currentWordIndex] && userInputLastChar == ' ') {
-            currentWordIndex++;
-            userInputCorrectText += userInputText;  //saves correct text
+            // currentWordIndex++;
+            setCurrentWordIndex(currentWordIndex+1)
+            // userInputCorrectText += userInputText;  //saves correct text
+            setUserInputCorrectText(userInputCorrectText + userInputText);
             document.getElementById("input-box").value = "";
         }
 
         if (userInputLastChar == text[currentCharIndex]) {
-            currentCharIndex++;
+            // currentCharIndex++;
+            setCurrentCharIndex(currentCharIndex+1);
+            // console.log("updateText split1: currentCharIndex = " + currentCharIndex);
         }else{
             wrongCharCount++;
         }
 
         //update player progress bar
-        updatePlayerProgress(playerProgressList[0], Math.ceil(currentCharIndex/text.length*100));
-       
+        // updatePlayerProgress(playerProgressList[0], Math.ceil(currentCharIndex/text.length*100));
+        updateHostPlayerProgress(Math.floor(currentCharIndex/text.length*100));
+        
+        console.log("near checkInput: tex.lengtht = "+text.length);
+        console.log("near checkInput: currentCharIndex = "+ currentCharIndex);
+
         //submit input if last letter is typed
+        /*
         if (currentCharIndex >= text.length) {
-            updateStatusContainer();
             submitInput();
+            console.log("checkInput: split one 1 executed = "+text);
+            updateStatusContainer();
+        }*/
+
+        if(userInputFullText === text){
+            submitInput();
+            console.log("checkInput: split one 1 executed = "+text);
+            updateHostPlayerProgress(Math.ceil(currentCharIndex/text.length*100));
         }
         
     }
@@ -81,6 +381,15 @@ function Multiplayer({userSession}) {
     function submitInput(){
         stopGame();
         document.getElementById("result-display").innerHTML = "Congratulations! You completed the game!";
+
+        const myID = document.querySelector(".usernameDisplay").innerHTML;
+        console.log("submitInput: " + mySocketPlayerID);
+        console.log("submitInput: myID = " + myID);
+        socket.emit('player finished', {
+            playerId: myID,
+            finishedTime: new Date().getTime() // Optionally send the client-side timestamp
+        });
+        console.log("Finished input sent to the server.");
     }
 
     //update text color as user types text
@@ -91,9 +400,16 @@ function Multiplayer({userSession}) {
         correct text | incorrect text | untyped text
     */
     //if you don't get what is going on here, open a type racer game and type some wrong text
+
+    
     function updateText() {
+        if(!isGameStarted){ 
+            return;
+        }
         var str = text;
         var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
+        console.log("updateText: userInputCorrectText" + userInputCorrectText);
+        console.log("updateText: userInputFullText = "+userInputFullText);
 
         var greenText = "";          //correct text
         var redText = "";           //incorrect text
@@ -135,6 +451,7 @@ function Multiplayer({userSession}) {
 
         document.getElementById("text-display").innerHTML = updatedText;
         
+        // return updateText;
     }
 
     async function fetchRandomWordList() {
@@ -154,75 +471,96 @@ function Multiplayer({userSession}) {
     }
 
     function resetVariables(){
-        currentWordIndex = 0;   //initializes value for play again
-        currentCharIndex = 0;
-        userInputCorrectText = "";
+        // currentWordIndex = 0;   //initializes value for play again
+        setCurrentWordIndex(0);
+        // currentCharIndex = 0;
+        setCurrentCharIndex(0);
+        // userInputCorrectText = "";
+        setUserInputCorrectText("");
         document.getElementById("input-box").value = "";
-        document.getElementById("timer-display").innerHTML = "";
+        // document.getElementById("timer-display").innerHTML = "";
         document.getElementById("result-display").innerHTML = "";
     }
 
-    async function startGame(){
-        let newText = await fetchRandomWordList();
-        text = newText;
-        document.getElementById("text-display").innerHTML = text;
-        words = text.split(" ");
-        
-        resetVariables();
-        resetPlayerProgress();
-        startTimer();
-        
-        document.getElementById("input-box").disabled = false;
-        console.log("start game");
-    }
 
-
-
-    function stopGame(){
-        //resetVariables();
-        document.getElementById("input-box").value = "";
-        document.getElementById("input-box").disabled = true;
-        stopTimer();
-        console.log("stop game");
-    }
-
+/*
     function startTimer(){
-        startTime = new Date().getTime();
+        //startTime = new Date().getTime();
+        setStartTime(new Date().getTime());
         intervalRef.current = setInterval(updateTimer, 10);
+    }
+*/
+
+    // rewrite timer
+    function startTimer(){
+        const start = new Date().getTime();
+        setStartTime(start);  // Set the start time when timer starts
+        intervalRef.current = setInterval(updateTimer, 10, start);  // Pass start time to ensure consistency
     }
 
     function stopTimer(){
         clearInterval(intervalRef.current);
     }
 
+    const[elapsedTime, setElapsedTime] = React.useState(0);
+
+    /*
     function updateTimer(){
         const currentTime = new Date().getTime();
-        const elapsedTime = (currentTime - startTime) / 1000;
-        console.log("updateTimer: elapsedTime: " + elapsedTime);
+        const elapsedTimeValue = (currentTime - startTime) / 1000;
+        
+        console.log("updateTimer: currentTime = "+currentTime);
+        console.log("updateTimer: elapsedTime = "+elapsedTimeValue);
+        setElapsedTime((currentTime - startTime) / 1000);
+
+        // console.log("updateTimer: elapsedTime: " + elapsedTime);
         document.getElementById("timer-display").innerHTML = `${elapsedTime.toFixed(2)} s`;
-        updateStatusContainer();    //should placed somewhere else but put here for convenience
+        // updateStatusContainer();    //should placed somewhere else but put here for convenience
+        console.log("update timer: executed");
+    }
+    */
+
+    function updateTimer(start){
+        const currentTime = new Date().getTime();
+        const elapsedTimeValue = (currentTime - start) / 1000;
+        
+        //console.log("updateTimer: currentTime = " + currentTime);
+        //console.log("updateTimer: elapsedTime = " + elapsedTimeValue);
+        setElapsedTime(elapsedTimeValue);
+    
+        // Logging here is fine but avoid direct DOM manipulation
+        //console.log("update timer: executed");
+    }
+    
+
+    function addPlayerProgress(id){
+        // const newProgressID = "player" + playerProgressList.length;
+        // playerProgressList.push(newProgressID);
+        const element = document.getElementById("player-progress-list-container");
+        element.appendChild(makePlayerProgress(id));       
+        console.log("addPlayerProgrss: id = " + id);
     }
 
-
-    const playerProgressList = ["player0"];
-
-    function addPlayerProgress(){
-        const newProgressID = "player" + playerProgressList.length;
-        playerProgressList.push(newProgressID);
+    function removePlayerProgress(id){
+        // const element = document.getElementById("player-progress-list-container");
+        // if(playerProgressList.length > 1){
+        //     const toRemove = document.getElementById(playerProgressList.pop());
+        //     element.removeChild(toRemove);
+        // }
         const element = document.getElementById("player-progress-list-container");
-        element.appendChild(makePlayerProgress(newProgressID));       
-        console.log("addPlayerProgrss: playerProgressList = " + playerProgressList);
-    }
-
-    function removePlayerProgress(){
-        const element = document.getElementById("player-progress-list-container");
-        if(playerProgressList.length > 1){
-            const toRemove = document.getElementById(playerProgressList.pop());
-            element.removeChild(toRemove);
+        const toRemove = document.getElementById(id); // Get the element by id directly
+        if (toRemove && element.contains(toRemove)) { // Ensure the element exists and is a child before removing
+            element.removeChild(toRemove); // Remove the specific element
+            // Optionally update the playerProgressList to reflect this change
+            const index = playerProgressList.indexOf(id);
+            if (index > -1) {
+                playerProgressList.splice(index, 1); // Remove the id from the list
+            }
         }
     }
     
     function updatePlayerProgress(id, newWidth){
+        console.log("updatePlayerProgress: id = "+id);
         const progressBarContainer = document.getElementById(id);
         const progressBar = progressBarContainer.querySelector(".progressbar");
         const progressBarText = progressBarContainer.querySelector(".progressbar-text");
@@ -231,17 +569,25 @@ function Multiplayer({userSession}) {
         progressBar.style.width = newWidth + "%";
         progressBarText.innerHTML = newWidth + "%";
 
-        if(newWidth === 100){
+        const hasIcon = (document.getElementById("check-icon") != null);
+        if(newWidth === 100 && !hasIcon){
             var checkmarkIcon = document.createElement('img');
+            checkmarkIcon.id = "check-icon";
             checkmarkIcon.src = '../static/pics/checkmark.png';
             progressBarIconContainer.appendChild(checkmarkIcon);
         }
+        /*  does not clear
+        else if(newWidth <= 100 && hasIcon){
+            var iconElement = progressBarContainer.getElementById("check-icon")
+            progressBarIconContainer.removeChild(iconElement);
+        }
+        */
         console.log("updatePlayerProgress: progressWidth = "+newWidth);
     }
 
     //clear host progress bar
     function resetPlayerProgress(){
-        const progressBarContainer = document.getElementById(playerProgressList[0]);
+        const progressBarContainer = document.getElementById("host-player-progress");
         const progressBar = progressBarContainer.querySelector(".progressbar");
         const progressBarText = progressBarContainer.querySelector(".progressbar-text");
         const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
@@ -252,12 +598,26 @@ function Multiplayer({userSession}) {
 
     }
 
+    React.useEffect(() => { //force re-render to let updateText() have correct variable
+        updateText();
+    }, [userInputCorrectText]);  // Depend on both the text and the trigger
+
+    const [isGameStarted, setIsGameStarted] = React.useState(false);    //only used once for updateText() in fillText to work properly
+
     function fillText(){
-        userInputCorrectText = text.substring(0, text.length-1);
-        currentCharIndex = text.length-1;
+        // userInputCorrectText = text.substring(0, text.length-1);
+        setUserInputCorrectText(text.substring(0, text.length-1));
+        // currentCharIndex = text.length-1;
+        setCurrentCharIndex(text.length-1);
+        setTriggerUpdate(triggerUpdate => triggerUpdate+1);
         updateText();
         //console.log("text: " + text);
         //console.log("userInputCorrectText: " + userInputCorrectText);
+    }
+
+    // magic code added by gao from 3308
+    if (socket == null) {
+        return <div>Is Loading...</div>;
     }
 
     return (
@@ -289,12 +649,15 @@ function Multiplayer({userSession}) {
 
             <div class="window-container" id="chat-window">
                 <div id="multiplayer">
-                    <ChatRoom userSession={userSession}/>
+                    <ChatRoom userSession={userSession} socketArgument={socket} />
                 </div>
             </div>
 
             <div class="window-container" id="timer-window">
-                <div id="timer-display"></div>
+                <div id="timer-display">
+                    <img class="timer-image" src="/static/pics/timer.png"/>
+                    {elapsedTime.toFixed(2)}s
+                </div>
             </div>
 
             <div class="window-container" id="text-window">
@@ -303,9 +666,9 @@ function Multiplayer({userSession}) {
                 </div>
             
                 <div class="stats-container">
-                    <div class="progress-display">Typed: 0</div>
-                    <div class="wpm-display">WPM: 0</div>
-                    <div class="accuracy-display">Accuracy: 100%</div>
+                    <div class="progress-display">Typed: {currentCharIndex}/{text.length}</div>
+                    <div class="wpm-display">WPM: {wpmValue}</div>
+                    {/* <div class="accuracy-display">Accuracy: 100%</div> */}
                 </div>
             
                 <div class="text-display-container">
@@ -317,8 +680,8 @@ function Multiplayer({userSession}) {
 
                 <div id="result-display"></div>
                 <div id="button-holder">
-                    <button onClick={startGame}>Start</button>
-                    <button onClick={stopGame}>Stop</button>
+                    <button onClick={startGameMultiplayer}>Start</button>
+                    <button onClick={stopGameMultiplayer}>Stop</button>
                     <button onClick={fillText}>Fill Text</button>
                 </div>
             </div>
@@ -328,7 +691,9 @@ function Multiplayer({userSession}) {
                 <div className="window-header">
                     <span className="header-title">Player Window</span>
                 </div>
+                
                 <div id="host-player-progress">
+                    {/*
                     <div class="grid-container" id="player0">
                         <div class="grid-item1">
                             <img src="../static/pics/defaultUserIcon.jpg"/>
@@ -341,13 +706,16 @@ function Multiplayer({userSession}) {
                                 </div>
                             </div>
                         </div>
-                        <div class="grid-item3"> {/* checkmark placeholder */}</div>  
+                        <div class="grid-item3"> {/* checkmark placeholder */}{/* </div> 
                         <div class="grid-item4">
                             WPM: 0
                         </div>
                         <div class="grid-item5"></div>  
-                    </div>  
+                    </div>
+                    */}  
                 </div>
+                
+
                 <div id="player-progress-list-container">
                 </div>
                 <button onClick={addPlayerProgress}>Test Adding</button>
