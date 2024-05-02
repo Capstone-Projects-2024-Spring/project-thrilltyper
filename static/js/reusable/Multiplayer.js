@@ -54,16 +54,32 @@ function Multiplayer({userSession}) {
             
             console.log("socket start game: playerProgressList = " + playerProgressList);
             startGame();
+            intervalRef2.current = setInterval(broadcastCurrentChar, 500, newSocket);
         });
 
         newSocket.on('stop game', (data) => {
             console.log(data.message);
             stopGame();
+            clearInterval(intervalRef2.current);
         });
 
 
+        function broadcastCurrentChar(socket){
+            console.log("broadcastCurrentChar: socket = "+socket);
+            socket.emit('update char index', {
+                player_id: socket.id,
+                currentCharIndex: currentCharIndex
+            });
+            console.log(`Emitting currentCharIndex: ${currentCharIndex} for player ${mySocketPlayerID}`);
+        }
+
         return () => newSocket.disconnect();
     }, []);
+
+    const intervalRef2 = React.useRef(null);
+
+
+
 
     function addHostPlayerProgress(){
         const element = document.getElementById("host-player-progress");
@@ -109,6 +125,7 @@ function Multiplayer({userSession}) {
     }
 
     async function startGameMultiplayer(){
+        console.log("startGameMultiplayer: socket = "+socket);
         let newText = await fetchRandomWordList();
 
         // text = newText;
@@ -186,6 +203,7 @@ function Multiplayer({userSession}) {
     React.useEffect(() => {
         return () => {
           clearInterval(intervalRef.current);
+          clearInterval(intervalRef2.current);
         };
     }, []);
 
