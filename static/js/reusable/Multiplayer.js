@@ -6,6 +6,9 @@ function Multiplayer({userSession}) {
     const[currentCharIndex, setCurrentCharIndex] = React.useState(0);
     const currentCharIndexRef = React.useRef(currentCharIndex); // Create a ref for currentCharIndex
 
+    const[text, setText] = React.useState("Click start button to start!");
+    const textRef = React.useRef(text); // Create a ref for currentCharIndex
+
     var playerList = [];
     var mySocketPlayerID;
 
@@ -87,6 +90,11 @@ function Multiplayer({userSession}) {
         currentCharIndexRef.current = currentCharIndex;
     }, [currentCharIndex]);
 
+    React.useEffect(() => {
+        console.log("useEffect: text = "+ text);
+        textRef.current = text;
+    }, [text]);
+
     // React.useEffect(() => {
     //     currentCharIndexRef.current = currentCharIndex; // Update ref whenever currentCharIndex changes
     // }, [currentCharIndex]);
@@ -106,17 +114,21 @@ function Multiplayer({userSession}) {
         });
     }
 
+
+
     function updatePlayerListProgressBar(players){
         const textLength = text.length;  // Ensure `text` is defined in the outer scope or passed as a parameter
-
-        console.log("updatePlayerListProgressBar: updating");
+        console.log("text = " + textRef.current);
+        console.log("updatePlayerListProgressBar: updating, text.length = " + textRef.current.length);
         players.forEach(player => {
             //need if condition because math calcualtion sometimes could not reach 100
-            if(player.currentCharIndex <= text.length){ //if player has not completed game
-                const newWidth = (player.currentCharIndex / textLength) * 100;  // Calculate the percentage of completion
-                updatePlayerProgress(player.id, newWidth);
-            }else{
-                updatePlayerProgress(player.id, 100);
+            if(player.id != mySocketPlayerID){
+                if(player.currentCharIndex <= text.length){ //if player has not completed game
+                    const newWidth = Math.floor((player.currentCharIndex / textRef.current.length) * 100);  // Calculate the percentage of completion
+                    updatePlayerProgress(player.id, newWidth);
+                }else{
+                    updatePlayerProgress(player.id, 100);
+                }
             }
             console.log(`updatePlayerListProgressBar for player ${player.id}: index = ${player.currentCharIndex}`);
         });
@@ -205,7 +217,7 @@ function Multiplayer({userSession}) {
     }
 
 
-    const[text, setText] = React.useState("Click start button to start!");
+
     // let text = "Click start button to start!";
     let words = text.split(" ");
     // let startTime;
