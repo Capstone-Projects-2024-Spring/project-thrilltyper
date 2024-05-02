@@ -141,10 +141,10 @@ def test_generate_text_word_list(client):
 
 def test_generate_dynamic(client):
     """
-    Test: That dynamic text generation endpoint can take in WPM and accuracy and generate words using that data
+    Test: That text generation endpoint can take in WPM and generate words using that data
     Result: True if the endpoint responds with successful status code and responds with enough words to fill two lines
     """
-    response = client.get("/generate_dynamic/?wpm=53&accuracy=70")
+    response = client.get("/generate_text/?wpm=53")
     assert response.status_code==200
     word_lst = response.data.decode('utf-8').split(" ")
     assert len(word_lst)>=10
