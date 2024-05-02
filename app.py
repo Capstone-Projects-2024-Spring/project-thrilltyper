@@ -62,6 +62,7 @@ class App:
 
     socketio = SocketIO(_app) 
     players = {}
+    players_finished = {}
     broadcast_active = False
     broadcast_thread = None
     
@@ -165,6 +166,32 @@ class App:
             App.players[player_id]['currentCharIndex'] = current_char_index
             print(f"Updated currentCharIndex for {player_id}: {current_char_index}")
         
+    @socketio.on('player finished')
+    def handle_player_finished(data):
+        print("Received data:", data)  # Add this line to debug what you receive
+        player_id = data['playerId']
+        finished_time = data['finishedTime']
+
+        if player_id in App.players:
+            App.players_finished[player_id] = {'finishedTime': finished_time}
+            print(f'Player {player_id} finished at {finished_time}')
+
+        print("Players Finished", App.players_finished)  # Add this line to debug what you receive
+
+        # Check if all players have finished
+        if len(App.players_finished) == len(App.players):
+            # Create a sorted list of players based on their finish times
+            sorted_players = sorted(App.players_finished.items(), key=lambda x: x[1]['finishedTime'])
+            rankings = [{'playerId': player_id, 'rank': i + 1} for i, (player_id, _) in enumerate(sorted_players)]
+
+            # Send rankings to all clients
+            emit('game rankings', rankings, broadcast=True)
+            App.players_finished.clear()
+            print('Rankings sent:', rankings)
+            if App.broadcast_active:
+                App.broadcast_active = False
+                if App.broadcast_thread.is_alive():
+                    App.broadcast_thread.join()  # Ensure the thread stops gracefully
 
 
 

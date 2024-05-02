@@ -11,6 +11,7 @@ function Multiplayer({userSession}) {
 
     var playerList = [];
     var mySocketPlayerID;
+    // const[mySocketPlayerID, setMySocketPlayerID] = React.useState(0);
 
     // var isMeAdded = false;
 
@@ -39,6 +40,7 @@ function Multiplayer({userSession}) {
 
         newSocket.on('your player id', data => {
             mySocketPlayerID = data.player_id;
+            // setMySocketPlayerID(mySocketPlayerID);
             console.log("socket my player id: "+ mySocketPlayerID);
             addHostPlayerProgress();
         });
@@ -69,6 +71,12 @@ function Multiplayer({userSession}) {
             clearInterval(intervalRef2.current);
         });
 
+        // Listen for the 'game rankings' event
+        newSocket.on('game rankings', (receivedRankings) => {
+            console.log("Rankings received:", receivedRankings);
+            console.log(JSON.stringify(receivedRankings));
+            document.getElementById("result-display").innerHTML = JSON.stringify(receivedRankings);
+        });
 
         function broadcastCurrentChar(socket){
             console.log("broadcastCurrentChar: socket = "+socket);
@@ -223,6 +231,7 @@ function Multiplayer({userSession}) {
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;
         stopTimer();
+        clearInterval(intervalRef2.current);
         console.log("stop game");
     }
 
@@ -372,6 +381,15 @@ function Multiplayer({userSession}) {
     function submitInput(){
         stopGame();
         document.getElementById("result-display").innerHTML = "Congratulations! You completed the game!";
+
+        const myID = document.querySelector(".usernameDisplay").innerHTML;
+        console.log("submitInput: " + mySocketPlayerID);
+        console.log("submitInput: myID = " + myID);
+        socket.emit('player finished', {
+            playerId: myID,
+            finishedTime: new Date().getTime() // Optionally send the client-side timestamp
+        });
+        console.log("Finished input sent to the server.");
     }
 
     //update text color as user types text
