@@ -249,3 +249,11 @@ body {
     padding: 10px;
     text-align: center;
 }
+
+.timer-image{
+    height: 50px;
+    width: auto;
+    vertical-align: middle; /* Aligns the middle of the image with the baseline plus half the x-height of the text */
+    margin-right: 10px;
+    margin-bottom: 10px;
+}

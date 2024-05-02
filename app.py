@@ -12,6 +12,7 @@ from dateutil import parser
 from sqlalchemy.orm import validates  # for validation of data in tables
 from sqlalchemy import Column, or_  # used for reference to tables' column name
 from player import player
+from threading import Thread
 import string
 from text_generator import Text_Generator
 
@@ -60,7 +61,11 @@ class App:
         server_metadata_url=f"{appConf.get('OAUTH2_META_URL')}",
     )
 
-    socketio = SocketIO(_app)
+    socketio = SocketIO(_app) 
+    players = {}
+    players_finished = {}
+    broadcast_active = False
+    broadcast_thread = None
 
     def run(self, host: str | None = None, port: int | None = None, debug: bool | None = None, load_dotenv: bool = True, **options):
         """
@@ -82,13 +87,111 @@ class App:
             server. See :func:`werkzeug.serving.run_simple` for more
             information.
         """
-        self._app.run(host, port, debug, load_dotenv)
+        self._app.run(host,port,debug,load_dotenv)
 
     @socketio.on('event')
     def handle_chat_global(json):
         global socketio
         print('received my event: ' + str(json))
         App.socketio.emit('global chat', json)
+    
+
+    """
+    added by Hu
+
+    """
+    def broadcast_player_list():
+        print("Broadcast thread started")
+        while App.broadcast_active:
+            App.socketio.sleep(0.5)  # Sleep for 100 milliseconds
+            App.socketio.emit('current player lists', list(App.players.values()))
+        print("Broadcast thread ended")
+        
+    @socketio.on('connect')
+    def handle_connect():
+        player_id = request.sid
+        # player_id = 'player' + str(len(App.players)+1)
+        App.players[player_id] = {'id': player_id, 'currentCharIndex': 0}
+
+        emit('your player id', {'player_id': player_id}, room=player_id)
+        emit('update players', list(App.players.values()), broadcast=True)
+        
+
+        print('a new player has connected')
+        print(f'User connected: {player_id}, players list updated')
+        print(f'Current players list: {App.players}')  # Print the entire list of players
+
+
+    @socketio.on('disconnect')
+    def handle_disconnect():
+        if request.sid in App.players:
+            player_id = request.sid  # Store the ID of the disconnecting player
+            del App.players[request.sid]
+            emit('client disconnected', {'player_id': player_id}, broadcast=True)
+            print('Player has disconnected:', player_id)
+            print(f'Current players list: {App.players}')  # Print the entire list of players
+
+
+    @socketio.on('start game')
+    def handle_start_game(data):
+        print('Received start game signal:', data)
+        # App.socketio.emit('start game', {'message': 'Start the game!', 'textKey': data['text']})
+        emit('start game', {'message': 'Start the game!', 'textKey': data['textKey']}, broadcast=True)
+            # Start the broadcast thread only if it's not already running
+        if not App.broadcast_active:
+            App.broadcast_active = True
+            App.broadcast_thread = Thread(target=App.broadcast_player_list)
+            App.broadcast_thread.start()
+
+    @socketio.on('stop game')
+    def handle_stop_game(data):
+        print('Received stop game signal:', data)
+        # App.socketio.emit('stop game', {'message': 'Stop the game!'})
+        emit('stop game', {'message': 'Stop the game!'}, broadcast=True)
+            # Stop the broadcasting thread
+        if App.broadcast_active:
+            App.broadcast_active = False
+            if App.broadcast_thread.is_alive():
+                App.broadcast_thread.join()  # Ensure the thread stops gracefully
+
+    @socketio.on('update char index')
+    def handle_update_char_index(data):
+        player_id = request.sid  # Assuming you're using the default SocketIO session ID as the player ID
+        current_char_index = data['currentCharIndex']
+        
+        # Update the player's current character index in the players dictionary
+        if player_id in App.players:
+            App.players[player_id]['currentCharIndex'] = current_char_index
+            print(f"Updated currentCharIndex for {player_id}: {current_char_index}")
+        
+    @socketio.on('player finished')
+    def handle_player_finished(data):
+        print("Received data:", data)  # Add this line to debug what you receive
+        player_id = data['playerId']
+        finished_time = data['finishedTime']
+
+        if player_id in App.players:
+            App.players_finished[player_id] = {'finishedTime': finished_time}
+            print(f'Player {player_id} finished at {finished_time}')
+
+        print("Players Finished", App.players_finished)  # Add this line to debug what you receive
+
+        # Check if all players have finished
+        if len(App.players_finished) == len(App.players):
+            # Create a sorted list of players based on their finish times
+            sorted_players = sorted(App.players_finished.items(), key=lambda x: x[1]['finishedTime'])
+            rankings = [{'playerId': player_id, 'rank': i + 1} for i, (player_id, _) in enumerate(sorted_players)]
+
+            # Send rankings to all clients
+            emit('game rankings', rankings, broadcast=True)
+            App.players_finished.clear()
+            print('Rankings sent:', rankings)
+            if App.broadcast_active:
+                App.broadcast_active = False
+                if App.broadcast_thread.is_alive():
+                    App.broadcast_thread.join()  # Ensure the thread stops gracefully
+
+
 
     @_app.route("/login", methods=["GET", "POST"])
     def login():
@@ -1080,4 +1183,4 @@ if __name__ == "__main__":
         # top_n_letters = Database.get_top_n_letters("user35", 6)
         # print(top_n_letters)
 
-    app.socketio.run(app._app, host="localhost", debug=True)
+    app.socketio.run(app._app, host="0.0.0.0", debug=True)

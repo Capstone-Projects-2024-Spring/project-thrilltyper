@@ -179,6 +179,7 @@ function RobotOpponent() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
         correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
+        correctLettersTyped = 0;
         totalCharsTyped = 0;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";

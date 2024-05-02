@@ -58,10 +58,17 @@ function makePlayerProgress(id){
     //checkmarkIcon.src = '../static/pics/checkmark.png';
     //gridItem3.appendChild(checkmarkIcon);
 
-    // Create the fourth grid item for WPM
+    // Create the fourth grid item for user name and WPM display
     var gridItem4 = document.createElement('div');
     gridItem4.className = 'grid-item4';
-    gridItem4.textContent = 'WPM: 89';
+    var usernameDisplay = document.createElement('p');
+    usernameDisplay.className = 'usernameDisplay';
+    usernameDisplay.textContent = id;
+    var wpmProgressDisplay = document.createElement('p');
+    wpmProgressDisplay.className = 'wpmProgressDisplay';
+    wpmProgressDisplay.textContent = 'WPM: 89';
+    gridItem4.appendChild(usernameDisplay);
+    gridItem4.appendChild(wpmProgressDisplay);
     
     // Create the fifth grid item (empty)
     var gridItem5 = document.createElement('div');

@@ -151,6 +151,7 @@ function DynamicMode() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
         correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
+        correctLettersTyped=0;
         totalCharsTyped = 0;
         currBlurbIndex = 0;
         userInputCorrectText = "";
@@ -232,7 +233,6 @@ function DynamicMode() {
         const endTime = new Date().getTime();
         const elapsedTime = timeToType / 1000;
         const wordsPerMinute = Math.round((correctLettersTyped / 5.0) / (elapsedTime / 60.0));
-        console.log(correctCharsTyped);
         let accuracy = 0;
         if (totalCharsTyped!=0){
             accuracy =  (correctCharsTyped / totalCharsTyped) * 100 ;

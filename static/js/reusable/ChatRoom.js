@@ -1,4 +1,4 @@
-function ChatRoom({ userSession = null }) {
+function ChatRoom({ userSession = null, socketArgument}) {
     // const decalration and initialization
     const [messages, setMessages] = React.useState([]);
     const [userName, setUserName] = React.useState('');
@@ -9,8 +9,10 @@ function ChatRoom({ userSession = null }) {
 
     // One-time setup
     React.useEffect(() => {
-        const newSocket = io.connect('http://' + window.location.hostname + ':' + window.location.port, { transports: ['websocket'] });
-        setSocket(newSocket);
+        // const newSocket = io.connect('http://' + window.location.hostname + ':' + window.location.port, { transports: ['websocket'] });
+        // setSocket(newSocket);
+        setSocket(socketArgument)
+        console.log("chatroom: " + socketArgument)
 
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let randomString = 'guest';
@@ -25,25 +27,25 @@ function ChatRoom({ userSession = null }) {
             setUserName(userSession.userinfo.given_name)
         }
 
-        newSocket.on('connect', () => {
+        socketArgument.on('connect', () => {
             console.log("connected")
-            newSocket.emit('event', { user_name: userSession ? userSession.userinfo.given_name : randomString, message: "has joined the lobby" });
+            socketArgument.emit('event', { user_name: userSession ? userSession.userinfo.given_name : randomString, message: "has joined the lobby" });
         });
 
-        newSocket.on('global chat', (msg) => {
+        socketArgument.on('global chat', (msg) => {
             setMessages((prevMessages) => [...prevMessages, msg]);
         });
 
         return () => {
             // Prevent navigation until socket is disconnected
             setDisconnecting(true);
-            newSocket.disconnect(() => {
+            socketArgument.disconnect(() => {
                 setDisconnecting(false);
             });
         };
     }, []);
 
-    if (userName == "") {
+    if (userName == "" || socket == null) {
         return <div>Is Loading...</div>;
     }
 
