@@ -179,57 +179,60 @@ function ThrillTyperGame() {
   }
 
   function checkInput() {
-    var userInputText = document.getElementById("input-box").value;
-    var userInputLastChar = userInputText[userInputText.length - 1];
+      var userInputText = document.getElementById("input-box").value;
+      var userInputLastChar = userInputText[userInputText.length - 1];
 
-    //updates text color
-    updateText();
+      //updates text color
+      updateText();
 
-    //idk what this is
-    //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
-    if (
-      userInputText.substring(0, userInputText.length - 1) ==
-        words[currentWordIndex] &&
-      userInputLastChar == " "
-    ) {
-      currentWordIndex++;
-      userInputCorrectText += userInputText; //saves correct text
-      document.getElementById("input-box").value = "";
-    }
+      //idk what this is 
+      //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
+      if (userInputText.substring(0, userInputText.length - 1) == words[currentWordIndex] && userInputLastChar == ' ') {
+          currentWordIndex++;
+          userInputCorrectText += userInputText;  //saves correct text
+          document.getElementById("input-box").value = "";
+      }
 
-    if (userInputLastChar == text[currentCharIndex]) {
-      //works but logic is bad
-      currentCharIndex++;
-      correctCharsTyped++;
-    }
-    totalCharsTyped++;
+      if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
+          currentCharIndex++;
+          correctCharsTyped++;
+          if(text[currentCharIndex]!=' '){
+              correctLettersTyped++;
+          }
+      }
+      totalCharsTyped++;
 
-    //submit input if last letter is typed
-    if (currentCharIndex >= text.length) {
-      submitInput();
-    }
+      //submit input if last letter is typed
+      if (currentCharIndex >= text.length) {
+          submitInput();
+      }
   }
 
-  function submitInput() {
-    //clearInterval(timerInterval);
-    stopTimerInterval();
-    const endTime = new Date().getTime();
-    const elapsedTime = (endTime - startTime) / 1000;
-    const wordsPerMinute = Math.round(
-      (correctCharsTyped / 5 / elapsedTime) * 60
-    );
-    const accuracy = (correctCharsTyped / totalCharsTyped) * 100;
-    document.getElementById(
-      "result"
-    ).innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(
-      2
-    )} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(
-      2
-    )}%`;
-    document.getElementById("input-box").value = "";
-    document.getElementById("input-box").disabled = true;
-    postUserMetrics(wordsPerMinute, accuracy, elapsedTime);
-  }
+    async function startTimer() {
+        currentWordIndex = 0;   //initializes value for play again
+        currentCharIndex = 0;
+        correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
+        totalCharsTyped = 0;
+        userInputCorrectText = "";
+        document.getElementById("input-box").value = "";
+        document.getElementById("result").innerHTML = "";
+
+        startTime = new Date().getTime();
+        if(!inputGiven){
+            text = await fetchRandomWordList();
+        }
+
+        words = text.split(" ");
+
+        displayText();
+        enableInput();
+
+        //clearInterval(timerInterval);
+        //timerInterval = setInterval(updateTimer, 10);
+
+        stopTimerInterval();
+        startTimerInterval();
+    }
 
   function stopTimer() {
     stopTimerInterval();
@@ -279,6 +282,46 @@ function ThrillTyperGame() {
     document.getElementById("hello").style.width = percentage + "%";
     document.getElementById("hello2").innerHTML = percentage + "%";
   }
+
+    function submitInput() {
+        //clearInterval(timerInterval);
+        stopTimerInterval();
+        const endTime = new Date().getTime();
+        const elapsedTime = (endTime - startTime) / 1000;
+        console.log(elapsedTime);
+        console.log(correctCharsTyped);
+        const wordsPerMinute = Math.round((correctLettersTyped / 5.0) / (elapsedTime / 60.0));
+        const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
+        document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
+        document.getElementById("input-box").value = "";
+        document.getElementById("input-box").disabled = true;
+        postUserMetrics(wordsPerMinute,accuracy,elapsedTime);
+    }
+
+    async function fetchUserInput() {
+        let newText = "";
+        try {
+            newText = prompt("Please enter your words:", "");
+            if (newText == null || newText == "") {
+                console.log("User cancelled the prompt.");
+                inputGiven=false;
+            }
+            else{
+                text = newText;
+                inputGiven=true;
+            }
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
+    function fillText(){
+        userInputCorrectText = text.substring(0, text.length-1);
+        currentCharIndex = text.length-1;
+        updateText();
+        //console.log("text: " + text);
+        //console.log("userInputCorrectText: " + userInputCorrectText);
+    }
 
   function insertPlayerStatus() {
     document.getElementById("holder").appendChild(makePlayerStatus());
