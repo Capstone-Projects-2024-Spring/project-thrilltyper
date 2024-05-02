@@ -46,6 +46,13 @@ Custom Mode - allows user to choose genre for words to type or input a blurb of 
 User Systems - accounts, logging in, dashboard, and leaderboard
 Dynamic Mode - generates an easy blurb for the user to type initially and based on the WPM the users has for that it generates a new blurb, and this goes on until time runs out
 
+## Known Bugs
+
+### Release 1.0
+
+1. Dynamic Text Generation does not allow the user to advance if they type two spaces in a row after finishing their last blurb
+2. Multiplayer does not synchronize gameplay so that the match ends when one player has finished the race
+
 ## Collaborators
 
 [//]: # ( readme: collaborators -start )
