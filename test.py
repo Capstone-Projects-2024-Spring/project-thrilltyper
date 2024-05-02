@@ -19,7 +19,12 @@ def client():
         yield client
 
 # --------------------------------------------------------------------------------App Tests-----------------------------------------------------------------------------
-
+def test_raceData(client):
+    """
+    Test: That the user can retrive race data
+    Result: True if the response with 200 status code
+    """
+    assert client.post("/raceData/user1").status_code == 200
 
 def test_registration(client):
     """
@@ -155,7 +160,10 @@ def test_matchmaking(client):
     assert response_data=="Matching successful." or response_data=="Match could not be found."
 
 def test_socketio_connection(client):
-    """Test SocketIO connection."""
+    """
+    Test SocketIO connection
+    Result: True if the client can receive messages
+    """
     sok = App.socketio
     # Connect the SocketIO client
     socketio_test_client = sok.test_client(App._app)
@@ -223,13 +231,13 @@ class Test_User_Data():
             random_user_data = {
                 '_username': sample_user_info['_username'],
                 '_email': sample_user_info['_email'],
-                '_history_highest_race_wpm': random.randint(50, 100),
+                '_top_wpm': random.randint(50, 100),
                 '_accuracy': round(random.uniform(80, 100), 2),
                 '_wins': random.randint(0, 100),
                 '_losses': random.randint(0, 100),
                 '_freq_mistyped_words': '|'.join(random.choices(["word1", "word2", "word3", "word4", "word5"], k=3)),
                 '_total_playing_time': random.randint(0, 1000),
-                '_play_date': datetime.now()
+                # '_play_date': datetime.now()
             }
 
             Database.insert(UserData, **random_user_data)
@@ -239,7 +247,7 @@ class Test_User_Data():
             # Assert individual attributes of user_data object
             assert user_data._username == sample_user_info['_username']
             assert user_data._email == sample_user_info['_email']
-            assert user_data._history_highest_race_wpm == random_user_data['_history_highest_race_wpm']
+            assert user_data._top_wpm == random_user_data['_top_wpm']
             assert float(user_data._accuracy) == random_user_data['_accuracy']
             assert user_data._wins == random_user_data['_wins']
             assert user_data._losses == random_user_data['_losses']

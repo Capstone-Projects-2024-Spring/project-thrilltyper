@@ -275,7 +275,7 @@ function Multiplayer({userSession}) {
         const elapsedTime = (currentTime - startTime) / 1000;
 
         const typed = currentCharIndex + "/" + text.length;
-        const wpm = Math.round((currentCharIndex/5 / elapsedTime) * 60);
+        const wpm = Math.round((currentCharIndex / 5.0) / (elapsedTime / 60.0));
         const accuracy = (text.length - wrongCharCount)/text.length*100;
 
         document.querySelector(".progress-display").innerHTML = "Typed: " + typed;

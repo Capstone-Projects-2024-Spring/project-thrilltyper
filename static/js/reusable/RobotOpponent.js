@@ -17,6 +17,7 @@ function RobotOpponent() {
 
 
     let correctCharsTyped = 0; // Track correct characters typed
+    let correctLettersTyped = 0;
     let totalCharsTyped = 0; // Track total characters typed
 
     async function getAvgTxtLen(difficulty,form){
@@ -177,6 +178,8 @@ function RobotOpponent() {
     function startTimer() {
         currentWordIndex = 0;   //initializes value for play again
         currentCharIndex = 0;
+        correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
+        totalCharsTyped = 0;
         userInputCorrectText = "";
         document.getElementById("input-box").value = "";
         document.getElementById("result").innerHTML = "";
@@ -259,6 +262,9 @@ function RobotOpponent() {
         if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
             currentCharIndex++;
             correctCharsTyped++; // Increment correct characters typed
+            if(text[currentCharIndex]!=' '){
+                correctLettersTyped++;
+            }
         }
         totalCharsTyped++; // Increment total characters
 
@@ -297,7 +303,7 @@ function RobotOpponent() {
         clearInterval(timerInterval);
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
-        const wordsPerMinute = Math.round((currentCharIndex/5 / elapsedTime) * 60);
+        const wordsPerMinute = Math.round((correctLettersTyped/5 / elapsedTime) * 60);
         const accuracy = (correctCharsTyped / totalCharsTyped) * 100; // Calculate accuracy
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Accuracy: ${accuracy.toFixed(2)}%`;
         document.getElementById("input-box").value = "";
