@@ -543,7 +543,7 @@ class Test_Text_Generator():
         Test: Ensure that text is generate successfully given valid input
         Result: True when: if given valid input, the invalid argument message is not returned, or if invalid input is given, then the invalid argument message is returned
         """
-        assert "Invalid arguments or missing arguments." not in Text_Generator.generate_text(
+        assert "An error occurred, check the file name and the parameters." not in Text_Generator.generate_text(
             "hard", "words", 20)
-        assert "Invalid arguments or missing arguments." in Text_Generator.generate_text(
+        assert "An error occurred, check the file name and the parameters." in Text_Generator.generate_text(
             "what", "no way buddy", 3)
