@@ -1,5 +1,5 @@
 <div align="center">
-![image](https://github.com/Capstone-Projects-2024-Spring/project-thrilltyper/assets/123014046/93224d1e-99b4-45fb-bc23-49cd108b89dc)
+
 
 # Project Name
 ThrillTyper
@@ -9,7 +9,7 @@ ThrillTyper
 
 
 </div>
-
+![image](https://github.com/Capstone-Projects-2024-Spring/project-thrilltyper/assets/123014046/93224d1e-99b4-45fb-bc23-49cd108b89dc)
 
 ## Keywords
 
