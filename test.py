@@ -61,7 +61,7 @@ def test_valid_login(client):
     response = client.post(
         "/authentication", data={"username": username, "password": password})
     print(response.status_code)
-    assert "/" == response.location
+    assert "/#/menu" == response.location
 
 
 def test_continue_as_guest(client):
