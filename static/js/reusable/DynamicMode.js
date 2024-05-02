@@ -216,7 +216,6 @@ function DynamicMode() {
             }
         }
         totalCharsTyped++;
-        //Add more input once last letter of current blurb is typed
         if (currentCharIndex >= text.length) {
             const endTime = new Date().getTime();
             const elapsedTime = (endTime - blurbStartTime) / 1000;
