@@ -156,6 +156,9 @@ function ThrillTyperGame() {
     // Default genre to null if not passed
     currentWordIndex = 0; // Initializes value for play again
     currentCharIndex = 0;
+    correctCharsTyped = 0;
+    correctLettersTyped = 0;
+    totalCharsTyped = 0;
     userInputCorrectText = "";
     document.getElementById("input-box").value = "";
     document.getElementById("result").innerHTML = "";
@@ -196,42 +199,26 @@ function ThrillTyperGame() {
     }
 
   function checkInput() {
-      var userInputText = document.getElementById("input-box").value;
-      var userInputLastChar = userInputText[userInputText.length - 1];
+    var userInputText = document.getElementById("input-box").value;
+    var userInputLastChar = userInputText[userInputText.length - 1];
 
-      //updates text color
-      updateText();
+    //updates text color
+    updateText();
 
-      //idk what this is 
-      //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
-      if (userInputText.substring(0, userInputText.length - 1) == words[currentWordIndex] && userInputLastChar == ' ') {
-          currentWordIndex++;
-          userInputCorrectText += userInputText;  //saves correct text
-          document.getElementById("input-box").value = "";
-      }
-
-      if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
-          currentCharIndex++;
-          correctCharsTyped++;
-          if(text[currentCharIndex]!=' '){
-              correctLettersTyped++;
-          }
-      }
-      totalCharsTyped++;
+    //idk what this is 
     //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
-    if (
-      userInputText.substring(0, userInputText.length - 1) ==
-        words[currentWordIndex] &&
-      userInputLastChar == " "
-    ) {
-      currentWordIndex++;
-      userInputCorrectText += userInputText; //saves correct text
-      document.getElementById("input-box").value = "";
+    if (userInputText.substring(0, userInputText.length - 1) == words[currentWordIndex] && userInputLastChar == ' ') {
+        currentWordIndex++;
+        userInputCorrectText += userInputText;  //saves correct text
+        document.getElementById("input-box").value = "";
     }
-    if (userInputLastChar == text[currentCharIndex]) {
-      //works but logic is bad
-      currentCharIndex++;
-      correctCharsTyped++;
+
+    if (userInputLastChar == text[currentCharIndex]) { //works but logic is bad
+        currentCharIndex++;
+        correctCharsTyped++;
+        if(text[currentCharIndex]!=' '){
+            correctLettersTyped++;
+        }
     }
     totalCharsTyped++;
   }
@@ -251,6 +238,9 @@ function ThrillTyperGame() {
     document.getElementById("input-box").value = "";
     userInputCorrectText = "";
     currentCharIndex = 0;
+    correctCharsTyped = 0;
+    correctLettersTyped = 0;
+    totalCharsTyped = 0;
     document.getElementById("result").innerHTML = "";
     currentWordIndex = 0; //initializes value for play again
     updateText();
@@ -299,8 +289,6 @@ function ThrillTyperGame() {
         stopTimerInterval();
         const endTime = new Date().getTime();
         const elapsedTime = (endTime - startTime) / 1000;
-        console.log(elapsedTime);
-        console.log(correctCharsTyped);
         const wordsPerMinute = Math.round((correctLettersTyped / 5.0) / (elapsedTime / 60.0));
         const accuracy =  (correctCharsTyped / totalCharsTyped) * 100;
         document.getElementById("result").innerHTML = `Congratulations! You completed the game in ${elapsedTime.toFixed(2)} seconds. Your speed: ${wordsPerMinute} WPM. Your accuracy: ${accuracy.toFixed(2)}%`;
