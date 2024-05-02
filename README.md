@@ -40,11 +40,16 @@ This is a software-dominant project with zero outside hardware requirements. The
 
 ## Implemented Features
 
-Single Player - basic timed gameplay
-Robot Opponent Mode - competing against a simulated opponent with difficulties of either easy, medium, or hard
-Custom Mode - allows user to choose genre for words to type or input a blurb of their own to type
-User Systems - accounts, logging in, dashboard, and leaderboard
-Dynamic Mode - generates an easy blurb for the user to type initially and based on the WPM the users has for that it generates a new blurb, and this goes on until time runs out
+- Single Player: basic timed gameplay
+
+- Robot Opponent Mode: competing against a simulated opponent with difficulties of either easy, medium, or hard
+
+- Custom Mode: allows user to choose genre for words to type or input a blurb of their own to type
+
+- User Systems: accounts, logging in, dashboard, and leaderboard
+
+- Dynamic Mode: generates an easy blurb for the user to type initially and based on the WPM the users has for that it generates a new blurb, and this goes on until time runs out
+
 
 ## Known Bugs
 
