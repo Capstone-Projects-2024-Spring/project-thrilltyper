@@ -106,13 +106,19 @@ function Multiplayer({userSession}) {
         });
     }
 
-    function updatePlayerListProgressBar(data){
+    function updatePlayerListProgressBar(players){
         const textLength = text.length;  // Ensure `text` is defined in the outer scope or passed as a parameter
 
+        console.log("updatePlayerListProgressBar: updating");
         players.forEach(player => {
-            const newWidth = (player.currentCharIndex / textLength) * 100;  // Calculate the percentage of completion
-            updatePlayerProgress(player.id, newWidth);
-            console.log(`Updated progress for player ${player.id}: ${newWidth}%`);
+            //need if condition because math calcualtion sometimes could not reach 100
+            if(player.currentCharIndex <= text.length){ //if player has not completed game
+                const newWidth = (player.currentCharIndex / textLength) * 100;  // Calculate the percentage of completion
+                updatePlayerProgress(player.id, newWidth);
+            }else{
+                updatePlayerProgress(player.id, 100);
+            }
+            console.log(`updatePlayerListProgressBar for player ${player.id}: index = ${player.currentCharIndex}`);
         });
     }
 
@@ -523,8 +529,10 @@ function Multiplayer({userSession}) {
         progressBar.style.width = newWidth + "%";
         progressBarText.innerHTML = newWidth + "%";
 
-        if(newWidth === 100){
+        const hasIcon = (document.getElementById("check-icon") != null);
+        if(newWidth === 100 && !hasIcon){
             var checkmarkIcon = document.createElement('img');
+            checkmarkIcon.id = "check-icon";
             checkmarkIcon.src = '../static/pics/checkmark.png';
             progressBarIconContainer.appendChild(checkmarkIcon);
         }
