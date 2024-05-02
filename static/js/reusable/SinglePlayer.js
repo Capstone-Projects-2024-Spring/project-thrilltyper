@@ -1,21 +1,27 @@
 function ThrillTyperGame() {
-  const date = new Date();
-  let text = "Click start button to start!";
-  let words = text.split(" ");
+    const date = new Date();
+    let text = "Click start button to start!";
+    let words = text.split(" ");
+    let timeLimit;
+    var inputGiven = false;
+    const highWPM = 120;
 
-  let currentCharIndex = 0; //only increment when user has typed correct letter
-  let currentWordIndex = 0;
-  let startTime;
-  //let timerInterval;
-  let userInputCorrectText = "";
-  let correctCharsTyped = 0; // Track correct characters typed
-  let totalCharsTyped = 0; // Track total characters typed
 
-  const intervalRef = React.useRef(null);
+    let currentCharIndex = 0;   //only increment when user has typed correct letter
+    let currentWordIndex = 0;
+    let startTime;
+    //let timerInterval;
+    let userInputCorrectText = "";
+    let correctCharsTyped = 0; // Track correct characters typed
+    let correctLettersTyped = 0;
+    let totalCharsTyped = 0; // Track total characters typed
 
-  function startTimerInterval() {
-    intervalRef.current = setInterval(updateTimer, 10);
-  }
+    const intervalRef = React.useRef(null);
+
+
+    function startTimerInterval(){
+        intervalRef.current = setInterval(updateTimer, 1000);
+    }
 
   function stopTimerInterval() {
     clearInterval(intervalRef.current);
@@ -27,13 +33,17 @@ function ThrillTyperGame() {
     };
   }, []);
 
-  async function fetchRandomWordList(genre) {
+  async function fetchRandomWordList(genre,num) {
     let newText = "";
     try {
       // Build the URL based on whether genre is provided
-      const url = genre
-        ? `/generate_text/?form=words&amount=30&genre=${genre}`
-        : "/generate_text/?difficulty=easy&form=words&amount=30";
+      let url;
+      if(genre!=null){
+        url = '/generate_text/?form=words&amount=30&genre='+genre
+      }
+      else{
+        url = '/generate_text/?difficulty=easy&form=words&amount='+highWPM*(num/60)
+      }
 
       const response = await fetch(url);
 
@@ -71,7 +81,7 @@ function ThrillTyperGame() {
       console.error("There was a problem with the fetch operation:", error);
     }
   }
-
+  
   //update text color as user types text
   //green text if user typed correctly
   //red background text if user typed incorrectly
@@ -102,6 +112,7 @@ function ThrillTyperGame() {
       } else {
         break;
       }
+      
     }
 
     greenEndIndex = numMatchLetters;
@@ -150,7 +161,8 @@ function ThrillTyperGame() {
     document.getElementById("result").innerHTML = "";
 
     startTime = new Date().getTime();
-    text = await fetchRandomWordList(genre); // Call with genre, which could be null
+    timeLimit = getTimeLimit();
+    text = await fetchRandomWordList(genre,timeLimit/1000); // Call with genre, which could be null
 
     words = text.split(" ");
 
@@ -161,14 +173,6 @@ function ThrillTyperGame() {
     startTimerInterval();
   }
 
-  function updateTimer() {
-    const currentTime = new Date().getTime();
-    const elapsedTime = (currentTime - startTime) / 1000;
-    document.getElementById(
-      "result"
-    ).innerHTML = `Time elapsed: ${elapsedTime.toFixed(2)} seconds`;
-  }
-
   function displayText() {
     document.getElementById("text-display").innerHTML = text;
   }
@@ -177,6 +181,16 @@ function ThrillTyperGame() {
     document.getElementById("input-box").disabled = false;
     document.getElementById("input-box").focus();
   }
+  
+  function getTimeLimit(){
+        var radioBtns = document.getElementsByName('timeLimit');
+        for (var i = 0; i < radioBtns.length; i++) {
+            if (radioBtns[i].checked) {
+                return parseInt(radioBtns[i].value)*1000;
+            }
+        }
+        return null;
+    }
 
   function checkInput() {
       var userInputText = document.getElementById("input-box").value;
@@ -201,38 +215,32 @@ function ThrillTyperGame() {
           }
       }
       totalCharsTyped++;
-
-      //submit input if last letter is typed
-      if (currentCharIndex >= text.length) {
-          submitInput();
-      }
-  }
-
-    async function startTimer() {
-        currentWordIndex = 0;   //initializes value for play again
-        currentCharIndex = 0;
-        correctCharsTyped = 0; //Need to reset to prevent other games from using previous numbers
-        totalCharsTyped = 0;
-        userInputCorrectText = "";
-        document.getElementById("input-box").value = "";
-        document.getElementById("result").innerHTML = "";
-
-        startTime = new Date().getTime();
-        if(!inputGiven){
-            text = await fetchRandomWordList();
-        }
-
-        words = text.split(" ");
-
-        displayText();
-        enableInput();
-
-        //clearInterval(timerInterval);
-        //timerInterval = setInterval(updateTimer, 10);
-
-        stopTimerInterval();
-        startTimerInterval();
+    //if typed word matches with text word and last letter is space, clear input box and add word to userInputCorrectText
+    if (
+      userInputText.substring(0, userInputText.length - 1) ==
+        words[currentWordIndex] &&
+      userInputLastChar == " "
+    ) {
+      currentWordIndex++;
+      userInputCorrectText += userInputText; //saves correct text
+      document.getElementById("input-box").value = "";
     }
+    if (userInputLastChar == text[currentCharIndex]) {
+      //works but logic is bad
+      currentCharIndex++;
+      correctCharsTyped++;
+    }
+    totalCharsTyped++;
+  }
+  
+  function updateTimer() {
+        const currentTime = new Date().getTime();
+        const timeLeft = (timeLimit-(currentTime - startTime)) / 1000;
+        document.getElementById("result").innerHTML = `Time elapsed: ${timeLeft.toFixed(0)} seconds`;
+        if(timeLeft<=0){
+            submitInput();
+        }
+  }
 
   function stopTimer() {
     stopTimerInterval();
@@ -373,6 +381,13 @@ function ThrillTyperGame() {
         </div>
         <button onClick={updateProgressBar}>Update Progress Bar</button>
         <button onClick={insertPlayerStatus}>Insert Player Status</button>
+        <div id="emptyDivider"></div>
+        <input type="radio" id="thirtySecBtn" value="30" name="timeLimit" defaultChecked></input>
+        <label htmlFor="thirtySecBtn">30 seconds</label>
+        <input type="radio" id="minuteBtn" value="60" name="timeLimit"></input>
+        <label htmlFor="minuteBtn">1 minute</label>
+        <input type="radio" id="minuteAndHalfBtn" value="90" name="timeLimit"></input>
+        <label htmlFor="minuteAndHalfBtn">1.5 minutes</label>
       </div>
     </div>
   );
