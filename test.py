@@ -22,7 +22,7 @@ def client():
 def test_raceData(client):
     """
     Test: That the user can retrive race data
-    Result: True if the response with 200 status code
+    Result: True if the response have 200 status code
     """
     assert client.post("/raceData/user1").status_code == 200
 
