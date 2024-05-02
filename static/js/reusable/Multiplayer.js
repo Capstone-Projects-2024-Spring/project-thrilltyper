@@ -9,6 +9,7 @@ function Multiplayer({userSession}) {
 
     // var isMeAdded = false;
 
+    
     React.useEffect(() => {
         // Connect to the WebSocket server
         const newSocket = io(`${window.location.protocol}//${window.location.hostname}:${window.location.port}`);
@@ -23,6 +24,11 @@ function Multiplayer({userSession}) {
             console.log("new player joined");
             updatePlayerProgressList();
 
+        });
+
+        newSocket.on('current player lists', players => {
+            console.log("Received updated player list");
+            console.log(JSON.stringify(players));
         });
 
         newSocket.on('your player id', data => {
@@ -146,6 +152,7 @@ function Multiplayer({userSession}) {
 
     function stopGame(){
         //resetVariables();
+        setIsGameStarted(false);
         console.log("stop game interval: "+intervalRef.current);   //DEBUG
         document.getElementById("input-box").value = "";
         document.getElementById("input-box").disabled = true;

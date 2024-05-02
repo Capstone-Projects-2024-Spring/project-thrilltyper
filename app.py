@@ -12,6 +12,7 @@ from dateutil import parser
 from sqlalchemy.orm import validates #for validation of data in tables
 from sqlalchemy import Column, or_ #used for reference to tables' column name
 from player import player
+from threading import Thread
 import string
 from text_generator import Text_Generator
 
@@ -61,6 +62,9 @@ class App:
 
     socketio = SocketIO(_app) 
     players = {}
+    broadcast_active = False
+    broadcast_thread = None
+    
 
     def run(self,host: str | None = None,port: int | None = None, debug: bool | None = None, load_dotenv: bool = True,**options):
         """
@@ -84,6 +88,7 @@ class App:
         """
         self._app.run(host,port,debug,load_dotenv)
 
+    
 
     @socketio.on('event')
     def handle_chat_global(json):
@@ -94,7 +99,15 @@ class App:
 
     """
     added by Hu
-    """    
+
+    """
+    def broadcast_player_list():
+        print("Broadcast thread started")
+        while App.broadcast_active:
+            App.socketio.sleep(0.5)  # Sleep for 100 milliseconds
+            App.socketio.emit('current player lists', list(App.players.values()))
+        print("Broadcast thread ended")
+        
     @socketio.on('connect')
     def handle_connect():
         player_id = request.sid
@@ -119,17 +132,31 @@ class App:
             print('Player has disconnected:', player_id)
             print(f'Current players list: {App.players}')  # Print the entire list of players
 
+
     @socketio.on('start game')
     def handle_start_game(data):
         print('Received start game signal:', data)
         # App.socketio.emit('start game', {'message': 'Start the game!', 'textKey': data['text']})
         emit('start game', {'message': 'Start the game!', 'textKey': data['textKey']}, broadcast=True)
+            # Start the broadcast thread only if it's not already running
+        if not App.broadcast_active:
+            App.broadcast_active = True
+            App.broadcast_thread = Thread(target=App.broadcast_player_list)
+            App.broadcast_thread.start()
 
     @socketio.on('stop game')
     def handle_stop_game(data):
         print('Received stop game signal:', data)
         # App.socketio.emit('stop game', {'message': 'Stop the game!'})
         emit('stop game', {'message': 'Stop the game!'}, broadcast=True)
+            # Stop the broadcasting thread
+        if App.broadcast_active:
+            App.broadcast_active = False
+            if App.broadcast_thread.is_alive():
+                App.broadcast_thread.join()  # Ensure the thread stops gracefully
+
+
+
 
 
 
