@@ -61,7 +61,7 @@ def test_valid_login(client):
     response = client.post(
         "/authentication", data={"username": username, "password": password})
     print(response.status_code)
-    assert "/" == response.location
+    assert "/#/menu" == response.location
 
 
 def test_continue_as_guest(client):
@@ -141,10 +141,10 @@ def test_generate_text_word_list(client):
 
 def test_generate_dynamic(client):
     """
-    Test: That dynamic text generation endpoint can take in WPM and accuracy and generate words using that data
+    Test: That text generation endpoint can take in WPM and generate words using that data
     Result: True if the endpoint responds with successful status code and responds with enough words to fill two lines
     """
-    response = client.get("/generate_dynamic/?wpm=53&accuracy=70")
+    response = client.get("/generate_text/?wpm=53")
     assert response.status_code==200
     word_lst = response.data.decode('utf-8').split(" ")
     assert len(word_lst)>=10
@@ -543,7 +543,7 @@ class Test_Text_Generator():
         Test: Ensure that text is generate successfully given valid input
         Result: True when: if given valid input, the invalid argument message is not returned, or if invalid input is given, then the invalid argument message is returned
         """
-        assert "Invalid arguments or missing arguments." not in Text_Generator.generate_text(
+        assert "An error occurred, check the file name and the parameters." not in Text_Generator.generate_text(
             "hard", "words", 20)
-        assert "Invalid arguments or missing arguments." in Text_Generator.generate_text(
+        assert "An error occurred, check the file name and the parameters." in Text_Generator.generate_text(
             "what", "no way buddy", 3)
