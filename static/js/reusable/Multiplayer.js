@@ -132,8 +132,9 @@ function Multiplayer({userSession}) {
         document.getElementById("text-display").innerHTML = text;
         words = text.split(" ");
         */
-
+        setIsGameStarted(true);
         resetVariables();
+        resetPlayerProgress();
         // resetPlayerProgress();
         startTimer();
         
@@ -241,9 +242,9 @@ function Multiplayer({userSession}) {
     
 
     function checkInput() {
-        console.log("checkInput: text = "+text);
+        console.log("checkInput: tex.lengtht = "+text.length);
         console.log("checkInput: userInputCorrectText = "+ userInputCorrectText);
-        console.log("checkInput: currentWordIndex = "+ currentWordIndex);
+        console.log("checkInput: currentCharIndex = "+ currentCharIndex);
 
         var userInputText = document.getElementById("input-box").value;
         var userInputLastChar = userInputText[userInputText.length - 1];
@@ -272,13 +273,23 @@ function Multiplayer({userSession}) {
 
         //update player progress bar
         // updatePlayerProgress(playerProgressList[0], Math.ceil(currentCharIndex/text.length*100));
-        updateHostPlayerProgress(Math.ceil(currentCharIndex/text.length*100));
-       
+        updateHostPlayerProgress(Math.floor(currentCharIndex/text.length*100));
+        
+        console.log("near checkInput: tex.lengtht = "+text.length);
+        console.log("near checkInput: currentCharIndex = "+ currentCharIndex);
+
         //submit input if last letter is typed
+        /*
         if (currentCharIndex >= text.length) {
-            updateStatusContainer();
             submitInput();
             console.log("checkInput: split one 1 executed = "+text);
+            updateStatusContainer();
+        }*/
+
+        if(userInputFullText === text){
+            submitInput();
+            console.log("checkInput: split one 1 executed = "+text);
+            updateHostPlayerProgress(Math.ceil(currentCharIndex/text.length*100));
         }
         
     }
@@ -297,7 +308,11 @@ function Multiplayer({userSession}) {
     */
     //if you don't get what is going on here, open a type racer game and type some wrong text
 
+    
     function updateText() {
+        if(!isGameStarted){ 
+            return;
+        }
         var str = text;
         var userInputFullText = userInputCorrectText + document.getElementById("input-box").value;
         console.log("updateText: userInputCorrectText" + userInputCorrectText);
@@ -471,7 +486,7 @@ function Multiplayer({userSession}) {
 
     //clear host progress bar
     function resetPlayerProgress(){
-        const progressBarContainer = document.getElementById(playerProgressList[0]);
+        const progressBarContainer = document.getElementById("host-player-progress");
         const progressBar = progressBarContainer.querySelector(".progressbar");
         const progressBarText = progressBarContainer.querySelector(".progressbar-text");
         const progressBarIconContainer = progressBarContainer.querySelector(".grid-item3");
@@ -482,11 +497,18 @@ function Multiplayer({userSession}) {
 
     }
 
+    React.useEffect(() => { //force re-render to let updateText() have correct variable
+        updateText();
+    }, [userInputCorrectText]);  // Depend on both the text and the trigger
+
+    const [isGameStarted, setIsGameStarted] = React.useState(false);    //only used once for updateText() in fillText to work properly
+
     function fillText(){
         // userInputCorrectText = text.substring(0, text.length-1);
         setUserInputCorrectText(text.substring(0, text.length-1));
         // currentCharIndex = text.length-1;
         setCurrentCharIndex(text.length-1);
+        setTriggerUpdate(triggerUpdate => triggerUpdate+1);
         updateText();
         //console.log("text: " + text);
         //console.log("userInputCorrectText: " + userInputCorrectText);
