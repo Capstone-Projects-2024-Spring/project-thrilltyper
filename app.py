@@ -155,7 +155,16 @@ class App:
             if App.broadcast_thread.is_alive():
                 App.broadcast_thread.join()  # Ensure the thread stops gracefully
 
-
+    @socketio.on('update char index')
+    def handle_update_char_index(data):
+        player_id = request.sid  # Assuming you're using the default SocketIO session ID as the player ID
+        current_char_index = data['currentCharIndex']
+        
+        # Update the player's current character index in the players dictionary
+        if player_id in App.players:
+            App.players[player_id]['currentCharIndex'] = current_char_index
+            print(f"Updated currentCharIndex for {player_id}: {current_char_index}")
+        
 
 
 

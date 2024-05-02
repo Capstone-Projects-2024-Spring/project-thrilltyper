@@ -3,6 +3,7 @@ function Multiplayer({userSession}) {
 
     const [gameStatus, setGameStatus] = React.useState('Game not started');
     const [socket, setSocket] = React.useState(null);
+    const currentCharIndexRef = React.useRef(currentCharIndex); // Create a ref for currentCharIndex
 
     var playerList = [];
     var mySocketPlayerID;
@@ -54,7 +55,7 @@ function Multiplayer({userSession}) {
             
             console.log("socket start game: playerProgressList = " + playerProgressList);
             startGame();
-            intervalRef2.current = setInterval(broadcastCurrentChar, 500, newSocket);
+            // intervalRef2.current = setInterval(broadcastCurrentChar, 500, newSocket);
         });
 
         newSocket.on('stop game', (data) => {
@@ -66,11 +67,12 @@ function Multiplayer({userSession}) {
 
         function broadcastCurrentChar(socket){
             console.log("broadcastCurrentChar: socket = "+socket);
+            console.log("broadcastCurrentChar: currentCharIndex = "+ currentCharIndex);
             socket.emit('update char index', {
                 player_id: socket.id,
-                currentCharIndex: currentCharIndex
+                currentCharIndex: currentCharIndexRef.current
             });
-            console.log(`Emitting currentCharIndex: ${currentCharIndex} for player ${mySocketPlayerID}`);
+            console.log(`Emitting currentCharIndex: ${currentCharIndexRef.current} for player ${mySocketPlayerID}`);
         }
 
         return () => newSocket.disconnect();
@@ -78,7 +80,13 @@ function Multiplayer({userSession}) {
 
     const intervalRef2 = React.useRef(null);
 
+    React.useEffect(() => {
+        console.log("useEffect: currentCharIndex = "+currentCharIndex);
+    }, [currentCharIndex]);
 
+    // React.useEffect(() => {
+    //     currentCharIndexRef.current = currentCharIndex; // Update ref whenever currentCharIndex changes
+    // }, [currentCharIndex]);
 
 
     function addHostPlayerProgress(){
@@ -292,6 +300,7 @@ function Multiplayer({userSession}) {
         if (userInputLastChar == text[currentCharIndex]) {
             // currentCharIndex++;
             setCurrentCharIndex(currentCharIndex+1);
+            // console.log("updateText split1: currentCharIndex = " + currentCharIndex);
         }else{
             wrongCharCount++;
         }
