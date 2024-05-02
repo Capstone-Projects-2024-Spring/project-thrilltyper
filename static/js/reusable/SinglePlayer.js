@@ -227,7 +227,7 @@ function ThrillTyperGame() {
         const currentTime = new Date().getTime();
         const timeLeft = (timeLimit-(currentTime - startTime)) / 1000;
         document.getElementById("result").innerHTML = `Time elapsed: ${timeLeft.toFixed(0)} seconds`;
-        if(timeLeft<=0){
+        if(timeLeft<=0 || currentCharIndex>=text.length){
             submitInput();
         }
   }
