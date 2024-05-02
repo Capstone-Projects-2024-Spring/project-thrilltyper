@@ -114,6 +114,16 @@ function Multiplayer({userSession}) {
         });
     }
 
+    
+    function resetPlayerListProgressbar(){  //this function causes bug so don't use it 
+        updateHostPlayerProgress(0);
+        playerList.forEach(player =>{
+            if(player.id != mySocketPlayerID){
+                updatePlayerProgress(player.id, 0);
+            }
+
+        });
+    }
 
 
     function updatePlayerListProgressBar(players){
@@ -123,7 +133,7 @@ function Multiplayer({userSession}) {
         players.forEach(player => {
             //need if condition because math calcualtion sometimes could not reach 100
             if(player.id != mySocketPlayerID){
-                if(player.currentCharIndex <= text.length){ //if player has not completed game
+                if(player.currentCharIndex <= textRef.current.length){ //if player has not completed game
                     const newWidth = Math.floor((player.currentCharIndex / textRef.current.length) * 100);  // Calculate the percentage of completion
                     updatePlayerProgress(player.id, newWidth);
                 }else{
@@ -172,7 +182,7 @@ function Multiplayer({userSession}) {
         // words = text.split(" ");
 
         socket.emit('start game', { message: 'Host started the game', textKey: newText});
-
+        // resetPlayerListProgressbar();
         //startGame(); do not start game because the host also calls startGame() on receiving the signal it sneds
     }
 
@@ -548,6 +558,12 @@ function Multiplayer({userSession}) {
             checkmarkIcon.src = '../static/pics/checkmark.png';
             progressBarIconContainer.appendChild(checkmarkIcon);
         }
+        /*  does not clear
+        else if(newWidth <= 100 && hasIcon){
+            var iconElement = progressBarContainer.getElementById("check-icon")
+            progressBarIconContainer.removeChild(iconElement);
+        }
+        */
         console.log("updatePlayerProgress: progressWidth = "+newWidth);
     }
 
@@ -620,7 +636,10 @@ function Multiplayer({userSession}) {
             </div>
 
             <div class="window-container" id="timer-window">
-                <div id="timer-display">Time {elapsedTime.toFixed(2)}s</div>
+                <div id="timer-display">
+                    <img class="timer-image" src="/static/pics/timer.png"/>
+                    {elapsedTime.toFixed(2)}s
+                </div>
             </div>
 
             <div class="window-container" id="text-window">
