@@ -162,7 +162,10 @@ function ThrillTyperGame() {
 
     startTime = new Date().getTime();
     timeLimit = getTimeLimit();
-    text = await fetchRandomWordList(genre,timeLimit/1000); // Call with genre, which could be null
+    if(!inputGiven){
+        text = await fetchRandomWordList(genre,timeLimit/1000); // Call with genre, which could be null
+    }
+    inputGiven=false;
 
     words = text.split(" ");
 
@@ -367,6 +370,7 @@ function ThrillTyperGame() {
             </button>
           </div>
         </div>
+        <button onClick={fetchUserInput}>Custom Input</button>
 
         {/* New custom button */}
         {/* Dropdown menu */}
