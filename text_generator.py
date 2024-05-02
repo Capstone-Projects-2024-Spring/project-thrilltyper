@@ -1,18 +1,17 @@
 from random import randint
 LEN_OF_LONGEST_WORD = 22
-
+LEFT_SIDE = "qwert|asdfg|zxcv"
+LEFT_ROW2_START = LEFT_SIDE.find('|')
+LEFT_ROW3_START = LEFT_SIDE.find('|', LEFT_ROW2_START+1)
+RIGHT_SIDE = "poiuy|lkjh|mnb"
+RIGHT_ROW2_START = RIGHT_SIDE.find('|')
+RIGHT_ROW3_START = RIGHT_SIDE.find('|', RIGHT_ROW2_START+1)
+PINKIE_CHARS = "qaz"
 
 class Text_Generator:
     """
     Responsible for generating text for a game to use and also separating words into different difficulties (the latter is done outside of run time)
     """
-    LEFT_SIDE = "qwert|asdfg|zxcv"
-    LEFT_ROW2_START = LEFT_SIDE.find('|')
-    LEFT_ROW3_START = LEFT_SIDE.find('|', LEFT_ROW2_START+1)
-    RIGHT_SIDE = "poiuy|lkjh|mnb"
-    RIGHT_ROW2_START = RIGHT_SIDE.find('|')
-    RIGHT_ROW3_START = RIGHT_SIDE.find('|', RIGHT_ROW2_START+1)
-    PINKIE_CHARS = "qaz"
 
     def get_txt_list(file) -> list[str]:
         """
@@ -41,17 +40,17 @@ class Text_Generator:
         while i < len(word):
             has_next_char = i+1 < len(word)
             # checking edge chars
-            if word[i] in self.PINKIE_CHARS:
+            if word[i] in PINKIE_CHARS:
                 score += 0.25
                 if has_next_char and word[i+1] == word[i]:
                     i += 1
             # checking direct verticals and consecutive side switches
             has_next_char = i+1 < len(word)
             if has_next_char:
-                curr_word_left_ind = self.LEFT_SIDE.find(word[i])
-                next_word_left_ind = self.LEFT_SIDE.find(word[i+1])
-                curr_word_right_ind = self.RIGHT_SIDE.find(word[i])
-                next_word_right_ind = self.RIGHT_SIDE.find(word[i+1])
+                curr_word_left_ind = LEFT_SIDE.find(word[i])
+                next_word_left_ind = LEFT_SIDE.find(word[i+1])
+                curr_word_right_ind = RIGHT_SIDE.find(word[i])
+                next_word_right_ind = RIGHT_SIDE.find(word[i+1])
                 if (curr_word_left_ind == -1 and next_word_left_ind != -1) or (curr_word_left_ind != -1 and next_word_left_ind == -1):
                     side_switches += 1
                 else:
@@ -79,11 +78,11 @@ class Text_Generator:
         """
         if (curr_char_keyboard_pos != -1 and nxt_char_keyboard_pos != -1):
             # standardize the rows
-            row2_start = self.RIGHT_ROW2_START
-            row3_start = self.RIGHT_ROW3_START
+            row2_start = RIGHT_ROW2_START
+            row3_start = RIGHT_ROW3_START
             if is_left:
-                row2_start = self.LEFT_ROW2_START
-                row3_start = self.LEFT_ROW3_START
+                row2_start = LEFT_ROW2_START
+                row3_start = LEFT_ROW3_START
             if curr_char_keyboard_pos > row3_start:
                 curr_char_keyboard_pos -= row3_start
             elif curr_char_keyboard_pos > row2_start:
@@ -162,8 +161,3 @@ class Text_Generator:
         except Exception as e:
             print(f"Error: {e}")
             return "An error occurred, check the file name and the parameters."
-
-
-if __name__ == "__main__":
-    tg = Text_Generator()
-    tg.sort_words_by_difficulty(tg.get_txt_list("words.txt"))
