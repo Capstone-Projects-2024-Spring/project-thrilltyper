@@ -161,8 +161,3 @@ class Text_Generator:
         except Exception as e:
             print(f"Error: {e}")
             return "An error occurred, check the file name and the parameters."
-
-
-if __name__ == "__main__":
-    tg = Text_Generator()
-    tg.sort_words_by_difficulty(tg.get_txt_list("words.txt"))
