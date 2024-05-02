@@ -2,6 +2,10 @@ import openai
 import string
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 #OpenAI Key
 openai.api_key = os.getenv('CHAT_API_KEY')
 
