@@ -152,7 +152,7 @@ function ThrillTyperGame() {
     document.getElementById("text-display").innerHTML = updatedText;
   }
 
-  async function startTimer(genre = null) {
+  async function startTimer(genre) {
     // Default genre to null if not passed
     currentWordIndex = 0; // Initializes value for play again
     currentCharIndex = 0;

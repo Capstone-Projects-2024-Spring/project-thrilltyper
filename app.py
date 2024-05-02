@@ -1,6 +1,5 @@
 # permanent import
 import os
-import sentence_generator
 import uuid
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
@@ -394,7 +393,7 @@ class App:
                 difficulty="hard"
         if not difficulty:
             difficulty=""
-        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
+        return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"),request.args.get("genre"))
 
     @_app.route('/raceData/<username>', methods=['GET', 'POST'])
     def getUserRaceData(username):
