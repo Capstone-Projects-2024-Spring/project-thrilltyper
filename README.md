@@ -62,6 +62,31 @@ This is a software-dominant project with zero outside hardware requirements. The
 2. Multiplayer does not synchronize gameplay so that the match ends when one player has finished the race
 3. The background of the cosmetic function may not always maintain a fixed size depending on the length of the monitor.
 
+## Build & Run Instructions
+### Release 1.0 or higher
+#### For zipped folder release
+1. Extract the zipped folder. For machines that do not have a Python environment or Python IDE (such as VSCode), download Python from [python.org](https://www.python.org/).
+2. The extracted folder includes a requirements.txt that holds all dependencies of the software. Open the Python shell or Python IDE and navigate to the folder. Run `pip install -r requirements.txt`. Hints: for developers, using the virtual environment module to install dependencies can avoid global installations on the machine.
+3. Check if there is an `.env` file inside the extracted folder.
+    
+    3.1. If there is one, run the app.py directly and open the link displayed on the terminal. One of them is `http://127.0.0.1:5000.`
+
+    3.2. If there is no .env file, create one in the folder's root directory and add your custom keys:
+
+    ```
+    CLIENT_ID = your_google_credential_id
+    CLIENT_SECRET = your_google_credential_secret
+    FLASK_SECRET = your_secret_can_be_anything
+
+    CHAT_API_KEY = your_own_openai_apikey
+    ```
+    For those without the need for Google OAuth2 login, we can omit the client id and secret in the .env file.
+    
+    For those without the need for OpenAI text generation, we can omit CHAT_API_KEY too.
+
+
+4. Make sure you're in the extracted folder directory. Run `python app.py` in the Python shell or IDE terminal. The server will start immediately and display the link(s) to the website.
+
 ## Collaborators
 
 [//]: # ( readme: collaborators -start )
@@ -120,7 +145,7 @@ This is a software-dominant project with zero outside hardware requirements. The
         <a href="https://github.com/icycoldveins">
             <img src="https://avatars.githubusercontent.com/u/81425589?v=4" width="100;" alt="tuk04440"/>
             <br />
-            <sub><b>Allen Abraham</b></sub>
+            <sub><b>Kevin W Wijaya</b></sub>
         </a>
     </td>
    </tr>
