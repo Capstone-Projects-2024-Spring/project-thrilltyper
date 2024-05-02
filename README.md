@@ -1,13 +1,16 @@
 <div align="center">
 
-# Project Name
-ThrillTyper
+
+# ThrillTyper
 [![Report Issue on Jira](https://img.shields.io/badge/Report%20Issues-Jira-0052CC?style=flat&logo=jira-software)](https://temple-cis-projects-in-cs.atlassian.net/jira/software/c/projects/DT/issues)
 [![Deploy Docs](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml)
 [![Documentation Website Link](https://img.shields.io/badge/-Documentation%20Website-brightgreen)](https://applebaumian.github.io/tu-cis-4398-docs-template/)
 
 
 </div>
+
+![typetriller](https://github.com/Capstone-Projects-2024-Spring/project-thrilltyper/assets/123014046/68ef13e5-5c5a-4a95-a96d-66faa2640711)
+
 
 
 ## Keywords
@@ -40,11 +43,16 @@ This is a software-dominant project with zero outside hardware requirements. The
 
 ## Implemented Features
 
-Single Player - basic timed gameplay
-Robot Opponent Mode - competing against a simulated opponent with difficulties of either easy, medium, or hard
-Custom Mode - allows user to choose genre for words to type or input a blurb of their own to type
-User Systems - accounts, logging in, dashboard, and leaderboard
-Dynamic Mode - generates an easy blurb for the user to type initially and based on the WPM the users has for that it generates a new blurb, and this goes on until time runs out
+- Single Player: basic timed gameplay
+
+- Robot Opponent Mode: competing against a simulated opponent with difficulties of either easy, medium, or hard
+
+- Custom Mode: allows user to choose genre for words to type or input a blurb of their own to type
+
+- User Systems: accounts, logging in, dashboard, and leaderboard
+
+- Dynamic Mode: generates an easy blurb for the user to type initially and based on the WPM the users has for that it generates a new blurb, and this goes on until time runs out
+
 
 ## Known Bugs
 
@@ -52,6 +60,7 @@ Dynamic Mode - generates an easy blurb for the user to type initially and based 
 
 1. Dynamic Text Generation does not allow the user to advance if they type two spaces in a row after finishing their last blurb
 2. Multiplayer does not synchronize gameplay so that the match ends when one player has finished the race
+3. The background of the cosmetic function may not always maintain a fixed size depending on the length of the monitor.
 
 ## Collaborators
 
