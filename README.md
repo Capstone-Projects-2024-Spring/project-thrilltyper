@@ -145,7 +145,7 @@ This is a software-dominant project with zero outside hardware requirements. The
         <a href="https://github.com/icycoldveins">
             <img src="https://avatars.githubusercontent.com/u/81425589?v=4" width="100;" alt="tuk04440"/>
             <br />
-            <sub><b>Kevin W Wijaya</b></sub>
+            <sub><b>Kevin Wijaya</b></sub>
         </a>
     </td>
    </tr>
