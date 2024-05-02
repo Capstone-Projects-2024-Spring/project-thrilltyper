@@ -392,7 +392,6 @@ class App:
                 difficulty="medium"
             else:
                 difficulty="hard"
-            return sentence_generator.generate_sentences(difficulty)
         if not difficulty:
             difficulty=""
         return Text_Generator.generate_text(difficulty,request.args.get("form"),request.args.get("amount"))
