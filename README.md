@@ -1,4 +1,5 @@
 <div align="center">
+![image](https://github.com/Capstone-Projects-2024-Spring/project-thrilltyper/assets/123014046/93224d1e-99b4-45fb-bc23-49cd108b89dc)
 
 # Project Name
 ThrillTyper
@@ -57,6 +58,7 @@ This is a software-dominant project with zero outside hardware requirements. The
 
 1. Dynamic Text Generation does not allow the user to advance if they type two spaces in a row after finishing their last blurb
 2. Multiplayer does not synchronize gameplay so that the match ends when one player has finished the race
+3. The background of the cosmetic function may not always maintain a fixed size depending on the length of the monitor.
 
 ## Collaborators
 
