@@ -54,7 +54,7 @@
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Modal.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/ChatRoom.js')}}"></script>
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/Multiplayer.js')}}"></script>
-
+    <script type="text/babel" src="{{url_for('static', filename='js/reusable/DynamicMode.js')}}"></script>
 
 
     <script type="text/babel" src="{{url_for('static', filename='js/reusable/ImportTextPlay.js')}}"></script>
@@ -102,6 +102,7 @@
                     <Route path="/menu" component={Menu} />
                     <Route path="/singlePlayer" component={ThrillTyperGame} />
                     <Route path="/robotOpponent" component={RobotOpponent} />
+                    <Route path="/dynamicMode" component={DynamicMode} />
                     <Route path="/multiplayer" component={(props) => <Multiplayer {...props} userSession={userSession} />} />
                     <Route path="/dashboard"  component={(props) => <Dashboard {...props} userSession={userSession} />} />
                     <Route path="/leaderboard" component={Leaderboard} />
