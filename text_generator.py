@@ -1,4 +1,5 @@
 from random import randint
+import requests
 LEN_OF_LONGEST_WORD = 22
 LEFT_SIDE = "qwert|asdfg|zxcv"
 LEFT_ROW2_START = LEFT_SIDE.find('|')
@@ -137,6 +138,10 @@ class Text_Generator:
         Generates the text that shall be typed by users for a game.
         If 'genre' is specified, it modifies the file selection process,
         otherwise, the file is selected based on 'difficulty' and 'form'.
+        :param difficulty
+        :param form : either "sentences" or "words"
+        :param amount : number of sentences or words
+        :param genre
         """
         file_name = ""
         try:
@@ -159,5 +164,4 @@ class Text_Generator:
                     otpt += txt_lst.pop(rand_ind).strip() + ' '
                 return otpt.strip()  # Remove the last space
         except Exception as e:
-            print(f"Error: {e}")
-            return "An error occurred, check the file name and the parameters."
+            return f"Error: {e}"
