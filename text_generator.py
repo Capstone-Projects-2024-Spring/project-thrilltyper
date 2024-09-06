@@ -1,4 +1,8 @@
 from random import randint
+import requests
+import os
+from dotenv import load_dotenv
+import json
 LEN_OF_LONGEST_WORD = 22
 LEFT_SIDE = "qwert|asdfg|zxcv"
 LEFT_ROW2_START = LEFT_SIDE.find('|')
@@ -7,6 +11,11 @@ RIGHT_SIDE = "poiuy|lkjh|mnb"
 RIGHT_ROW2_START = RIGHT_SIDE.find('|')
 RIGHT_ROW3_START = RIGHT_SIDE.find('|', RIGHT_ROW2_START+1)
 PINKIE_CHARS = "qaz"
+#may need to change the first sentence for other languages
+SYS_PROMPT = "You are a word/sentence generator that can only generate characters that are on the English keyboard. You must generate words or sentences for type racing games based on the user's prompt. Do not include any introductory text or explanations. Only return the generated words or sentences, without any additional formatting or explanations."
+load_dotenv()
+llama_api_key = os.environ.get("LLAMA_API_KEY")
+api_generation_history = [{"role":"system","content":SYS_PROMPT}]
 
 class Text_Generator:
     """
@@ -137,9 +146,39 @@ class Text_Generator:
         Generates the text that shall be typed by users for a game.
         If 'genre' is specified, it modifies the file selection process,
         otherwise, the file is selected based on 'difficulty' and 'form'.
+        :param difficulty
+        :param form : either "sentences" or "words"
+        :param amount : number of sentences or words
+        :param genre
         """
         file_name = ""
         try:
+            if llama_api_key:
+                try:
+                    api_generation_history.append({"role":"user","content":f"Generate {amount} {form} of {difficulty} difficulty in terms of typing on a keyboard."})
+                    payload = {
+                        "model": "meta-llama/llama-3.1-8b-instruct:free",
+                        "messages": api_generation_history,
+                        "top_p": 0.3,
+                        "temperature": .9,
+                        "repetition_penalty": 1,
+                        "response_format": { "type": "string" },
+                    }
+                    headers = {
+                        "Authorization": f"Bearer {llama_api_key}",
+                        "Content-Type": "application/json"
+                    }
+                    response = requests.post("https://openrouter.ai/api/v1/chat/completions",json=payload,headers=headers)
+                    if response.status_code == 200:
+                        api_response = response.json()
+                        print(api_response)
+                        response_message = api_response["choices"][0]["message"]["content"]
+                        api_generation_history.append({"role": "assistant", "content": response_message})
+                        return response_message
+                    else:
+                        print(response)
+                except Exception as e:
+                    print(e)
             # Determine the file name based on whether 'genre' is provided
             if genre:
                 file_name = f"{genre}{form}.txt"
@@ -157,7 +196,6 @@ class Text_Generator:
                     rand_ind = randint(0, len(txt_lst)-1)
                     # Using strip to remove newline characters
                     otpt += txt_lst.pop(rand_ind).strip() + ' '
-                return otpt.strip()  # Remove the last space
+                return otpt.strip()  # Remove the last space"""
         except Exception as e:
-            print(f"Error: {e}")
-            return "An error occurred, check the file name and the parameters."
+            return f"Error: {e}"
